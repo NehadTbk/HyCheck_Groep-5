@@ -1,9 +1,35 @@
 import React from "react";
-import AfdelingshoofdDashboard from "./pages/AfdelingshoofdDashboard";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboard";
+import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersoneel";
+import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
 import "./index.css";
 
 function App() {
-  return <AfdelingshoofdDashboard />;
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/afdelingshoofd/dashboard"
+          element={<AfdelingshoofdDashboard />}
+        />
+        <Route
+          path="/afdelingshoofd/mijn-personeel"
+          element={<AfdelingshoofdPersoneel />}
+        />
+        <Route
+          path="/afdelingshoofd/account-aanmaken"
+          element={<AfdelingshoofdCreateAccount />}
+        />
+
+        {/* default */}
+        <Route
+          path="/"
+          element={<Navigate to="/afdelingshoofd/dashboard" replace />}
+        />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

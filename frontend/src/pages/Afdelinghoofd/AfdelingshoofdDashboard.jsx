@@ -1,9 +1,10 @@
 import React from "react";
-import Topbar from "../components/common/Topbar";
-import AfdelingshoofdNavBar from "../components/navbar/AfdelingshoofdNavBar";
-import ProgressCard from "../components/cards/ProgressCard";
-import PeriodicCard from "../components/cards/PeriodicCard";
-import CreateAccountCard from "../components/cards/CreateAccountCard";
+import Topbar from "../../components/common/Topbar";
+import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
+import ProgressCard from "../../components/cards/ProgressCard";
+import PeriodicCard from "../../components/cards/PeriodicCard";
+import CreateAccountCard from "../../components/cards/CreateAccountCard";
+
 
 
 function AfdelingshoofdDashboard() {
