@@ -1,7 +1,9 @@
 import React from "react";
+import AfdelingshoofdDashboard from "./pages/AfdelingshoofdDashboard";
+import "./index.css";
 
-const App = () => {
-  return <div className="text-green-500">Testing Tailwind</div>;
-};
+function App() {
+  return <AfdelingshoofdDashboard />;
+}
 
 export default App;
