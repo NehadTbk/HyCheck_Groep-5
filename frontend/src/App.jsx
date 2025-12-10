@@ -1,5 +1,5 @@
 import React from "react";
-import AfdelingshoofdDashboard from "./pages/AfdelingshoofdDashboard";
+import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboard";
 import "./index.css";
 
 function App() {
