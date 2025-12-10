@@ -3,7 +3,6 @@ import React from "react";
 function NavBar({ items, activeKey, onChange, showInstructions = true }) {
   return (
     <nav className="flex items-center justify-between w-full">
-      {/* Left: Navigation Tabs */}
       <div className="flex gap-4">
         {items.map((item) => {
           const isActive = item.key === activeKey;
@@ -13,10 +12,13 @@ function NavBar({ items, activeKey, onChange, showInstructions = true }) {
               key={item.key}
               onClick={() => onChange && onChange(item.key)}
               className={[
-                "px-4 py-2 rounded-full text-sm transition-colors",
+                "px-4 py-2 rounded-full text-sm font-medium",
+                "cursor-pointer select-none",
+                "transition-all duration-150",
+
                 isActive
-                  ? "bg-[#7A4A77] text-white"
-                  : "bg-transparent text-gray-800 hover:bg-gray-200",
+                  ? "bg-[#7A4A77] text-white shadow-md"
+                  : "bg-transparent text-gray-800 hover:bg-gray-200 hover:text-black"
               ].join(" ")}
             >
               {item.label}
@@ -25,7 +27,7 @@ function NavBar({ items, activeKey, onChange, showInstructions = true }) {
         })}
       </div>
 
-      {/* Right: Instructions, Bell, Language toggle */}
+      {/* right-side elements kept same */}
       <div className="flex items-center gap-4">
         {showInstructions && (
           <button className="text-sm text-gray-800">Instructies</button>
