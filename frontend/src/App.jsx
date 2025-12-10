@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboard";
 import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersoneel";
 import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
+import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
 import "./index.css";
 
 function App() {
@@ -20,6 +21,10 @@ function App() {
         <Route
           path="/afdelingshoofd/account-aanmaken"
           element={<AfdelingshoofdCreateAccount />}
+        />
+        <Route
+          path="/afdelingshoofd/overzicht-maanden"
+          element={<AfdelingshoofdMonthlyOverview />}
         />
 
         {/* default */}

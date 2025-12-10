@@ -1,17 +1,30 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Topbar() {
+  const navigate = useNavigate();
+
+  const goHome = () => {
+    navigate("/afdelingshoofd/dashboard");
+  };
+
   return (
     <header className="bg-[#4A2144] text-white px-12 py-3 flex items-center justify-between">
+      
       {/* Left: logo + name */}
       <div className="flex items-center gap-4">
-        <div className="bg-white rounded-md w-16 h-16 flex items-center justify-center">
+        {/* Clickable Logo */}
+        <button
+          onClick={goHome}
+          className="cursor-pointer bg-white rounded-md w-16 h-16 flex items-center justify-center shadow-sm hover:shadow-md transition"
+        >
           <img
             src="/hycheck-logo.png"
             alt="HyCheck logo"
             className="w-14 h-14 object-contain"
           />
-        </div>
+        </button>
+
         <span className="text-lg font-semibold">HyCheck</span>
       </div>
 
