@@ -52,7 +52,7 @@ function NavBar({ items, activeKey, onChange, showInstructions = true }) {
 
           <button
             className={[
-              "px-2 transition-all",
+              "px-2 font-semibold transition-all",
               lang === "FR" ? "text-black" : "text-gray-500",
             ].join(" ")}
             onClick={() => setLang("FR")}
