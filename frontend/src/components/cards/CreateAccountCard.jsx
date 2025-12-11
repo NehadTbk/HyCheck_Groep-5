@@ -27,7 +27,7 @@ function CreateAccountCard() {
       }}
     >
       <span className="text-base font-medium">
-        Account aanmaken
+        Account Aanmaken
       </span>
     </article>
   );

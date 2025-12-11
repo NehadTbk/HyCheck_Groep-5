@@ -1,9 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";          // 👈 NEW
 import Topbar from "../../components/common/Topbar";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import PersoneelRegisterCard from "../../components/Afdelingshoofd/PersoneelRegisterCard";
 
 function AfdelingshoofdPersoneel() {
+  const navigate = useNavigate();                       // 👈 NEW
+
+  const handleAddPersonnel = () => {
+    // change path here if your route is named differently
+    navigate("/afdelingshoofd/account-aanmaken");
+  };
+
   return (
     <div className="min-h-screen bg-[#C6B6C2] flex flex-col">
       <Topbar />
@@ -17,8 +25,15 @@ function AfdelingshoofdPersoneel() {
           </div>
 
           <div className="mt-4 flex justify-end">
-            <button className="bg-white rounded-full px-6 py-2 text-sm shadow">
-              Personeel toevoegen
+            <button
+              onClick={handleAddPersonnel}               // 👈 CLICK HANDLER
+              className="
+                bg-white rounded-full px-6 py-2 text-sm shadow
+                hover:bg-gray-100 hover:shadow-md
+                transition-colors
+              "
+            >
+              Account Aanmaken
             </button>
           </div>
         </div>
