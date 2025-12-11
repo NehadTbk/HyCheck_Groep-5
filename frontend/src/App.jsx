@@ -4,6 +4,8 @@ import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboa
 import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersoneel";
 import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
+import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
+
 import "./index.css";
 
 function App() {
@@ -32,6 +34,12 @@ function App() {
           path="/"
           element={<Navigate to="/afdelingshoofd/dashboard" replace />}
         />
+        <Route
+          path="/verantwoordelijke/dashboard"
+          element={<VerantwoordelijkeDashboard/>}
+        />
+        
+
       </Routes>
     </Router>
   );
