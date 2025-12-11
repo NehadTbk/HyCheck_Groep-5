@@ -16,10 +16,18 @@ function AfdelingshoofdDashboard() {
         <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6">
           <AfdelingshoofdNavBar />
 
-          <section className="flex flex-col gap-6 mt-4">
-            <ProgressCard />
-            <PeriodicCard />
-            <CreateAccountCard />
+          <section className="flex flex-col lg:flex-row gap-6 mt-4">
+            <div className="flex-1">
+              <ProgressCard />
+            </div>
+
+            <div className="flex-1">
+              <PeriodicCard />
+            </div>
+
+            <div className="flex-1">
+              <CreateAccountCard />
+            </div>
           </section>
         </div>
       </main>
