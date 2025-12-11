@@ -12,7 +12,7 @@ function AfdelingshoofdPersoneel() {
         <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6 flex flex-col">
           <AfdelingshoofdNavBar />
 
-          <div className="mt-6 flex-1">
+          <div className="mt-8 flex-1">
             <PersoneelRegisterCard />
           </div>
 
