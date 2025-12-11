@@ -5,11 +5,15 @@ import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersone
 import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
 import "./index.css";
+import Login from "./pages/Login";
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route
+        path="/login" element={<Login />}
+        />
         <Route
           path="/afdelingshoofd/dashboard"
           element={<AfdelingshoofdDashboard />}
@@ -30,7 +34,7 @@ function App() {
         {/* default */}
         <Route
           path="/"
-          element={<Navigate to="/afdelingshoofd/dashboard" replace />}
+          element={<Navigate to="/login" replace />}
         />
       </Routes>
     </Router>
