@@ -1,7 +1,7 @@
 import React from "react";
 import Topbar from "../../components/common/Topbar";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
-import MonthlyProgressCard from "../../components/cards/MonthlyProgressCard";
+import MonthlyProgressCard from "../../components/cards/ProgressCard";
 
 const MONTH_DATA = [
   { month: "December",  percentage: 67, status: "warning" },
