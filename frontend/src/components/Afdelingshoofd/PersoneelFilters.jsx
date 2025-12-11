@@ -1,3 +1,4 @@
+// src/components/Afdelingshoofd/PersoneelFilters.jsx
 import React from "react";
 
 const ROLE_OPTIONS = [
@@ -6,20 +7,34 @@ const ROLE_OPTIONS = [
   { key: "tandartsassistent", label: "Tandartsassistent" },
 ];
 
-function PersoneelFilters({ activeRole, onChange }) {
+function PersoneelFilters({ selectedRoles, onChange }) {
+  const handleClick = (key) => {
+    let next;
+
+    if (selectedRoles.includes(key)) {
+      // remove if already selected
+      next = selectedRoles.filter((k) => k !== key);
+    } else {
+      // add if not selected yet
+      next = [...selectedRoles, key];
+    }
+
+    onChange(next);
+  };
+
   return (
     <div className="flex gap-2">
       {ROLE_OPTIONS.map((role) => {
-        const isActive = activeRole === role.key;
+        const isActive = selectedRoles.includes(role.key);
         return (
           <button
             key={role.key}
-            onClick={() => onChange && onChange(role.key)}
+            onClick={() => handleClick(role.key)}
             className={[
               "px-4 py-1 rounded-full text-xs transition-colors",
               isActive
                 ? "bg-[#C6939F] text-white"
-                : "bg-gray-200 text-gray-700",
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300",
             ].join(" ")}
           >
             {role.label}

@@ -2,7 +2,7 @@ import React from "react";
 
 function PeriodicCard() {
   return (
-    <article className="bg-white rounded-xl shadow-md px-8 py-6 max-w-xl">
+    <article className="bg-white rounded-xl shadow-md px-8 py-6 min-h-[260px] w-full">
       <h3 className="text-base font-medium mb-4">Periodieke reinigingen</h3>
 
       <div className="flex gap-2 text-sm mb-1">
