@@ -61,7 +61,7 @@ function VerantwoordelijkeDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#D7CBD6] flex flex-col rounded-2xl overflow-hidden">
+    <div className="min-h-screen bg-[#E5DCE7] flex flex-col rounded-2xl overflow-hidden">
       <Topbar />
 
       <main className="flex-1 px-8 py-6">
@@ -76,7 +76,7 @@ function VerantwoordelijkeDashboard() {
               <a href="/verantwoordelijke/kalender" className="text-gray-500 text-base py-1 px-2 hover:text-black">Mijn Boxen</a>
               <a href="/verantwoordelijke/rapporten" className="text-gray-500 text-base py-1 px-2 hover:text-black">Rapporten</a>
               <a href="/verantwoordelijke/personeel" className="text-gray-500 text-base py-1 px-2 hover:text-black">Mijn Personeel</a>
-              <a href="/verantwoordelijke/meldingen" className="text-gray-500 text-base py-1 px-2 hover:text-black">Meldingen</a>
+              
             </div>
 
             
