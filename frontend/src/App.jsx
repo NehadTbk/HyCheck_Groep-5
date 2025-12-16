@@ -6,6 +6,7 @@ import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCre
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
 import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
 import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -17,38 +18,55 @@ function App() {
       <Routes>
         {/* Public */}
         <Route
-        path="/login" element={<Login />}
+          path="/login" element={<Login />}
         />
         <Route
-        path="/" element={<Login />}
+          path="/" element={<Login />}
         />
         {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
-          element={<AfdelingshoofdDashboard />}
+          element={<ProtectedRoute allowedRoles={['admin']}>
+            <AfdelingshoofdDashboard />
+          </ProtectedRoute>
+          }
         />
         <Route
           path="/afdelingshoofd/mijn-personeel"
-          element={<AfdelingshoofdPersoneel />}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AfdelingshoofdPersoneel />
+            </ProtectedRoute>}
         />
         <Route
           path="/afdelingshoofd/account-aanmaken"
-          element={<AfdelingshoofdCreateAccount />}
+          element={<ProtectedRoute allowedRoles={['admin']}>
+            <AfdelingshoofdCreateAccount />
+          </ProtectedRoute>
+          }
         />
         <Route
           path="/afdelingshoofd/overzicht-maanden"
-          element={<AfdelingshoofdMonthlyOverview />}
+          element={<ProtectedRoute allowedRoles={['admin']}>
+    <AfdelingshoofdMonthlyOverview />
+          </ProtectedRoute>
+      }
         />
         {/* Verantwoordelijke */}
         <Route
           path="/verantwoordelijke/dashboard"
-          element={<VerantwoordelijkeDashboard />}
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+          <VerantwoordelijkeDashboard />
+          </ProtectedRoute>
+          }
         />
 
         {/* GECORRIGEERD: Zelfsluitende tag met attributen */}
         <Route
           path="/verantwoordelijke/personeel"
-          element={<VerantwoordelijkePersoneel />}
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+          <VerantwoordelijkePersoneel />
+          </ProtectedRoute>}
         />
 
       </Routes>
