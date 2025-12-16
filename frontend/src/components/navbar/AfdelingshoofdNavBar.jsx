@@ -12,7 +12,6 @@ function AfdelingshoofdNavBar() {
         <div className="flex gap-4">
           <a href="/afdelingshoofd/dashboard" className="text-gray-800 font-semibold text-base py-1 px-2 hover:text-black">Dashboard</a>
           <a href="/afdelingshoofd/mijn-personeel" className="text-gray-500 text-base py-1 px-2 hover:text-black">Mijn Personeel</a>
-          <a href="/afdelingshoofd/meldingen" className="text-gray-500 text-base py-1 px-2 hover:text-black">Meldingen</a>
         </div>
 
 
