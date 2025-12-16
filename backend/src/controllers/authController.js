@@ -97,3 +97,24 @@ export const register = async (req, res) => {
         });
     }
 };
+
+export const logout = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ') [1];
+
+        if(token){
+            console.log('User logged out');
+        }
+        res.json({
+            success: true,
+            message: "Uitgelogd"
+        });
+
+    } catch (err) {
+        console.error('Logout error:', err);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};

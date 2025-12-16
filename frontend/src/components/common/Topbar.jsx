@@ -8,6 +8,11 @@ function Topbar() {
     navigate("/afdelingshoofd/dashboard");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  }
   return (
     <header className="bg-[#4A2144] text-white px-12 py-3 flex items-center justify-between">
       
@@ -40,7 +45,9 @@ function Topbar() {
           </div>
         </div>
 
-        <button className="bg-white text-black font-semibold rounded-lg px-5 py-2 shadow-sm">
+        <button
+        onClick={handleLogout}
+         className="bg-white text-black font-semibold rounded-lg px-5 py-2 shadow-sm">
           Uitloggen
         </button>
       </div>

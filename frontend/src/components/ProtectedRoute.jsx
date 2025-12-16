@@ -4,9 +4,9 @@ import { Navigate } from "react-router-dom";
 const getRedirectPathByRole = (role) => {
     switch (role) {
         case 'admin':
-            return "/admin/dashboard"; 
+            return "/afdelingshoofd/dashboard"; 
         case 'responsible':
-            return "/afdelingshoofd/dashboard";
+            return "/verantwoordelijke/dashboard";
         case 'assistant':
             return "/assistant/dashboard";
         default:

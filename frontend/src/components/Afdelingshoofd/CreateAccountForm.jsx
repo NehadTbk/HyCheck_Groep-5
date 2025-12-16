@@ -2,8 +2,8 @@ import React, { useState } from "react";
 
 function CreateAccountForm() {
   const [form, setForm] = useState({
-    name: "",
-    surname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     role: "",
   });
