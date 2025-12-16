@@ -15,7 +15,7 @@ function CreateAccountCard() {
       role="button"
       tabIndex={0}
       className="
-        bg-white rounded-xl shadow-md px-8 py-10 max-w-xl
+        bg-white rounded-xl shadow-md px-8 py-10 min-h-[260px] w-full
         flex items-center justify-center
         cursor-pointer select-none
         transition-all
@@ -27,7 +27,7 @@ function CreateAccountCard() {
       }}
     >
       <span className="text-base font-medium">
-        Account aanmaken
+        Account Aanmaken
       </span>
     </article>
   );

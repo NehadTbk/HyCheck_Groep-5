@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import PersoneelFilters from "./PersoneelFilters";
+import PersoneelFilters, { ROLE_OPTIONS } from "./PersoneelFilters";
 import PersoneelSearch from "./PersoneelSearch";
 import PersoneelTable from "./PersoneelTable";
 
@@ -43,17 +43,26 @@ const PERSONEEL_ROWS = [
 ];
 
 function PersoneelRegisterCard() {
-  const [activeRole, setActiveRole] = useState("verantwoordelijke");
+  const [selectedRoles, setSelectedRoles] = useState([]); // array of roleKeys
   const [search, setSearch] = useState("");
 
   const filteredRows = useMemo(() => {
     return PERSONEEL_ROWS.filter((row) => {
-      if (activeRole && row.roleKey !== activeRole) return false;
+      // --- ROLE FILTER ---
+      const usingRoleFilter =
+        selectedRoles.length > 0 &&
+        selectedRoles.length < ROLE_OPTIONS.length;
+
+      if (usingRoleFilter && !selectedRoles.includes(row.roleKey)) {
+        return false;
+      }
+
+      // --- SEARCH FILTER ---
       if (!search) return true;
       const haystack = `${row.code} ${row.lastName} ${row.firstName} ${row.email}`.toLowerCase();
       return haystack.includes(search.toLowerCase());
     });
-  }, [activeRole, search]);
+  }, [selectedRoles, search]);
 
   return (
     <div className="bg-white rounded-xl shadow-md px-10 py-8">
@@ -61,7 +70,10 @@ function PersoneelRegisterCard() {
         <h1 className="text-3xl font-semibold">Personeelsregister</h1>
 
         <div className="flex items-center gap-4">
-          <PersoneelFilters activeRole={activeRole} onChange={setActiveRole} />
+          <PersoneelFilters
+            selectedRoles={selectedRoles}
+            onChange={setSelectedRoles}
+          />
           <PersoneelSearch value={search} onChange={setSearch} />
         </div>
       </div>
