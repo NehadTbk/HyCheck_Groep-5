@@ -1,9 +1,9 @@
-// src/components/navbar/AfdelingshoofdNavBar.jsx
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
 
+function AfdelingshoofdNavBar() {
 <nav className="bg-white py-3 shadow-sm rounded-3xl mt-4 mb-6">
   <div className="w-full mx-auto px-4 flex items-center justify-between">
 
@@ -28,3 +28,6 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 
   </div>
 </nav>
+}
+
+export default AfdelingshoofdNavBar;
