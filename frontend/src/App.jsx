@@ -15,6 +15,11 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public */}
+        <Route
+        path="/login" element={<Login />}
+        />
+        {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
           element={<AfdelingshoofdDashboard />}
@@ -31,12 +36,7 @@ function App() {
           path="/afdelingshoofd/overzicht-maanden"
           element={<AfdelingshoofdMonthlyOverview />}
         />
-
-        {/* default */}
-        <Route
-          path="/"
-          element={<Navigate to="/login" replace />}
-        />
+        {/* Verantwoordelijke */}
         <Route
           path="/verantwoordelijke/dashboard"
           element={<VerantwoordelijkeDashboard />}

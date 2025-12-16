@@ -2,8 +2,8 @@
 Hycheck is een desktop webapp die tandartsassistenten helpt om hun schoonmaaktaken digitaal te registreren, terwijl verantwoordelijken een duidelijk overzicht krijgen van de hygiënestatus per box.
 
 
-
-
+Frontend
+npm install react-icons --save
 
 #Initialiseren backend
 In integrated terminal run je het commando: npm init -y
