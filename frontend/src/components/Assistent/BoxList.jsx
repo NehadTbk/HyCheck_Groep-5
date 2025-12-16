@@ -2,60 +2,108 @@ import React, { useState } from "react";
 import BoxCard from "./BoxCard";
 
 function BoxList({ boxes }) {
-  const [filter, setFilter] = useState("alles");
+  const [statusFilter, setStatusFilter] = useState("alles");
+  const [typeFilter, setTypeFilter] = useState("alle");
+
+  const statusOptions = [
+    { key: "alles", label: "Alles" },
+    { key: "openstaand", label: "Openstaand" },
+    { key: "voltooid", label: "Voltooid" }
+  ];
+
+  const typeOptions = [
+    { key: "alle", label: "Alle tags" },
+    { key: "Ochtend", label: "Ochtend" },
+    { key: "Avond", label: "Avond" },
+    { key: "Wekelijks", label: "Wekelijks" },
+    { key: "Maandelijks", label: "Maandelijks" }
+  ];
 
   const filtered = boxes.filter((box) => {
-    if (filter === "alles") return true;
-    if (filter === "openstaand") return box.status === "openstaand";
-    if (filter === "voltooid") return box.status === "voltooid";
+    if (statusFilter === "openstaand" && box.status !== "openstaand") {
+      return false;
+    }
+    if (statusFilter === "voltooid" && box.status !== "voltooid") {
+      return false;
+    }
+    if (typeFilter !== "alle" && !box.types.includes(typeFilter)) {
+      return false;
+    }
     return true;
   });
 
-  return (
-    <div className="bg-white rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-600">Mijn toegewezen boxen - 20/11</p>
-        <div className="flex gap-3 text-sm">
-          <button
-            onClick={() => setFilter("alles")}
-            className={`px-3 py-1 rounded-full ${
-              filter === "alles"
-                ? "bg-purple-900 text-white"
-                : "text-gray-600"
-            }`}
-          >
-            Alles
-          </button>
-          <button
-            onClick={() => setFilter("openstaand")}
-            className={`px-3 py-1 rounded-full ${
-              filter === "openstaand"
-                ? "bg-purple-100 text-purple-900"
-                : "text-gray-600"
-            }`}
-          >
-            Openstaand
-          </button>
-          <button
-            onClick={() => setFilter("voltooid")}
-            className={`px-3 py-1 rounded-full ${
-              filter === "voltooid"
-                ? "bg-green-100 text-green-700"
-                : "text-gray-600"
-            }`}
-          >
-            Voltooid
-          </button>
+  const getStatusClasses = (key) => {
+    const isActive = statusFilter === key;
+
+    return [
+      "px-3 py-1 text-xs rounded-full border",
+      "bg-white text-gray-700 border-gray-300",
+      isActive ? "font-semibold" : "font-normal"
+    ].join(" ");
+  };
+
+  const getTypeClasses = (key) => {
+    const base = "px-3 py-1 text-xs rounded-full border font-medium";
+
+    const typeColors = {
+      Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
+      Avond: "bg-purple-100 text-purple-700 border-purple-300",
+      Wekelijks: "bg-orange-100 text-orange-700 border-orange-300",
+      Maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
+      alle: "bg-white text-gray-700 border-gray-300"
+    };
+
+    return `${base} ${typeColors[key] || "bg-white text-gray-700 border-gray-300"}`;
+  };
+
+    return (
+    <div className="space-y-4">
+      {/* Filters helemaal bovenaan */}
+      <div className="flex justify-end">
+        <div className="flex flex-wrap gap-2 items-center">
+          {statusOptions.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setStatusFilter(item.key)}
+              className={getStatusClasses(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
+
+          <span className="mx-2 h-4 w-px bg-gray-200" />
+
+          {typeOptions.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setTypeFilter(item.key)}
+              className={getTypeClasses(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Box kaarten mooi gecentreerd in grid */}
+      <div
+        className="
+          grid 
+          gap-4 
+          justify-center
+          grid-cols-1
+          md:grid-cols-2
+          lg:grid-cols-3
+          xl:grid-cols-4
+        "
+      >
         {filtered.map((box) => (
           <BoxCard key={box.id} box={box} />
         ))}
       </div>
     </div>
   );
+
 }
 
 export default BoxList;
