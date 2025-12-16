@@ -7,13 +7,16 @@ import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdM
 import "./index.css";
 import Login from "./pages/Login";
 
+
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public */}
         <Route
         path="/login" element={<Login />}
         />
+        {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
           element={<AfdelingshoofdDashboard />}
@@ -30,6 +33,9 @@ function App() {
           path="/afdelingshoofd/overzicht-maanden"
           element={<AfdelingshoofdMonthlyOverview />}
         />
+        {/* Verantwoordelijke */}
+
+        {/* Assistente */}
 
         {/* default */}
         <Route

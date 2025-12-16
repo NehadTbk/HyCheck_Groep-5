@@ -1,15 +1,51 @@
 import pool from "../config/db.js";
 
-export const createUser = async (email, hashedPassword) => {
-    const [result] = await pool.query(
-        "INSERT INTO users (email, password) VALUES (?,?)", [email, hashedPassword]
-    );
-    return result;
+export const findUserByEmail = async (email) => {
+    try {
+        const [rows] = await pool.query(
+            `SELECT 
+                user_id, 
+                first_name, 
+                last_name, 
+                email, 
+                password_hash,  
+                role, 
+                is_active, 
+                badge_id 
+            FROM users 
+            WHERE email = ?`, 
+            [email]
+        );
+        
+        return rows[0] || null;
+    } catch (error) {
+        console.error("Error finding user by email:", error.message);
+        throw error;
+    }
 };
 
-export const findUserByEmail = async (email) => {
-    const [rows] = await pool.query(
-        "SELECT * FROM users WHERE email = ?", [email]
-    );
-    return rows[0];
-}
+export const createUser = async (userData) => {
+    const { 
+        firstName, 
+        lastName, 
+        email, 
+        passwordHash,  
+        role = 'assistant', 
+        isActive = 1, 
+        badgeId = null 
+    } = userData;
+    
+    try {
+        const [result] = await pool.query(
+            `INSERT INTO users 
+                (first_name, last_name, email, password_hash, role, is_active, badge_id) 
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [firstName, lastName, email, passwordHash, role, isActive, badgeId]
+        );
+        
+        return result.insertId;
+    } catch (error) {
+        console.error("Error creating user:", error.message);
+        throw error;
+    }
+};

@@ -3,7 +3,7 @@
         "title": "Connexion",
         "email": "Adresse mail",
         "password": "Mot de passe",
-        "button": "Se connecter",
+        "loginButton": "Se connecter",
         "loading": "Chargement..."
     },
     "errors": {

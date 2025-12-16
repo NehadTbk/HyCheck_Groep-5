@@ -8,7 +8,7 @@
         "title": "Inloggen",
         "email": "E-mail",
         "password": "Wachtwoord",
-        "button": "Inloggen",
+        "loginButton": "Inloggen",
         "loading": "Bezig..."
     },
     "errors": {

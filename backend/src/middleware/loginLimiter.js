@@ -1,5 +1,4 @@
 import rateLimit from "express-rate-limit";
-import { getMessage } from "../utils/locales.js";
 
 export const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minuten
