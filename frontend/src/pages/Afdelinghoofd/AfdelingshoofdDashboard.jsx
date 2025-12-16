@@ -13,8 +13,8 @@ function AfdelingshoofdDashboard() {
       <Topbar />
 
       <main className="flex-1 px-8 py-6">
+        <AfdelingshoofdNavBar />
         <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6">
-          <AfdelingshoofdNavBar />
 
           <section className="mt-8 flex flex-col lg:flex-row gap-6">
             <div className="flex-1">

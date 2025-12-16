@@ -4,6 +4,9 @@ import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboa
 import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersoneel";
 import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
+import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
+import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
+
 import "./index.css";
 import Login from "./pages/Login";
 
@@ -12,11 +15,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public */}
-        <Route
-        path="/login" element={<Login />}
-        />
-        {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
           element={<AfdelingshoofdDashboard />}
@@ -33,15 +31,23 @@ function App() {
           path="/afdelingshoofd/overzicht-maanden"
           element={<AfdelingshoofdMonthlyOverview />}
         />
-        {/* Verantwoordelijke */}
-
-        {/* Assistente */}
 
         {/* default */}
         <Route
           path="/"
           element={<Navigate to="/login" replace />}
         />
+        <Route
+          path="/verantwoordelijke/dashboard"
+          element={<VerantwoordelijkeDashboard />}
+        />
+
+        {/* GECORRIGEERD: Zelfsluitende tag met attributen */}
+        <Route
+          path="/verantwoordelijke/personeel"
+          element={<VerantwoordelijkePersoneel />}
+        />
+
       </Routes>
     </Router>
   );
