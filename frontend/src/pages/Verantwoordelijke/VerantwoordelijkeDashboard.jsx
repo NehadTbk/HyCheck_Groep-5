@@ -98,7 +98,7 @@ function VerantwoordelijkeDashboard() {
 
         
         <div className="p-4 bg-white rounded-xl shadow-lg mt-4 overflow-x-auto">
-          <h1 className="text-3xl font-extrabold text-gray-800 pb-3 mb-6 border-b border-gray-300">Agenda</h1>
+          <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Agenda</h1>
 
           
           <div className="flex space-x-2 text-xl mb-4 ml-2">
