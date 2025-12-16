@@ -19,6 +19,9 @@ function App() {
         <Route
         path="/login" element={<Login />}
         />
+        <Route
+        path="/" element={<Login />}
+        />
         {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
