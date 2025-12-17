@@ -6,6 +6,7 @@ import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCre
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
 import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
 import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
+import VerantwoordelijkeRapport from "./pages/Verantwoordelijke/VerantwoordelijkeRapport";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./index.css";
@@ -67,6 +68,13 @@ function App() {
           element={<ProtectedRoute allowedRoles={['responsible']}>
           <VerantwoordelijkePersoneel />
           </ProtectedRoute>}
+        />
+        <Route
+          path="/verantwoordelijke/rapporten"
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+          <VerantwoordelijkeRapport />
+          </ProtectedRoute>
+          }
         />
 
       </Routes>
