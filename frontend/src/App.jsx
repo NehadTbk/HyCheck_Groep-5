@@ -8,6 +8,7 @@ import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdM
 
 // NIEUW: import voor assistent
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
+import MijnBoxen from "./pages/Assistent/MijnBoxen";
 
 import "./index.css";
 
@@ -38,6 +39,9 @@ function App() {
           path="/assistent/dashboard"
           element={<AssistentDashboard />}
         />
+        <Route
+         path="/assistent/mijn-boxen" 
+         element={<MijnBoxen />} />
 
         {/* default: kies zelf welke user je eerst wil tonen */}
         <Route
