@@ -51,15 +51,15 @@ function App() {
         <Route
           path="/afdelingshoofd/overzicht-maanden"
           element={<ProtectedRoute allowedRoles={['admin']}>
-    <AfdelingshoofdMonthlyOverview />
+            <AfdelingshoofdMonthlyOverview />
           </ProtectedRoute>
-      }
+          }
         />
         {/* Verantwoordelijke */}
         <Route
           path="/verantwoordelijke/dashboard"
           element={<ProtectedRoute allowedRoles={['responsible']}>
-          <VerantwoordelijkeDashboard />
+            <VerantwoordelijkeDashboard />
           </ProtectedRoute>
           }
         />
@@ -67,23 +67,30 @@ function App() {
         {/* Assistent routes */}
         <Route
           path="/assistent/dashboard"
-          element={<AssistentDashboard />}
+          element={<ProtectedRoute allowedRoles={['assistant']} >
+            <AssistentDashboard />
+          </ProtectedRoute>
+          }
         />
         <Route
-         path="/assistent/mijn-boxen" 
-         element={<MijnBoxen />} />
+          path="/assistent/mijn-boxen"
+          element={<ProtectedRoute allowedRoles={['assistant']} >
+            <MijnBoxen />
+          </ProtectedRoute>
+          }
+        />
 
         {/* GECORRIGEERD: Zelfsluitende tag met attributen */}
         <Route
           path="/verantwoordelijke/personeel"
           element={<ProtectedRoute allowedRoles={['responsible']}>
-          <VerantwoordelijkePersoneel />
+            <VerantwoordelijkePersoneel />
           </ProtectedRoute>}
         />
         <Route
           path="/verantwoordelijke/rapporten"
           element={<ProtectedRoute allowedRoles={['responsible']}>
-          <VerantwoordelijkeRapport />
+            <VerantwoordelijkeRapport />
           </ProtectedRoute>
           }
         />
