@@ -1,5 +1,8 @@
 import React from "react";
 import Topbar from "../../components/common/Topbar";
+import { FaFilePdf } from "react-icons/fa6";
+import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
+
 
 function VerantwoordelijkeRapport() {
     return (
@@ -36,11 +39,13 @@ function VerantwoordelijkeRapport() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="flex gap-4 mb-6">
-                            <button className="bg-[#2D7D46] text-white px-6 py-2 rounded-md font-medium hover:bg-opacity-90 transition-all">
-                            Exporteer naar Excel
+                            <button className="bg-[#2D7D46] text-white px-6 py-2 rounded-md font-medium hover:bg-opacity-90 transition-all flex items-center gap-3">
+                            <PiMicrosoftExcelLogoFill size={20} />
+                            
                             </button>
-                            <button className="bg-[#FF7F50] text-white px-6 py-2 rounded-md font-medium hover:bg-opacity-90 transition-all">
-                            Exporteer naar PDF
+                            <button className="bg-[#FF7F50] text-white px-6 py-2 rounded-md font-medium hover:bg-opacity-90 transition-all flex items-center gap-3">
+                            <FaFilePdf size={18} />
+                           
                             </button>
                         </div>
                     </div>
