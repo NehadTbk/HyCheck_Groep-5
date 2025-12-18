@@ -5,8 +5,27 @@ function Topbar() {
   const navigate = useNavigate();
 
   const goHome = () => {
-    navigate("/afdelingshoofd/dashboard");
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user?.role) {
+    navigate("/login");
+    return;
+  }
+
+  switch (user.role) {
+    case "assistant":
+      navigate("/assistant/dashboard");
+      break;
+    case "responsible":
+      navigate("/verantwoordelijke/dashboard");
+      break;
+    case "admin":
+      navigate("/afdelingshoofd/dashboard");
+      break;
+    default:
+      navigate("/login");
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
