@@ -1,7 +1,7 @@
 import React from "react";
 import Topbar from "../../components/common/Topbar";
 
-function Rapport() {
+function VerantwoordelijkeRapport() {
     return (
         <div className="min-h-screen bg-[#E5DCE7] flex flex-col rounded-2xl overflow-hidden">
             <Topbar />
