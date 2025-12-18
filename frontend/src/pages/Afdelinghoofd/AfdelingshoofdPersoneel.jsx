@@ -1,45 +1,39 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";          // 👈 NEW
+// pages/Afdelinghoofd/AfdelingshoofdPersoneel.jsx
+import React, { useState } from "react";
 import Topbar from "../../components/common/Topbar";
-import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
-import PersoneelRegisterCard from "../../components/Afdelingshoofd/PersoneelRegisterCard";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import Personeelsregister from '../../components/personeel/Personeelsregister';
+import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoegenModal';
 
 function AfdelingshoofdPersoneel() {
-  const navigate = useNavigate();                       // 👈 NEW
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const userRole = "admin";
 
-  const handleAddPersonnel = () => {
-    // change path here if your route is named differently
-    navigate("/afdelingshoofd/account-aanmaken");
-  };
+    return (
+        <div className="min-h-screen bg-[#E5DCE7] flex flex-col rounded-2xl overflow-hidden">
+            <Topbar />
 
-  return (
-    <div className="min-h-screen bg-[#C6B6C2] flex flex-col">
-      <Topbar />
+                <div className="p-6 bg-white rounded-xl shadow-lg mt-4 min-h-[500px]">
+                    <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
+                        <h1 className="text-3xl font-extrabold text-gray-800">Personeelsbeheer (Afdelingshoofd)</h1>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="bg-[#4A2144] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#8B5CF6] transition-colors"
+                        >
+                            + Personeel toevoegen
+                        </button>
+                    </div>
+                    
+                    <Personeelsregister showAllUsers={true} /> {/* Toon ALLE gebruikers */}
+                </div>
 
-      <main className="flex-1 px-8 py-6">
-        <AfdelingshoofdNavBar />
-        <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6 flex flex-col">
-
-          <div className="mt-8 flex-1">
-            <PersoneelRegisterCard />
-          </div>
-
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={handleAddPersonnel}               // 👈 CLICK HANDLER
-              className="
-                bg-white rounded-full px-6 py-2 text-sm shadow
-                hover:bg-gray-100 hover:shadow-md
-                transition-colors
-              "
-            >
-              Account Aanmaken
-            </button>
-          </div>
+            <PersoneelToevoegenModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                userRole={userRole}
+            />
         </div>
-      </main>
-    </div>
-  );
+    );
 }
 
 export default AfdelingshoofdPersoneel;

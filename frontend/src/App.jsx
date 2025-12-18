@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboard";
 import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersoneel";
-import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
 import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
 import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
@@ -40,13 +39,6 @@ function App() {
             <ProtectedRoute allowedRoles={['admin']}>
               <AfdelingshoofdPersoneel />
             </ProtectedRoute>}
-        />
-        <Route
-          path="/afdelingshoofd/account-aanmaken"
-          element={<ProtectedRoute allowedRoles={['admin']}>
-            <AfdelingshoofdCreateAccount />
-          </ProtectedRoute>
-          }
         />
         <Route
           path="/afdelingshoofd/overzicht-maanden"
