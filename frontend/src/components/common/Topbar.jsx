@@ -5,8 +5,27 @@ function Topbar() {
   const navigate = useNavigate();
 
   const goHome = () => {
-    navigate("/afdelingshoofd/dashboard");
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user?.role) {
+    navigate("/login");
+    return;
+  }
+
+  switch (user.role) {
+    case "assistant":
+      navigate("/assistant/dashboard");
+      break;
+    case "responsible":
+      navigate("/verantwoordelijke/dashboard");
+      break;
+    case "admin":
+      navigate("/afdelingshoofd/dashboard");
+      break;
+    default:
+      navigate("/login");
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -15,7 +34,7 @@ function Topbar() {
   }
   return (
     <header className="bg-[#4A2144] text-white px-12 py-3 flex items-center justify-between">
-      
+
       {/* Left: logo + name */}
       <div className="flex items-center gap-4">
         {/* Clickable Logo */}
@@ -46,8 +65,21 @@ function Topbar() {
         </div>
 
         <button
-        onClick={handleLogout}
-         className="bg-white text-black font-semibold rounded-lg px-5 py-2 shadow-sm">
+          onClick={handleLogout}
+          className="
+         bg-white 
+         text-black 
+          font-semibold 
+          rounded-lg 
+          px-5 
+          py-2 
+          shadow-sm 
+          cursor-pointer
+          transition
+         hover:bg-gray-200
+         hover:shadow-md
+        "
+        >
           Uitloggen
         </button>
       </div>
