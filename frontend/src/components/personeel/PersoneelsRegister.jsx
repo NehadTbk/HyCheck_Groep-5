@@ -54,27 +54,15 @@ function Personeelsregister() {
 
             
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-white">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                ID
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Naam
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Voornaam
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Functie
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                E-mail
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            
-                            </th>
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="bg-[#F8F9FA]">
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-700 rounded-l-xl">ID</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-700">Naam</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-700">Voornaam</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-700">Functie</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-700">E-mail</th>
+                            <th className="px-6 py-4 text-sm font-semibold text-gray-700 rounded-r-xl text-right">Verwijder</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
