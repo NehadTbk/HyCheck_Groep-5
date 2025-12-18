@@ -29,15 +29,20 @@ function VerantwoordelijkeRapport() {
                 
                 <div className="p-6 bg-white rounded-xl shadow-lg mt-4 min-h-[500px]">
                     <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
-                        <h1 className="text-3xl font-extrabold text-gray-800">Rapporten</h1>
-                        <button className="bg-[#4A2144] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#8B5CF6] transition-colors">
-                            Nieuw Rapport
-                        </button>
+                        <h1 className="text-3xl font-bold text-gray-800">Rapporten</h1>
+                        
                     </div>
 
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        // nog niks geschreven
+                        <div className="flex gap-4 mb-6">
+                            <button className="bg-[#2D7D46] text-white px-6 py-2 rounded-md font-medium hover:bg-opacity-90 transition-all">
+                            Exporteer naar Excel
+                            </button>
+                            <button className="bg-[#FF7F50] text-white px-6 py-2 rounded-md font-medium hover:bg-opacity-90 transition-all">
+                            Exporteer naar PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
 
