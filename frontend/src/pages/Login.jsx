@@ -55,7 +55,7 @@ function Login() {
                     redirectPath = "/afdelingshoofd/dashboard";
                     break;
                 case 'responsible':
-                    redirectPath = "verantwoordelijke/dashboard";
+                    redirectPath = "/verantwoordelijke/dashboard";
                     break;
                 case 'assistant':
                     redirectPath = "/assistant/dashboard";

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { findUserByEmail } from "../models/User.js";
+import { findUserByEmail, createUser } from "../models/User.js";
+
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -74,35 +75,66 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-    const { fname, lname, email, password, role, badge_id = null } = req.body;
+    const { firstName, lastName, email, role, sendEmail = false } = req.body;
 
     try {
+
+        if (!firstName || !lastName || !email || !role) {
+            return res.status(400).json({
+                success: false,
+                message: "Alle velden zijn verplicht"
+            });
+        }
         const existingUser = await findUserByEmail(email);
-        if (existingUser) return res.status(400).json({
-            success: false,
-            message: "Gebruiker bestaat al"
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Gebruiker bestaat al"
+            });
+        }
+        const tempPassword = Math.random().toString(36).slice(-8) + "A1!";
+
+        console.log(`Tijdelijk wachtwoord voor ${email} is: ${tempPassword}`);
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+
+        const userId = await createUser({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            passwordHash: hashedPassword,
+            role: role,
+            isActive: 1,
+            badgeId: null
         });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        if(sendEmail) {
+            console.log(`E-mail zou gestuurd worden naar ${email}`);
+        }
 
         res.status(201).json({
             success: true,
-            message: "Gebruiker aangemaakt"
+            message: "Gebruiker aangemaakt",
+            userId: userId,
+            email: email,
+            role: role
         });
     } catch (err) {
-        console.error(err);
+        console.error("Register error", err.message);
+        console.error("Stack error", err.stack);
         res.status(500).json({
             success: false,
-            message: "Server error"
+            message: "Server error " + err.message
         });
     }
 };
 
+
 export const logout = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ') [1];
+        const token = req.headers.authorization?.split(' ')[1];
 
-        if(token){
+        if (token) {
             console.log('User logged out');
         }
         res.json({
