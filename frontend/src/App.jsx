@@ -9,6 +9,7 @@ import VerantwoordelijkeRapport from "./pages/Verantwoordelijke/Verantwoordelijk
 import ProtectedRoute from "./components/ProtectedRoute";
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
+import Historiek from "./pages/Assistent/Historiek";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -84,6 +85,16 @@ function App() {
           element={<ProtectedRoute allowedRoles={['responsible']}>
             <VerantwoordelijkeRapport />
           </ProtectedRoute>
+          }
+        />
+        
+        {/* Route aangepast naar de Historiek component */}
+        <Route
+          path="/assistant/historiek"
+          element={
+            <ProtectedRoute allowedRoles={['assistant']}>
+              <Historiek />
+            </ProtectedRoute>
           }
         />
 
