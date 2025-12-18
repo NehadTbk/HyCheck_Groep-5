@@ -20,6 +20,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({message: "Er is iets misgegaan!"});
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server running on PORT ${process.env.PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server running on PORT ${PORT}`);
 });

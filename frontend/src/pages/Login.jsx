@@ -4,7 +4,7 @@ import nl from "../locales/nl.json";
 import fr from "../locales/fr.json";
 import LanguageSwitcher from "../components/TaalSwitcher";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function Login() {
     const [email, setEmail] = useState("");
