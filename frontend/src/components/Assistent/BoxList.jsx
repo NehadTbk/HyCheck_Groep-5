@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import BoxCard from "./BoxCard";
 
-function BoxList({ boxes }) {
+// Voeg onBoxCheck en onBoxClick toe aan de props
+function BoxList({ boxes, onBoxCheck, onBoxClick }) {
   const [statusFilter, setStatusFilter] = useState("alles");
   const [typeFilter, setTypeFilter] = useState("alle");
 
@@ -34,16 +35,16 @@ function BoxList({ boxes }) {
 
   const getStatusClasses = (key) => {
     const isActive = statusFilter === key;
-
     return [
       "px-3 py-1 text-xs rounded-full border",
       "bg-white text-gray-700 border-gray-300",
-      isActive ? "font-semibold" : "font-normal"
+      isActive ? "font-semibold bg-gray-100" : "font-normal"
     ].join(" ");
   };
 
   const getTypeClasses = (key) => {
     const base = "px-3 py-1 text-xs rounded-full border font-medium";
+    const isActive = typeFilter === key;
 
     const typeColors = {
       Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
@@ -53,12 +54,15 @@ function BoxList({ boxes }) {
       alle: "bg-white text-gray-700 border-gray-300"
     };
 
-    return `${base} ${typeColors[key] || "bg-white text-gray-700 border-gray-300"}`;
+    // Voeg een visuele hint toe als een filter actief is
+    const activeClass = isActive ? " ring-2 ring-offset-1 ring-gray-400" : "";
+
+    return `${base} ${typeColors[key] || "bg-white text-gray-700 border-gray-300"}${activeClass}`;
   };
 
-    return (
+  return (
     <div className="space-y-4">
-      {/* Filters helemaal bovenaan */}
+      {/* Filters bovenaan */}
       <div className="flex justify-end">
         <div className="flex flex-wrap gap-2 items-center">
           {statusOptions.map((item) => (
@@ -85,7 +89,7 @@ function BoxList({ boxes }) {
         </div>
       </div>
 
-      {/* Box kaarten mooi gecentreerd in grid */}
+      {/* Grid met kaarten */}
       <div
         className="
           grid 
@@ -98,12 +102,16 @@ function BoxList({ boxes }) {
         "
       >
         {filtered.map((box) => (
-          <BoxCard key={box.id} box={box} />
+          <BoxCard 
+            key={box.id} 
+            box={box} 
+            onCheck={onBoxCheck} 
+            onClick={onBoxClick} 
+          />
         ))}
       </div>
     </div>
   );
-
 }
 
 export default BoxList;
