@@ -10,6 +10,7 @@ import VerantwoordelijkeRapport from "./pages/Verantwoordelijke/Verantwoordelijk
 import ProtectedRoute from "./components/ProtectedRoute";
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
+import VerantwoordelijkeBoxen from "./pages/Verantwoordelijke/VerantwoordelijkeBoxen";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -84,6 +85,13 @@ function App() {
           path="/verantwoordelijke/rapporten"
           element={<ProtectedRoute allowedRoles={['responsible']}>
           <VerantwoordelijkeRapport />
+          </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/verantwoordelijke/boxen"
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+          <VerantwoordelijkeBoxen />
           </ProtectedRoute>
           }
         />

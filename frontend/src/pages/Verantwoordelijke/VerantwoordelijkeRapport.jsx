@@ -44,7 +44,7 @@ function VerantwoordelijkeRapport() {
                     <div className="w-full mx-auto px-4 flex items-center justify-between">
                         <div className="flex gap-4">
                             <a href="/verantwoordelijke/dashboard" className="text-gray-500 text-base py-1 px-2 hover:text-black">Dashboard</a>
-                            <a href="/verantwoordelijke/kalender" className="text-gray-500 text-base py-1 px-2 hover:text-black">Mijn Boxen</a>
+                            <a href="/verantwoordelijke/boxen" className="text-gray-500 text-base py-1 px-2 hover:text-black">Mijn Boxen</a>
                             <a href="/verantwoordelijke/rapporten" className="text-gray-800 font-semibold text-base py-1 px-2 hover:text-black">Rapporten</a>
                             <a href="/verantwoordelijke/personeel" className="text-gray-500 text-base py-1 px-2 hover:text-black">Mijn Personeel</a> 
                         </div>
