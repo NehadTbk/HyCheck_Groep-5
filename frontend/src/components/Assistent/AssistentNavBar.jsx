@@ -7,7 +7,7 @@ function AssistentNavBar() {
   const items = [
     { key: "dashboard", label: "Dashboard" },
     { key: "boxes", label: "Mijn Boxen" },
-    { key: "reports", label: "Rapporten" },
+    { key: "history", label: "Historiek" },
   ];
 
   const handleChange = (key) => setActiveKey(key);

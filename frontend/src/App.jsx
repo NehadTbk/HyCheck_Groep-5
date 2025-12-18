@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AfdelingshoofdDashboard from "./pages/Afdelinghoofd/AfdelingshoofdDashboard";
 import AfdelingshoofdPersoneel from "./pages/Afdelinghoofd/AfdelingshoofdPersoneel";
 import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCreateAccount";
@@ -11,27 +11,27 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
 
+// Aangepaste import naar jouw bestandsnaam:
+import Historiek from "./pages/Assistent/Historiek";
+
 import "./index.css";
 import Login from "./pages/Login";
-
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public */}
-        <Route
-          path="/login" element={<Login />}
-        />
-        <Route
-          path="/" element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+
         {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
-          element={<ProtectedRoute allowedRoles={['admin']}>
-            <AfdelingshoofdDashboard />
-          </ProtectedRoute>
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AfdelingshoofdDashboard />
+            </ProtectedRoute>
           }
         />
         <Route
@@ -39,59 +39,77 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AfdelingshoofdPersoneel />
-            </ProtectedRoute>}
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/afdelingshoofd/account-aanmaken"
-          element={<ProtectedRoute allowedRoles={['admin']}>
-            <AfdelingshoofdCreateAccount />
-          </ProtectedRoute>
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AfdelingshoofdCreateAccount />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/afdelingshoofd/overzicht-maanden"
-          element={<ProtectedRoute allowedRoles={['admin']}>
-            <AfdelingshoofdMonthlyOverview />
-          </ProtectedRoute>
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AfdelingshoofdMonthlyOverview />
+            </ProtectedRoute>
           }
         />
+
         {/* Verantwoordelijke */}
         <Route
           path="/verantwoordelijke/dashboard"
-          element={<ProtectedRoute allowedRoles={['responsible']}>
-            <VerantwoordelijkeDashboard />
-          </ProtectedRoute>
+          element={
+            <ProtectedRoute allowedRoles={['responsible']}>
+              <VerantwoordelijkeDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/verantwoordelijke/personeel"
+          element={
+            <ProtectedRoute allowedRoles={['responsible']}>
+              <VerantwoordelijkePersoneel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/verantwoordelijke/rapporten"
+          element={
+            <ProtectedRoute allowedRoles={['responsible']}>
+              <VerantwoordelijkeRapport />
+            </ProtectedRoute>
           }
         />
 
         {/* Assistent routes */}
         <Route
           path="/assistant/dashboard"
-          element={<ProtectedRoute allowedRoles={['assistant']} >
-            <AssistentDashboard />
-          </ProtectedRoute>
+          element={
+            <ProtectedRoute allowedRoles={['assistant']}>
+              <AssistentDashboard />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/assistant/mijn-boxen"
-          element={<ProtectedRoute allowedRoles={['assistant']} >
-            <MijnBoxen />
-          </ProtectedRoute>
+          element={
+            <ProtectedRoute allowedRoles={['assistant']}>
+              <MijnBoxen />
+            </ProtectedRoute>
           }
         />
-
-        {/* GECORRIGEERD: Zelfsluitende tag met attributen */}
+        
+        {/* Route aangepast naar de Historiek component */}
         <Route
-          path="/verantwoordelijke/personeel"
-          element={<ProtectedRoute allowedRoles={['responsible']}>
-            <VerantwoordelijkePersoneel />
-          </ProtectedRoute>}
-        />
-        <Route
-          path="/verantwoordelijke/rapporten"
-          element={<ProtectedRoute allowedRoles={['responsible']}>
-            <VerantwoordelijkeRapport />
-          </ProtectedRoute>
+          path="/assistant/historiek"
+          element={
+            <ProtectedRoute allowedRoles={['assistant']}>
+              <Historiek />
+            </ProtectedRoute>
           }
         />
 
