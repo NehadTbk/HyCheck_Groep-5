@@ -6,7 +6,10 @@ import AfdelingshoofdCreateAccount from "./pages/Afdelinghoofd/AfdelingshoofdCre
 import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdMonthlyOverview";
 import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
 import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
+import VerantwoordelijkeRapport from "./pages/Verantwoordelijke/VerantwoordelijkeRapport";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
+import MijnBoxen from "./pages/Assistent/MijnBoxen";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -61,12 +64,28 @@ function App() {
           }
         />
 
+        {/* Assistent routes */}
+        <Route
+          path="/assistent/dashboard"
+          element={<AssistentDashboard />}
+        />
+        <Route
+         path="/assistent/mijn-boxen" 
+         element={<MijnBoxen />} />
+
         {/* GECORRIGEERD: Zelfsluitende tag met attributen */}
         <Route
           path="/verantwoordelijke/personeel"
           element={<ProtectedRoute allowedRoles={['responsible']}>
           <VerantwoordelijkePersoneel />
           </ProtectedRoute>}
+        />
+        <Route
+          path="/verantwoordelijke/rapporten"
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+          <VerantwoordelijkeRapport />
+          </ProtectedRoute>
+          }
         />
 
       </Routes>
