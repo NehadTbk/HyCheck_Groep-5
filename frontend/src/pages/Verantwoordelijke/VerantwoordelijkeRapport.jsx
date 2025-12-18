@@ -2,6 +2,8 @@ import React from "react";
 import Topbar from "../../components/common/Topbar";
 import { FaFilePdf } from "react-icons/fa6";
 import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
+import RapportFilter from "../../components/Verantwoordelijke/RapportFilter";
+import Rapporten from "../../components/Verantwoordelijke/Rapporten";
 
 
 function VerantwoordelijkeRapport() {
@@ -35,6 +37,7 @@ function VerantwoordelijkeRapport() {
                         <h1 className="text-3xl font-bold text-gray-800">Rapporten</h1>
                         
                     </div>
+                    <RapportFilter />
 
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -49,6 +52,7 @@ function VerantwoordelijkeRapport() {
                             </button>
                         </div>
                     </div>
+                    <Rapporten />
                 </div>
 
             </main>
