@@ -66,14 +66,14 @@ function App() {
 
         {/* Assistent routes */}
         <Route
-          path="/assistent/dashboard"
+          path="/assistant/dashboard"
           element={<ProtectedRoute allowedRoles={['assistant']} >
             <AssistentDashboard />
           </ProtectedRoute>
           }
         />
         <Route
-          path="/assistent/mijn-boxen"
+          path="/assistant/mijn-boxen"
           element={<ProtectedRoute allowedRoles={['assistant']} >
             <MijnBoxen />
           </ProtectedRoute>
