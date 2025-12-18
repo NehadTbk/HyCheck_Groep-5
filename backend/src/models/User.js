@@ -49,3 +49,11 @@ export const createUser = async (userData) => {
         throw error;
     }
 };
+
+export const getAllUsers = async () => {
+  const [rows] = await pool.query(`
+    SELECT user_id, first_name, last_name, email, role, is_active
+    FROM users
+  `);
+  return rows;
+};
