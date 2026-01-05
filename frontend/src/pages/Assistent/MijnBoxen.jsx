@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Topbar from "../../components/common/Topbar";
-import AssistentNavBar from "../../components/Assistent/AssistentNavBar";
+import Topbar from "../../components/layout/Topbar";
+import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import BoxList from "../../components/Assistent/BoxList";
 import TaskModal from "../../components/Assistent/TaskModal";
 

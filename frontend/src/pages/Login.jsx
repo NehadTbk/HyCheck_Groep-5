@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import nl from "../locales/nl.json";
 import fr from "../locales/fr.json";
-import LanguageSwitcher from "../components/TaalSwitcher";
+import LanguageSwitcher from "../components/layout/LanguageSwitcher";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
@@ -90,7 +90,8 @@ function Login() {
                     <LanguageSwitcher
                         languages={['nl', 'fr']}
                         defaultLang={lang}
-                        onLanguageChange={handleLanguageChange} />
+                        onLanguageChange={handleLanguageChange}
+                        variant="blue" />
                 </div>
 
                 {/* Login Form */}

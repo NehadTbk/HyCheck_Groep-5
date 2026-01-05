@@ -1,22 +1,42 @@
-import React, { useState } from "react";
-import NavBar from "./NavBar";
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import BaseNavBar from '../layout/BaseNavBar';
 
 function VerantwoordelijkeNavBar() {
-  const [active, setActive] = useState("dashboard");
+  const location = useLocation();
 
   const items = [
-    { key: "dashboard", label: "Dashboard" },
-    { key: "boxes", label: "Mijn Boxen" },
-    { key: "reports", label: "Rapporten" },
-    { key: "settings", label: "Instellingen" },
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      href: '/verantwoordelijke/dashboard',
+      active: location.pathname === '/verantwoordelijke/dashboard'
+    },
+    {
+      key: 'kalender',
+      label: 'Mijn Boxen',
+      href: '/verantwoordelijke/kalender',
+      active: location.pathname === '/verantwoordelijke/kalender'
+    },
+    {
+      key: 'rapporten',
+      label: 'Rapporten',
+      href: '/verantwoordelijke/rapporten',
+      active: location.pathname === '/verantwoordelijke/rapporten'
+    },
+    {
+      key: 'personeel',
+      label: 'Mijn Personeel',
+      href: '/verantwoordelijke/personeel',
+      active: location.pathname === '/verantwoordelijke/personeel'
+    }
   ];
 
   return (
-    <NavBar
+    <BaseNavBar
       items={items}
-      activeKey={active}
-      onChange={setActive}
-      showInstructions={true}
+      showInstructions={false}
+      showNotifications={true}
     />
   );
 }
