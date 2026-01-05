@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Topbar from "../../components/common/Topbar";
+import Topbar from "../../components/layout/Topbar";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import MonthlyProgressCard from "../../components/cards/ProgressCard";
 

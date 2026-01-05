@@ -1,7 +1,7 @@
 // pages/Afdelinghoofd/AfdelingshoofdPersoneel.jsx
 import React, { useState } from "react";
-import Topbar from "../../components/common/Topbar";
-import { IoMdNotificationsOutline } from "react-icons/io";
+import Topbar from "../../components/layout/Topbar";
+import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import Personeelsregister from '../../components/personeel/Personeelsregister';
 import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoegenModal';
 
