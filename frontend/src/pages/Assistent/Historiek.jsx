@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Topbar from "../../components/common/Topbar";
-import AssistentNavBar from "../../components/Assistent/AssistentNavBar";
+import Topbar from "../../components/layout/Topbar";
+import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import HistoryModal from "../../components/Assistent/HistoryModal";
 import { Search, Eye } from "lucide-react";
 

@@ -18,7 +18,7 @@ function Topbar() {
     responsible: "Verantwoordelijke",
     admin: "Afdelingshoofd",
   };
-  
+
   //Initialen vormen
   const getInitials = () => {
     if (!user) return "ME";
