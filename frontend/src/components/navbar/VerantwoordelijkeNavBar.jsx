@@ -13,10 +13,10 @@ function VerantwoordelijkeNavBar() {
       active: location.pathname === '/verantwoordelijke/dashboard'
     },
     {
-      key: 'kalender',
+      key: 'boxen',
       label: 'Mijn Boxen',
-      href: '/verantwoordelijke/kalender',
-      active: location.pathname === '/verantwoordelijke/kalender'
+      href: '/verantwoordelijke/boxen',
+      active: location.pathname === '/verantwoordelijke/boxen'
     },
     {
       key: 'rapporten',
