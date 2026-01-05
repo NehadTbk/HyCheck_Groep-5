@@ -6,7 +6,9 @@ function CreateAccountCard() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/afdelingshoofd/account-aanmaken");
+    navigate("/afdelingshoofd/mijn-personeel", {
+      state: { openAddPersonnel:true},
+    });
   };
 
   return (

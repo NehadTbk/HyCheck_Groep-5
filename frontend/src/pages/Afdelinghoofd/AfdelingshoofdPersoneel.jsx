@@ -1,14 +1,16 @@
 // pages/Afdelinghoofd/AfdelingshoofdPersoneel.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Topbar from "../../components/layout/Topbar";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import Personeelsregister from '../../components/personeel/Personeelsregister';
 import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoegenModal';
 
 function AfdelingshoofdPersoneel() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const location = useLocation();
+    const [isModalOpen, setIsModalOpen] = useState(location.state?.openAddPersonnel === true);
     const userRole = "admin";
-
+    
     return (
         <div className="min-h-screen bg-[#E5DCE7] flex flex-col rounded-2xl overflow-hidden">
             <Topbar />
