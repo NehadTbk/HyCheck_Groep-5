@@ -1,32 +1,10 @@
-import { useState } from "react";
-
 export default function LanguageSwitcher({
   languages = ['nl', 'fr'],
-  defaultLang = 'nl',
+  language,
   onLanguageChange,
   className = '',
   variant = 'default'  // 'default' | 'blue'
 }) {
-  const [currentLang, setCurrentLang] = useState(() => {
-    const savedLang = localStorage.getItem('preferredLanguage');
-    const lang = savedLang && languages.includes(savedLang) ? savedLang : defaultLang;
-
-    if (onLanguageChange) {
-      onLanguageChange(lang);
-    }
-
-    return lang;
-  });
-
-  const handleLanguageChange = (lang) => {
-    setCurrentLang(lang);
-    localStorage.setItem('preferredLanguage', lang);
-
-    if (onLanguageChange) {
-      onLanguageChange(lang);
-    }
-  };
-
   const languageLabels = {
     nl: "NL",
     fr: "FR"
@@ -53,8 +31,8 @@ export default function LanguageSwitcher({
       {languages.map((lang) => (
         <button
           key={lang}
-          onClick={() => handleLanguageChange(lang)}
-          className={currentLang === lang ? styles.active : styles.inactive}
+          onClick={() => onLanguageChange(lang)}
+          className={language === lang ? styles.active : styles.inactive}
         >
           {languageLabels[lang] || lang.toUpperCase()}
         </button>

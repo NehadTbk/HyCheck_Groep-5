@@ -1,20 +1,25 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import BaseNavBar from '../layout/BaseNavBar';
+import { useTranslation } from '../../i18n/useTranslation';
+import LanguageSwitcher from '../layout/LanguageSwitcher';
+import { useLanguage } from '../../i18n/useLanguage';
+
 
 function AfdelingshoofdNavBar() {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const items = [
     {
       key: 'dashboard',
-      label: 'Dashboard',
+      label: t('navbar.dashboard'),
       href: '/afdelingshoofd/dashboard',
       active: location.pathname === '/afdelingshoofd/dashboard'
     },
     {
       key: 'personeel',
-      label: 'Mijn Personeel',
+      label: t('navbar.mijnPersoneel'),
       href: '/afdelingshoofd/mijn-personeel',
       active: location.pathname === '/afdelingshoofd/mijn-personeel'
     }

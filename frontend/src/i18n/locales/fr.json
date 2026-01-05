@@ -4,11 +4,16 @@
         "email": "Adresse mail",
         "password": "Mot de passe",
         "loginButton": "Se connecter",
-        "loading": "Chargement..."
+        "loading": "Chargement...",
+        "forgotPassword": "Mot de passe oublié?"
     },
     "errors": {
         "loginFailed": "Echec de connexion, veuillez réesayer.",
         "serverError": "Une erreur est survenue, veuillez réesayer plus tard...",
         "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard..."
+    },
+    "navbar": {
+        "dashboard": "Tableau de bord",
+        "mijnPersoneel": "Mon Personnel"
     }
 }
