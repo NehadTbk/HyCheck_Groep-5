@@ -6,6 +6,7 @@ import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdM
 import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
 import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
 import VerantwoordelijkeRapport from "./pages/Verantwoordelijke/VerantwoordelijkeRapport";
+import VerantwoordelijkeBoxen from "./pages/Verantwoordelijke/VerantwoordelijkeBoxen";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
@@ -53,6 +54,13 @@ function App() {
           path="/verantwoordelijke/dashboard"
           element={<ProtectedRoute allowedRoles={['responsible']}>
             <VerantwoordelijkeDashboard />
+          </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/verantwoordelijke/boxen"
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+            <VerantwoordelijkeBoxen />
           </ProtectedRoute>
           }
         />
