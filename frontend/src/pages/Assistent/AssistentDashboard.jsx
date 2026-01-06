@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Topbar from "../../components/layout/Topbar";
+import PageLayout from "../../components/layout/PageLayout";
 import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import StatsCard from "../../components/Assistent/StatsCard";
 import PeriodicStatsCard from "../../components/Assistent/PeriodicStatsCard";
@@ -60,17 +60,15 @@ function AssistentDashboard() {
   const todayCompleted = boxes.filter(b => b.status === "voltooid").length;
 
   return (
-    <div className="min-h-screen bg-[#E5DCE7]">
-      <Topbar />
-      <main className="max-w-6xl mx-auto py-8 px-6 space-y-6">
-        <AssistentNavBar />
+    <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
+      <AssistentNavBar />
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatsCard title="Vandaag voltooid" value={`${todayCompleted}/${boxes.length}`} subtitle="Boxen schoongemaakt" icon="check-circle" />
           <StatsCard title="Openstaand" value={boxes.length - todayCompleted} subtitle="Boxen nog te doen" icon="clock" />
           <PeriodicStatsCard weeklyDate="Vrijdag 28/11" monthlyDate="Maandag 17/11" icon="calendar" />
         </section>
 
-        <section className="bg-white rounded-2xl p-8 shadow-sm">
+        <section className="bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">
             Mijn toegewezen boxen - 20/11
           </h2>
@@ -80,18 +78,17 @@ function AssistentDashboard() {
             onBoxClick={(box) => setSelectedBox(box)} 
           />
         </section>
-      </main>
 
       {selectedBox && (
-        <TaskModal 
-          box={selectedBox} 
-          tasksState={tasksState} 
+        <TaskModal
+          box={selectedBox}
+          tasksState={tasksState}
           onToggleTask={handleToggleTask}
           onSave={handleSaveTasks}
-          onClose={() => setSelectedBox(null)} 
+          onClose={() => setSelectedBox(null)}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }
 

@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./src/routes/authRoutes.js";
+import reportRoutes from "./src/routes/reportRoutes.js";
 import usersRoutes from "./src/routes/usersRoutes.js";
 import schedulingRoutes from "./src/routes/schedulingRoutes.js";
 
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", schedulingRoutes);
+app.use("/api/reports", reportRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("HyCheck Backend werkt!");

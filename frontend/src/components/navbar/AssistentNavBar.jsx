@@ -33,6 +33,7 @@ function AssistentNavBar() {
       showNotifications={true}
       activeColor="#C1A9CF"
       activeTextColor="#2C1E33"
+      instructiesHref="/instructies"
     />
   );
 }

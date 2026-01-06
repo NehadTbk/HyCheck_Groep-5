@@ -18,7 +18,7 @@ function PeriodicStatsCard({
   const IconComponent = iconMap[icon] || iconMap.default;
 
   return (
-    <div className="bg-white rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+    <div className="bg-white rounded-xl p-6 flex flex-col justify-between shadow-lg">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-sm font-medium text-gray-900">{title}</h3>
         <div className="w-8 h-8 rounded-full bg-[#F3E8FF] flex items-center justify-center">

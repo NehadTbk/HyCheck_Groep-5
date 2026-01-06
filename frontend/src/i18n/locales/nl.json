@@ -9,11 +9,25 @@
         "email": "E-mail",
         "password": "Wachtwoord",
         "loginButton": "Inloggen",
-        "loading": "Bezig..."
+        "loading": "Bezig...",
+        "forgotPassword": "Wachtwoord vergeten?"
     },
     "errors": {
         "loginFailed": "Login mislukt, probeer opnieuw.",
         "serverError": "Er ging iets mis, probeer later opnieuw.",
         "too_many_requests": "Te veel verkeerde loginpogingen. Probeer later opnieuw..."
+    },
+    "navbar": {
+        "dashboard": "Dashboard",
+        "mijnPersoneel": "Mijn Personeel"
+    },
+    "notifications": {
+        "title": "Meldingen",
+        "noAlerts": "Geen nieuwe meldingen",
+        "new": "Nieuw",
+        "older": "Eerder",
+        "minutesAgo": "minuten geleden",
+        "hoursAgo": "uur geleden",
+        "daysAgo": "dagen geleden"
     }
 }

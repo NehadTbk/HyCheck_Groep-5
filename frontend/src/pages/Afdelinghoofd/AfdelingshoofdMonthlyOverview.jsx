@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Topbar from "../../components/layout/Topbar";
+import PageLayout from "../../components/layout/PageLayout";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import MonthlyProgressCard from "../../components/cards/ProgressCard";
 
@@ -29,13 +29,11 @@ function AfdelingshoofdMonthlyOverview() {
 ];*/
 
   return (
-    <div className="min-h-screen bg-[#C6B6C2] flex flex-col">
-      <Topbar />
-      <main className="flex-1 px-8 py-6">
-        <AfdelingshoofdNavBar />
-        <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6">
-          <div className="mt-8 max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <PageLayout>
+      <AfdelingshoofdNavBar />
+        <div className="bg-white rounded-xl shadow-lg p-6 min-h-[500px]">
+          <div className="mb-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {monthData.map((item) => (
                 <MonthlyProgressCard
                   key={item.month}
@@ -47,8 +45,7 @@ function AfdelingshoofdMonthlyOverview() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </PageLayout>
   );
 }
 

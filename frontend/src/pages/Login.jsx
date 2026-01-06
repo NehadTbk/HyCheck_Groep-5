@@ -1,28 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import nl from "../locales/nl.json";
-import fr from "../locales/fr.json";
 import LanguageSwitcher from "../components/layout/LanguageSwitcher";
-
+import { useTranslation } from "../i18n/useTranslation";
+import { useLanguage } from "../i18n/useLanguage";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [lang, setLang] = useState(() => {
-        return localStorage.getItem("preferredLanguage") || "fr";
-    });
+
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { language, setLanguage } = useLanguage();
+    const { t } = useTranslation();
 
-    const translations = { nl, fr };
-
-    const t = translations[lang]?.login || translations.fr.login;
-
-    const handleLanguageChange = (newLang) => {
-        setLang(newLang);
-    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -36,13 +28,16 @@ function Login() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ email, password }),
-                
+
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                setError(data.message || t.error || "Login failed");
+                setError(
+                    t(`errors.${data.code}`) ||
+                    t("errors.loginFailed")
+                );
                 return;
             }
 
@@ -87,11 +82,7 @@ function Login() {
             {/* Language Switcher */}
             <div className="pt-28">
                 <div className="flex justify-end px-4 py-3">
-                    <LanguageSwitcher
-                        languages={['nl', 'fr']}
-                        defaultLang={lang}
-                        onLanguageChange={handleLanguageChange}
-                        variant="blue" />
+                    <LanguageSwitcher language={language} onLanguageChange={setLanguage} variant="blue" />
                 </div>
 
                 {/* Login Form */}
@@ -99,7 +90,7 @@ function Login() {
                     <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
 
 
-                        <h1 className="text-2xl font-bold text-gray-800 mb-8 text-center">HyCheck login</h1>
+                        <h1 className="text-2xl font-bold text-gray-800 mb-8 text-center">{t("login.title")}</h1>
 
                         {error && (
                             <div className="mb-4 p-2 bg-red-100 text-red-700 text-sm rounded">
@@ -111,7 +102,7 @@ function Login() {
                             {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t.email}
+                                    {t("login.email")}
                                 </label>
                                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="john@doe.com" />
                             </div>
@@ -119,7 +110,7 @@ function Login() {
                             {/* Password */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t.password}
+                                    {t("login.password")}
                                 </label>
                                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="******" />
                             </div>
@@ -129,14 +120,14 @@ function Login() {
                                 type="submit"
                                 disabled={loading}
                                 className="w-full bg-[#70A3CB] text-white py-2 px-4 rounded hover:bg-[#5e93bb] transition-colors duration-200 disabled:opacity-50">
-                                {loading ? "..." : t.loginButton}
+                                {loading ? t("login.loading") : t("login.loginButton")}
                             </button>
                         </form>
 
                         {/* Forgot Password */}
                         <div className="mt-4 text-center">
                             <a href="#" className="text-sm text-blue-600 hover:underline">
-                                {t.forgotPassword}
+                                {t("login.forgotPassword")}
                             </a>
                         </div>
 

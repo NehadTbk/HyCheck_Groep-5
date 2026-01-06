@@ -1,5 +1,5 @@
 import React from "react";
-import Topbar from "../../components/layout/Topbar";
+import PageLayout from "../../components/layout/PageLayout";
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
 
 function VerantwoordelijkeDashboard() {
@@ -61,15 +61,12 @@ function VerantwoordelijkeDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E5DCE7] flex flex-col rounded-2xl overflow-hidden">
-      <Topbar />
-
-      <main className="flex-1 px-8 py-6">
-        <VerantwoordelijkeNavBar />
+    <PageLayout>
+      <VerantwoordelijkeNavBar />
 
 
         
-        <div className="p-4 bg-white rounded-xl shadow-lg mt-4 overflow-x-auto">
+        <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px] overflow-x-auto">
           <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Agenda</h1>
 
           
@@ -98,8 +95,7 @@ function VerantwoordelijkeDashboard() {
 
           </div>
         </div>
-      </main>
-    </div>
+    </PageLayout>
   );
 }
 

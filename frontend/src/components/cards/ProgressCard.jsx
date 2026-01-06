@@ -19,7 +19,7 @@ function ProgressCard({
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : -1}
       className={[
-        "bg-white rounded-xl shadow-md px-8 py-6 min-h-[260px]",
+        "bg-white rounded-xl shadow-lg px-8 py-6 min-h-[260px]",
         "transition-all duration-150",
         clickable
           ? "cursor-pointer select-none hover:shadow-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7A4A77]"
