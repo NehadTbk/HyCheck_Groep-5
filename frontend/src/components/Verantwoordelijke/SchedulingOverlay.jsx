@@ -42,9 +42,33 @@ useEffect(() => {
 
 return (
     <div>
+      <label>Tijd</label>
+      <select>
+        {timeSlots.map((time) => (
+          <option key={time} value={time}>
+            {time}
+          </option>
+        ))}
+      </select>
+
+      <label>Dentist</label>
       <select>
         {dentists.map((d) => (
           <option key={d}>{d}</option>
+        ))}
+      </select>
+
+      <label>Box</label>
+      <select>
+        {boxes.map((b) => (
+          <option key={b}>{b}</option>
+        ))}
+      </select>
+
+      <label>Assistant</label>
+      <select>
+        {assistants.map((a) => (
+          <option key={a}>{a}</option>
         ))}
       </select>
     </div>
