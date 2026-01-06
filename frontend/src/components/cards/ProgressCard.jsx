@@ -6,6 +6,14 @@ function ProgressCard({
   percentage = 67,
   clickable = true,
 }) {
+  <div className={[
+    "w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs",
+    status === "ok" ? "border-green-500 bg-green-50"
+      : status === "danger" ? "border-red-500 bg-red-50"
+        : "border-[#E0B76F] bg-[#F8F3E8]"
+  ].join(" ")}>
+    ✔
+  </div>
   const navigate = useNavigate();
 
   const handleClick = () => {
