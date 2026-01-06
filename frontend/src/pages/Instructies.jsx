@@ -5,7 +5,7 @@ import VerantwoordelijkeNavBar from "../components/navbar/VerantwoordelijkeNavBa
 import AfdelingshoofdNavBar from "../components/navbar/AfdelingshoofdNavBar";
 import { BookOpen, Edit2, Save, X, Image as ImageIcon } from "lucide-react";
 
-const IMG_BASE = "/instructions"; // -> frontend/public/instructions
+const IMG_BASE = "/instructions"; // files live in: frontend/public/instructions
 
 function Instructies() {
   const [isEditing, setIsEditing] = useState(false);
@@ -46,23 +46,14 @@ function Instructies() {
         nr: 5,
         group: "Einde van de dag",
         title: "Speekselopvangbak (Crachot)",
-        lines: [
-          "Leeg en reinig het filter.",
-          "Leeg het filter niet in de afvoer!",
-          "Vul met water tot max. 65°C.",
-        ],
+        lines: ["Leeg en reinig het filter.", "Leeg het filter niet in de afvoer!", "Vul met water tot max. 65°C."],
         images: ["task-5.png"],
       },
       {
         nr: 6,
         group: "Elke week",
         title: "MD555 cleaner – Wekelijkse reiniging",
-        lines: [
-          "Gebruik MD 555 cleaner.",
-          "1–2 liter oplossing via Orcosy.",
-          "Laat 30 min–2 uur inwerken.",
-          "Spoel met 2 liter water.",
-        ],
+        lines: ["Gebruik MD 555 cleaner.", "1–2 liter oplossing via Orcosy.", "Laat 30 min–2 uur inwerken.", "Spoel met 2 liter water."],
         images: ["task-6-1.png", "task-6-2.png", "task-6-3.png", "task-6-4.png"],
       },
       {
@@ -204,9 +195,11 @@ function Instructies() {
                 <div className="space-y-4">
                   {groupTasks.map((task) => {
                     const imgs = task.images || [];
+                    const isWeeklyTask6 = task.nr === 6;
+
                     return (
                       <div key={task.nr} className="bg-white rounded-xl border border-gray-200 p-4">
-                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4">
                           {/* LEFT: text */}
                           <div className="flex items-start gap-4">
                             <div className="w-8 h-8 rounded-full bg-[#5C2D5F] text-white flex items-center justify-center text-sm font-bold shrink-0">
@@ -226,19 +219,19 @@ function Instructies() {
 
                               {isEditing ? (
                                 <textarea
-                                  value={task.lines.join("\n")}
+                                  value={(task.lines || []).join("\n")}
                                   onChange={(e) =>
                                     handleTaskChange(
                                       task.nr,
                                       "lines",
-                                      e.target.value.split("\n").filter((x) => x.trim() !== "")
+                                      e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)
                                     )
                                   }
                                   className="mt-2 w-full text-sm p-2 border border-gray-300 rounded-lg focus:outline-none min-h-[90px]"
                                 />
                               ) : (
                                 <ul className="mt-2 list-disc pl-5 text-sm text-gray-700 space-y-1">
-                                  {task.lines.map((line, idx) => (
+                                  {(task.lines || []).map((line, idx) => (
                                     <li key={idx}>{line}</li>
                                   ))}
                                 </ul>
@@ -249,7 +242,7 @@ function Instructies() {
                                 <div className="mt-3 text-xs text-gray-600">
                                   <div className="flex items-center gap-2 mb-2">
                                     <ImageIcon size={16} />
-                                    <span>Afbeeldingen (filenames in /public/instructions)</span>
+                                    <span>Afbeeldingen (1 filename per lijn in /public/instructions)</span>
                                   </div>
                                   <textarea
                                     value={imgs.join("\n")}
@@ -271,23 +264,25 @@ function Instructies() {
                           {/* RIGHT: images */}
                           <div className="rounded-lg border border-gray-200 bg-white p-3">
                             {imgs.length === 0 ? (
-                              <div className="text-sm text-gray-500 p-4 text-center">
-                                Geen afbeelding ingesteld
-                              </div>
+                              <div className="text-sm text-gray-500 p-4 text-center">Geen afbeelding ingesteld</div>
                             ) : (
                               <div
                                 className={
-                                  imgs.length === 1
+                                  isWeeklyTask6
+                                    ? "flex flex-col gap-3" // ✅ TASK 6 vertical, in order
+                                    : imgs.length === 1
                                     ? "grid grid-cols-1 gap-2"
                                     : "grid grid-cols-2 gap-2"
                                 }
                               >
                                 {imgs.map((file, idx) => {
                                   const src = `${IMG_BASE}/${file}`;
+                                  const boxHeight = isWeeklyTask6 ? "h-[180px]" : "h-[160px]";
+
                                   return (
                                     <div
                                       key={`${task.nr}-${idx}`}
-                                      className="h-[160px] rounded-md border border-gray-200 overflow-hidden flex items-center justify-center bg-white"
+                                      className={`${boxHeight} rounded-md border border-gray-200 overflow-hidden flex items-center justify-center bg-white`}
                                     >
                                       <img
                                         src={src}
@@ -295,8 +290,12 @@ function Instructies() {
                                         className="w-full h-full object-contain"
                                         onError={(e) => {
                                           e.currentTarget.style.display = "none";
-                                          e.currentTarget.parentElement.innerHTML =
-                                            `<div class="text-xs text-gray-500 p-2 text-center">Niet gevonden:<br/>${src}</div>`;
+                                          const parent = e.currentTarget.parentElement;
+                                          if (parent) {
+                                            parent.innerHTML = `<div style="font-size:12px;color:#6b7280;padding:8px;text-align:center">
+                                              Niet gevonden:<br/>${src}
+                                            </div>`;
+                                          }
                                         }}
                                       />
                                     </div>
