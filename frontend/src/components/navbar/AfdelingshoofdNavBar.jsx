@@ -25,7 +25,7 @@ function AfdelingshoofdNavBar() {
     },
     {
       key: 'monthly-overview',
-      label: 'Maandoverzicht',
+      label: t('navbar.maandoverzicht'),
       href: '/afdelingshoofd/overzicht-maanden',
       active: location.pathname === '/afdelingshoofd/overzicht-maanden'
     }

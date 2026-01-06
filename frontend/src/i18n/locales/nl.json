@@ -19,6 +19,8 @@
     },
     "navbar": {
         "dashboard": "Dashboard",
-        "mijnPersoneel": "Mijn Personeel"
+        "mijnPersoneel": "Mijn Personeel",
+        "maandoverzicht": "Maandoverzicht"
     }
+
 }

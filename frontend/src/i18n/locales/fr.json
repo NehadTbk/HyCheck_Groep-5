@@ -14,6 +14,7 @@
     },
     "navbar": {
         "dashboard": "Tableau de bord",
-        "mijnPersoneel": "Mon Personnel"
+        "mijnPersoneel": "Mon Personnel",
+        "maandoverzicht": "Aperçu mensuel"
     }
 }
