@@ -1,6 +1,35 @@
 import { useEffect, useState } from "react";
 import { X, Plus, Trash2, Clock } from "lucide-react";
 
+const TASK_GROUPS = {
+  ochtend: {
+    label: "Ochtend",
+    tasks: [
+      "Filters",
+      "Waterleidingen – Lange spoeling",
+    ],
+  },
+  avond: {
+    label: "Avond",
+    tasks: [
+      "Oppervlakken",
+      "Afzuigsysteem – Reiniging van de afzuigslangen",
+      "Speekselopvangbak (Crachot)",
+    ],
+  },
+  wekelijks: {
+    label: "Wekelijks",
+    tasks: ["MD555 cleaner – Wekelijkse reiniging"],
+  },
+  maandelijks: {
+    label: "Maandelijks",
+    tasks: [
+      "Afzuigsysteem en waterleidingen",
+      "Filters extensief",
+    ],
+  },
+};
+
 function SchedulingOverlay() {
   const [dentists, setDentists] = useState([]);
   const [boxes, setBoxes] = useState([]);
