@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Topbar from "../../components/layout/Topbar";
+import PageLayout from "../../components/layout/PageLayout";
 import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import BoxList from "../../components/Assistent/BoxList";
 import TaskModal from "../../components/Assistent/TaskModal";
@@ -49,10 +49,8 @@ function MijnBoxen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E5DCE7]">
-      <Topbar />
-      <main className="max-w-6xl mx-auto py-8 px-6 space-y-6">
-        <AssistentNavBar />
+    <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
+      <AssistentNavBar />
         <section className="bg-white rounded-3xl p-6 shadow-sm">
           <h1 className="text-lg font-semibold text-gray-900 mb-4">Alle Boxen</h1>
           <BoxList 
@@ -61,18 +59,17 @@ function MijnBoxen() {
             onBoxClick={(box) => setSelectedBox(box)} 
           />
         </section>
-      </main>
 
       {selectedBox && (
-        <TaskModal 
-          box={selectedBox} 
-          tasksState={tasksState} 
+        <TaskModal
+          box={selectedBox}
+          tasksState={tasksState}
           onToggleTask={handleToggleTask}
           onSave={handleSaveTasks}
-          onClose={() => setSelectedBox(null)} 
+          onClose={() => setSelectedBox(null)}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }
 

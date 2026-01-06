@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Topbar from "../../components/layout/Topbar";
+import PageLayout from "../../components/layout/PageLayout";
 import { IoMdClose } from "react-icons/io";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Personeelsregister from '../../components/personeel/Personeelsregister';
@@ -117,12 +117,8 @@ function VerantwoordelijkePersoneel() {
     };
 
     return (
-        <div className="min-h-screen bg-[#E5DCE7] flex flex-col rounded-2xl overflow-hidden">
-            <Topbar />
-
-            <main className="flex-1 px-8 py-6">
-
-                <VerantwoordelijkeNavBar />
+        <PageLayout>
+            <VerantwoordelijkeNavBar />
 
                 <div className="p-6 bg-white rounded-xl shadow-lg mt-4 min-h-[500px]">
                     <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
@@ -138,9 +134,6 @@ function VerantwoordelijkePersoneel() {
                     </div>
                     <Personeelsregister />
                 </div>
-
-            </main>
-
 
             {isModalOpen && (
                 <div className="fixed inset-0  bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
@@ -258,7 +251,7 @@ function VerantwoordelijkePersoneel() {
                     </div>
                 </div>
             )}
-        </div>
+        </PageLayout>
     );
 }
 
