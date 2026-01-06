@@ -29,7 +29,7 @@ function AfdelingshoofdPersoneel() {
 
         <div className="p-6 bg-white rounded-xl shadow-lg mt-4 min-h-[500px]">
         <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
-          <h1 className="text-3xl font-extrabold text-gray-800">
+          <h1 className="text-3xl font-bold text-gray-800">
             Personeelsbeheer (Afdelingshoofd)
           </h1>
 
