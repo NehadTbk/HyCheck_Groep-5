@@ -68,7 +68,7 @@ function AssistentDashboard() {
           <PeriodicStatsCard weeklyDate="Vrijdag 28/11" monthlyDate="Maandag 17/11" icon="calendar" />
         </section>
 
-        <section className="bg-white rounded-2xl p-8 shadow-sm">
+        <section className="bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">
             Mijn toegewezen boxen - 20/11
           </h2>

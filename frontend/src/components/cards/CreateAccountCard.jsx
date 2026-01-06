@@ -17,7 +17,7 @@ function CreateAccountCard() {
       role="button"
       tabIndex={0}
       className="
-        bg-white rounded-xl shadow-md px-8 py-10 min-h-[260px] w-full
+        bg-white rounded-xl shadow-lg px-8 py-10 min-h-[260px] w-full
         flex items-center justify-center
         cursor-pointer select-none
         transition-all

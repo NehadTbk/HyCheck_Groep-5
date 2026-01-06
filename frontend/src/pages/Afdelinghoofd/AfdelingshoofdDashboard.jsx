@@ -14,9 +14,9 @@ function AfdelingshoofdDashboard() {
   return (
     <PageLayout>
       <AfdelingshoofdNavBar />
-        <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6">
+        <div className="bg-white rounded-xl shadow-lg p-6 min-h-[500px]">
 
-          <section className="mt-8 flex flex-col lg:flex-row gap-6">
+          <section className="mb-6 flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
               <ProgressCard />
             </div>

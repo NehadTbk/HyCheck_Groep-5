@@ -133,9 +133,9 @@ function Instructies() {
     <PageLayout>
       {getNavBar()}
 
-      <div className="p-6 bg-white rounded-xl shadow-lg mt-4 min-h-[500px]">
+      <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px]">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 border-b border-gray-300 pb-4">
+        <div className="flex items-center justify-between mb-6 border-b border-gray-300 pb-3">
           <div className="flex items-center gap-3">
             <BookOpen className="text-[#5C2D5F]" size={32} />
             {isEditing ? (

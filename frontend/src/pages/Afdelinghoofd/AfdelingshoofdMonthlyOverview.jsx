@@ -31,9 +31,9 @@ function AfdelingshoofdMonthlyOverview() {
   return (
     <PageLayout>
       <AfdelingshoofdNavBar />
-        <div className="bg-[#E5E5E5] rounded-xl min-h-[calc(100vh-7rem)] px-10 py-6">
-          <div className="mt-8 max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 min-h-[500px]">
+          <div className="mb-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {monthData.map((item) => (
                 <MonthlyProgressCard
                   key={item.month}
