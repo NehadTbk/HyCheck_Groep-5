@@ -9,6 +9,7 @@ function BaseNavBar({
   showNotifications = true,
   activeColor = '#C1A9CF',
   activeTextColor = '#2C1E33',
+  instructiesHref = '#',
   children
 }) {
   const getActiveStyles = (isActive) => {
@@ -41,9 +42,12 @@ function BaseNavBar({
         {/* Right: Utilities */}
         <div className="flex items-center space-x-4">
           {showInstructions && (
-            <button className="text-base text-gray-900 font-medium hover:opacity-80 transition">
+            <Link
+              to={instructiesHref}
+              className="text-base text-gray-900 font-medium hover:opacity-80 transition"
+            >
               Instructies
-            </button>
+            </Link>
           )}
 
           {showNotifications && (

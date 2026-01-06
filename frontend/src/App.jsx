@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
 import Historiek from "./pages/Assistent/Historiek";
+import Instructies from "./pages/Instructies";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -102,6 +103,16 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['assistant']}>
               <Historiek />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Shared Instructies route - accessible by all authenticated users */}
+        <Route
+          path="/instructies"
+          element={
+            <ProtectedRoute allowedRoles={['assistant', 'responsible', 'admin']}>
+              <Instructies />
             </ProtectedRoute>
           }
         />
