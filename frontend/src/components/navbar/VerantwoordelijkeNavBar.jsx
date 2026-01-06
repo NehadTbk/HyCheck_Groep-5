@@ -35,8 +35,10 @@ function VerantwoordelijkeNavBar() {
   return (
     <BaseNavBar
       items={items}
-      showInstructions={false}
+      showInstructions={true}
       showNotifications={true}
+      activeColor="#C1A9CF"
+      activeTextColor="#2C1E33"
     />
   );
 }
