@@ -10,7 +10,7 @@ const COMPANY_CONFIG = {
 export const getSchedulingData = async (req, res) => {
   try {
     const [boxes] = await db.query(
-      "SELECT id, name FROM box ORDER BY id ASC"
+      "SELECT box_id, name FROM box ORDER BY id ASC"
     );
   
     //hardcoded demo data
