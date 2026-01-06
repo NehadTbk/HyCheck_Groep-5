@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '../../i18n/useLanguage';
+import NotificationsModal from '../notifications/NotificationsModal';
 
 function BaseNavBar({
   items = [],
@@ -14,6 +15,69 @@ function BaseNavBar({
   children
 }) {
   const { language, setLanguage } = useLanguage();
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  // Get user from localStorage to filter notifications
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  })();
+
+  // Load notifications - TODO: Replace with API call
+  useEffect(() => {
+    // Sample notifications - in production, fetch from backend
+    const sampleNotifications = [
+      {
+        id: 1,
+        title: "Nieuwe box toegewezen",
+        message: "Box 5 is aan u toegewezen voor vandaag",
+        date: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 min ago
+        type: "info",
+        read: false,
+        role: "assistant"
+      },
+      {
+        id: 2,
+        title: "Taak voltooid",
+        message: "Box 3 is succesvol schoongemaakt",
+        date: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+        type: "success",
+        read: false,
+        role: "assistant"
+      },
+      {
+        id: 3,
+        title: "Rapport beschikbaar",
+        message: "Het maandrapport van november is nu beschikbaar",
+        date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+        type: "info",
+        read: true,
+        role: "responsible"
+      },
+      {
+        id: 4,
+        title: "Nieuw personeelslid",
+        message: "Jan Janssen is toegevoegd aan het systeem",
+        date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
+        type: "success",
+        read: true,
+        role: "admin"
+      }
+    ];
+
+    // Filter notifications by user role
+    const userNotifications = sampleNotifications.filter(
+      n => n.role === user?.role || n.role === "all"
+    );
+    setNotifications(userNotifications);
+  }, [user?.role]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   const getActiveStyles = (isActive) => {
     if (isActive) {
       return 'font-semibold text-base py-2 px-4 rounded-full transition-all';
@@ -53,15 +117,32 @@ function BaseNavBar({
           )}
 
           {showNotifications && (
-            <span className="text-gray-500 cursor-pointer hover:text-gray-700">
-              <IoMdNotificationsOutline size={24} />
-            </span>
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className="text-gray-500 cursor-pointer hover:text-gray-700 relative"
+              >
+                <IoMdNotificationsOutline size={24} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            </div>
           )}
           <LanguageSwitcher language={language} onLanguageChange={setLanguage} variant="default" />
 
           {children}
         </div>
       </div>
+
+      {/* Notifications Modal */}
+      <NotificationsModal
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        notifications={notifications}
+      />
     </nav>
   );
 }

@@ -15,5 +15,14 @@
     "navbar": {
         "dashboard": "Tableau de bord",
         "mijnPersoneel": "Mon Personnel"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "noAlerts": "Aucune nouvelle notification",
+        "new": "Nouveau",
+        "older": "Anciennes",
+        "minutesAgo": "minutes",
+        "hoursAgo": "heures",
+        "daysAgo": "jours"
     }
 }
