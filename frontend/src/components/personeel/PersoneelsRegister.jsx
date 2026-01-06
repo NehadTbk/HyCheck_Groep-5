@@ -40,16 +40,20 @@ function PersoneelRegisterCard() {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   // 🔄 Centrale fetch (herbruikbaar)
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/users`);
+      const res = await fetch(`${API_BASE_URL}/api/users`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       const data = await res.json();
-      const mapped = data
-      .filter((u) => u.is_active === 1)
+        const mapped = data
+          .filter((u) => u.is_active === 1)
           .map((u) => ({
             id: u.user_id,
             code: `u${u.user_id}`,
@@ -66,7 +70,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
       } finally {
         setLoading(false);
       }
-  }, [API_BASE_URL]);
+    }, [API_BASE_URL]);
 
   // init
   useEffect(() => {
@@ -81,12 +85,21 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
     if (!confirm) return;
 
     try {
-  await fetch(`${API_BASE_URL}/api/users/${userId}`, {
-  method: "DELETE",
-});
-      await fetchUsers();
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        }
+      });
+      if(!res.ok){
+        const errData = await res.json();
+        throw new Error(errData.message || "Delete failed");
+      }
+      fetchUsers();
     } catch (err) {
       console.error("Delete user error:", err);
+      alert(err.message);
     }
   };
 

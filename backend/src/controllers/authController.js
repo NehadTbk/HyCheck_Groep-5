@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { findByEmail, createUser } from "../models/User.js";
+import { findUserByEmail, createUser } from "../models/User.js";
 
 const rolePermissions = {
     admin: ["USER_CREATE", "USER_DELETE", "USER_VIEW"],
@@ -47,11 +47,22 @@ export const login = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 name: `${user.first_name} ${user.last_name}`,
-                permissions: permissions
+                permissions
             },
             process.env.JWT_SECRET,
             { expiresIn: "24h" }
         );
+        res.json({
+            success: true,
+            token,
+            user: {
+                id: user.user_id,
+                fullName: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+                role: user.role,
+                permissions: rolePermissions[user.role] || []
+            }
+        });
 
 
         // 5. Response sturen
@@ -88,8 +99,8 @@ export const register = async (req, res) => {
 
     try {
 
-        if(!req.user.permissions.includes("USER_CREATE")) {
-            return res.status(403).json({success: false, message: "Permission error"});
+        if (!req.user.permissions.includes("USER_CREATE")) {
+            return res.status(403).json({ success: false, message: "Permission error" });
         }
 
         if (!firstName || !lastName || !email || !role) {
