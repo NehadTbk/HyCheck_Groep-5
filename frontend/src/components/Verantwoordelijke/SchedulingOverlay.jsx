@@ -1,10 +1,12 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Plus, Trash2, Clock } from "lucide-react";
 
 function SchedulingOverlay() {
   const [dentists, setDentists] = useState([]);
   const [boxes, setBoxes] = useState([]);
   const [assistants, setAssistants] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]); // ⚡ nu een state
+
   const timeConfig = { openTime: "08:00", closeTime: "18:00", intervalMinutes: 30 };
 
   function generateTimeSlots(openTime, closeTime, interval) {
@@ -42,42 +44,69 @@ function SchedulingOverlay() {
 
     fetchData();
 
-    setTimeSlots(generateTimeSlots(timeConfig.openTime, timeConfig.closeTime, timeConfig.intervalMinutes));
+    const generatedSlots = generateTimeSlots(
+      timeConfig.openTime,
+      timeConfig.closeTime,
+      timeConfig.intervalMinutes
+    );
+    setTimeSlots(generatedSlots);
   }, []);
 
   return (
-    <div>
-      <label>Tijd</label>
-      <select>
-        {timeSlots.map((time) => (
-          <option key={time} value={time}>
-            {time}
-          </option>
-        ))}
-      </select>
+    <div className="p-6 bg-white rounded-xl shadow-lg grid gap-6 max-w-3xl mx-auto">
+      <div className="flex flex-col">
+        <label className="mb-1 font-medium text-gray-700 flex items-center gap-1">
+          <Clock size={16} /> Tijd
+        </label>
+        <select className="p-2 rounded border border-gray-300 bg-input" disabled={timeSlots.length === 0}>
+          {timeSlots.length > 0 ? (
+            timeSlots.map((time) => (
+              <option key={time} value={time}>
+                {time}
+              </option>
+            ))
+          ) : (
+            <option value="">Geen tijdslots beschikbaar</option>
+          )}
+        </select>
+      </div>
 
-      <label>Dentist</label>
-      <select>
-        {dentists.map((d) => (
-          <option key={d}>{d}</option>
-        ))}
-      </select>
+      <div className="flex flex-col">
+        <label className="mb-1 font-medium text-gray-700">Dentist</label>
+        <select className="p-2 rounded border border-gray-300 bg-input" disabled={dentists.length === 0}>
+          {dentists.length > 0 ? (
+            dentists.map((d) => <option key={d}>{d}</option>)
+          ) : (
+            <option value="">Geen dentists</option>
+          )}
+        </select>
+      </div>
 
-      <label>Box</label>
-      <select>
-        {boxes.map((b) => (
-          <option key={b.id} value={b.id}>
-            {b.name}
-          </option>
-        ))}
-      </select>
+      <div className="flex flex-col">
+        <label className="mb-1 font-medium text-gray-700">Box</label>
+        <select className="p-2 rounded border border-gray-300 bg-input" disabled={boxes.length === 0}>
+          {boxes.length > 0 ? (
+            boxes.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))
+          ) : (
+            <option value="">Geen boxes</option>
+          )}
+        </select>
+      </div>
 
-      <label>Assistant</label>
-      <select>
-        {assistants.map((a) => (
-          <option key={a}>{a}</option>
-        ))}
-      </select>
+      <div className="flex flex-col">
+        <label className="mb-1 font-medium text-gray-700">Assistant</label>
+        <select className="p-2 rounded border border-gray-300 bg-input" disabled={assistants.length === 0}>
+          {assistants.length > 0 ? (
+            assistants.map((a) => <option key={a}>{a}</option>)
+          ) : (
+            <option value="">Geen assistants</option>
+          )}
+        </select>
+      </div>
     </div>
   );
 }
