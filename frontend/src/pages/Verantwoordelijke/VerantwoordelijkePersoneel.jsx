@@ -120,14 +120,14 @@ function VerantwoordelijkePersoneel() {
         <PageLayout>
             <VerantwoordelijkeNavBar />
 
-                <div className="p-6 bg-white rounded-xl shadow-lg mt-4 min-h-[500px]">
+                <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px]">
                     <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
 
                         <h1 className="text-3xl font-bold text-gray-800">Mijn Personeel</h1>
 
                         <button
                             onClick={openModal}
-                            className="bg-[#4A2144] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#8B5CF6] transition-colors flex items-center space-x-2"
+                            className="bg-[#5C2D5F] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#4A2144] transition-colors flex items-center space-x-2"
                         >
                             <span className="hidden sm:inline">Personeel toevoegen</span>
                         </button>
@@ -242,7 +242,7 @@ function VerantwoordelijkePersoneel() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="bg-[#4A2144] text-white py-2 px-4 rounded-lg hover:bg-[#8B5CF6]"
+                                    className="bg-[#5C2D5F] text-white py-2 px-4 rounded-lg hover:bg-[#4A2144] transition-colors"
                                 >
                                     {loading ? "Bezig met toevoegen..." : "Toevoegen"}
                                 </button>

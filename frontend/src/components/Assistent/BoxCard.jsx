@@ -22,7 +22,7 @@ function BoxCard({ box, onCheck, onClick }) {
   return (
     <div
       onClick={() => onClick(box)}
-      className={`rounded-2xl border px-4 py-3 shadow-sm cursor-pointer transition-all hover:brightness-95
+      className={`rounded-xl border px-4 py-3 shadow-lg cursor-pointer transition-all hover:brightness-95
                   w-[260px] h-[150px] flex flex-col justify-between relative ${cardStyles}`}
     >
       <div>
