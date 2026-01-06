@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { X, Circle, CheckCircle2 } from "lucide-react";
 
 const typeColors = {
@@ -26,6 +26,9 @@ const taskData = {
 };
 
 function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
+  const [showReasonInput, setShowReasonInput] = useState(false);
+  const [reason, setReason] = useState("");
+
   if (!box) return null;
 
   return (
@@ -74,19 +77,56 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
           ))}
         </div>
         
-        <div className="p-6 border-t bg-white flex justify-between items-center">
-          <button 
-            className="text-[#5C2D5F] font-bold hover:underline"
-            onClick={() => alert("Reden toevoegen functionaliteit")}
-          >
-            + Reden toevoegen
-          </button>
-          <button 
-            className="bg-[#5C2D5F] hover:bg-[#4a244d] text-white px-10 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
-            onClick={() => onSave(box.id)}
-          >
-            Opslaan & Sluiten
-          </button>
+        <div className="p-6 border-t bg-white">
+          {showReasonInput ? (
+            <div className="space-y-3 mb-4">
+              <label className="text-sm font-semibold text-gray-700">Reden toevoegen:</label>
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Typ hier de reden waarom een taak niet voltooid is..."
+                className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5C2D5F]/20 focus:border-[#5C2D5F] resize-none"
+                rows={3}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowReasonInput(false);
+                    setReason("");
+                  }}
+                  className="text-gray-600 text-sm font-semibold hover:text-gray-800 px-3 py-1"
+                >
+                  Annuleren
+                </button>
+                <button
+                  onClick={() => {
+                    console.log("Reden opgeslagen:", reason);
+                    setShowReasonInput(false);
+                  }}
+                  className="bg-[#5C2D5F] hover:bg-[#4A2144] text-white px-4 py-1 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  Bevestigen
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="text-[#5C2D5F] font-bold hover:underline mb-4"
+              onClick={() => setShowReasonInput(true)}
+            >
+              + Reden toevoegen
+            </button>
+          )}
+
+          <div className="flex justify-end">
+            <button
+              className="bg-[#5C2D5F] hover:bg-[#4a244d] text-white px-10 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
+              onClick={() => onSave(box.id)}
+            >
+              Opslaan & Sluiten
+            </button>
+          </div>
         </div>
       </div>
     </div>
