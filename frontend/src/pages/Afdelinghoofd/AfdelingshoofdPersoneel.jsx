@@ -1,5 +1,5 @@
 // pages/Afdelinghoofd/AfdelingshoofdPersoneel.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Topbar from "../../components/layout/Topbar";
 import PageLayout from "../../components/layout/PageLayout";

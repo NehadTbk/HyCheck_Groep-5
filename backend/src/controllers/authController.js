@@ -1,83 +1,96 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { findUserByEmail, createUser } from "../models/User.js";
+import { findByEmail, createUser } from "../models/User.js";
 
+const rolePermissions = {
+    admin: ["USER_CREATE", "USER_DELETE", "USER_VIEW"],
+    responsible: ["USER_CREATE", "USER_DELETE", "USER_VIEW"],
+    assistant: ["USER_VIEW"]
+};
 
-    export const login = async (req, res) => {
-        const { email, password } = req.body;
+export const login = async (req, res) => {
+    const { email, password } = req.body;
 
-        try {
-            // 1. Haal gebruiker op
-            const user = await findUserByEmail(email);
+    try {
+        // 1. Haal gebruiker op
+        const user = await findUserByEmail(email);
 
-            if (!user) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Ongeldige email of wachtwoord"
-                });
-            }
-            if (!user.password_hash) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Account heeft geen wachtwoord ingesteld"
-                });
-            }
-
-            const match = await bcrypt.compare(password, user.password_hash);
-
-            if (!match) {
-
-                return res.status(400).json({
-                    success: false,
-                    message: "Ongeldige email of wachtwoord"
-                });
-            }
-
-            // 4. JWT token genereren
-            const token = jwt.sign(
-                {
-                    id: user.user_id,
-                    email: user.email,
-                    role: user.role,
-                    name: `${user.first_name} ${user.last_name}`
-                },
-                process.env.JWT_SECRET,
-                { expiresIn: "24h" }
-            );
-
-
-            // 5. Response sturen
-            const responseData = {
-                success: true,
-                token,
-                user: {
-                    id: user.user_id,
-                    firstName: user.first_name,
-                    lastName: user.last_name,
-                    fullName: `${user.first_name} ${user.last_name}`,
-                    email: user.email,
-                    role: user.role
-                },
-                message: "Login succesvol"
-            };
-
-            res.json(responseData);
-
-        } catch (err) {
-            console.error("\n LOGIN ERROR:", err);
-            console.error("Error stack:", err.stack);
-            console.log("=".repeat(60));
-            res.status(500).json({
+        if (!user) {
+            return res.status(400).json({
                 success: false,
-                message: "Server error: " + err.message
+                message: "Ongeldige email of wachtwoord"
             });
         }
-    };
+        if (!user.password_hash) {
+            return res.status(400).json({
+                success: false,
+                message: "Account heeft geen wachtwoord ingesteld"
+            });
+        }
+
+        const match = await bcrypt.compare(password, user.password_hash);
+
+        if (!match) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Ongeldige email of wachtwoord"
+            });
+        }
+
+        const permissions = rolePermissions[user.role] || [];
+
+        // 4. JWT token genereren
+        const token = jwt.sign(
+            {
+                id: user.user_id,
+                email: user.email,
+                role: user.role,
+                name: `${user.first_name} ${user.last_name}`,
+                permissions: permissions
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        );
+
+
+        // 5. Response sturen
+        const responseData = {
+            success: true,
+            token,
+            user: {
+                id: user.user_id,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                fullName: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+                role: user.role,
+                permissions: permissions
+            },
+            message: "Login succesvol"
+        };
+
+        res.json(responseData);
+
+    } catch (err) {
+        console.error("\n LOGIN ERROR:", err);
+        console.error("Error stack:", err.stack);
+        console.log("=".repeat(60));
+        res.status(500).json({
+            success: false,
+            message: "Server error: " + err.message
+        });
+    }
+};
 
 export const register = async (req, res) => {
     const { firstName, lastName, email, role, sendEmail = false } = req.body;
 
     try {
+
+        if(!req.user.permissions.includes("USER_CREATE")) {
+            return res.status(403).json({success: false, message: "Permission error"});
+        }
 
         if (!firstName || !lastName || !email || !role) {
             return res.status(400).json({
@@ -108,7 +121,7 @@ export const register = async (req, res) => {
             badgeId: null
         });
 
-        if(sendEmail) {
+        if (sendEmail) {
             console.log(`E-mail zou gestuurd worden naar ${email}`);
         }
 

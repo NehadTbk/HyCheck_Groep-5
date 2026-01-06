@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import PersoneelFilters, { ROLE_OPTIONS } from "./PersoneelFilters";
+import PersoneelFilters from "./PersoneelFilters";
 import PersoneelSearch from "./PersoneelSearch";
 import PersoneelTable from "./PersoneelTable";
+import { ROLE_OPTIONS } from "../Afdelingshoofd/constants";
 
 // DB role → UI
 const roleToKey = (role) => {
@@ -39,16 +40,16 @@ function PersoneelRegisterCard() {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   // 🔄 Centrale fetch (herbruikbaar)
-  const fetchUsers = useCallback(() => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
-    fetch("http://localhost:5001/api/users")
-      .then((res) => res.json())
-      .then((data) => {
-        const mapped = data
-          // 🔐 alleen actieve users
-          .filter((u) => u.is_active === 1)
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/users`);
+      const data = await res.json();
+      const mapped = data
+      .filter((u) => u.is_active === 1)
           .map((u) => ({
             id: u.user_id,
             code: `u${u.user_id}`,
@@ -60,10 +61,12 @@ function PersoneelRegisterCard() {
           }));
 
         setRows(mapped);
-      })
-      .catch((err) => console.error("Fetch users error:", err))
-      .finally(() => setLoading(false));
-  }, []);
+      } catch (err) {
+        console.error("Fetch users error:", err);
+      } finally {
+        setLoading(false);
+      }
+  }, [API_BASE_URL]);
 
   // init
   useEffect(() => {
@@ -78,12 +81,10 @@ function PersoneelRegisterCard() {
     if (!confirm) return;
 
     try {
-      await fetch(`http://localhost:5001/api/users/${userId}`, {
-        method: "DELETE",
-      });
-
-      // 🔄 refresh lijst
-      fetchUsers();
+  await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+  method: "DELETE",
+});
+      await fetchUsers();
     } catch (err) {
       console.error("Delete user error:", err);
     }

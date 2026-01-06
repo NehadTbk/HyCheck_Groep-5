@@ -1,11 +1,6 @@
 // src/components/Afdelingshoofd/PersoneelFilters.jsx
 import React from "react";
-
-const ROLE_OPTIONS = [
-  { key: "verantwoordelijke", label: "Verantwoordelijke" },
-  { key: "tandarts", label: "Tandarts" },
-  { key: "tandartsassistent", label: "Tandartsassistent" },
-];
+import { ROLE_OPTIONS } from "../Afdelingshoofd/constants";
 
 function PersoneelFilters({ selectedRoles, onChange }) {
   const handleClick = (key) => {
@@ -46,4 +41,3 @@ function PersoneelFilters({ selectedRoles, onChange }) {
 }
 
 export default PersoneelFilters;
-export { ROLE_OPTIONS };

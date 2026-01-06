@@ -1,11 +1,30 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { UserContext } from "../../context/UserContextOnly";
 
+ const roleOptionsMap = {
+        admin: ["Afdelingshoofd", "Verantwoordelijke", "Tandarts", "Tandartsassistent"],
+        responsible: ["Tandarts", "Tandartsassistent"],
+    };
+const functieToRoleMap = {
+    "Afdelingshoofd": "admin",
+    "Tandartsassistent": "assistant",
+    "Verantwoordelijke": "responsible",
+    "Tandarts": "dentist"
+};  
+const roleDescriptions = {
+  admin: "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen",
+  responsible: "Als verantwoordelijke kun je tandartsen en assistenten toevoegen"
+};
+  
 const PersoneelToevoegenModal = ({
     isOpen,
     onClose,
-    userRole
+    onCreated
 }) => {
+    const { user } = useContext(UserContext);
+    const userRole = user?.role || "none";
+     const getFunctieOpties = () => roleOptionsMap[userRole] || [];
     const [formData, setFormData] = useState({
         voornaam: "",
         achternaam: "",
@@ -16,22 +35,11 @@ const PersoneelToevoegenModal = ({
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const getFunctieOpties = () => {
-        if(userRole === "admin") {
-            return ["Afdelingshoofd", "Verantwoordelijke", "Tandarts", "Tandartsassistent"];
-        } else if(userRole === "responsible") {
-            return ["Tandarts", "Tandartsassistent"];
-        }
-        return [];
-    };
-    const functieToRoleMap = {
-        "Afdelingshoofd": "admin",
-        "Tandartsassistent": "assistant",
-        "Verantwoordelijke": "responsible",
-        "Tandarts": "dentist"
-    };
+ 
+   
 
-      const closeModal = () => {
+
+    const closeModal = () => {
         onClose();
         setFormData({ voornaam: "", achternaam: "", email: "", functie: "" });
         setError("");
@@ -39,7 +47,7 @@ const PersoneelToevoegenModal = ({
     };
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -51,7 +59,7 @@ const PersoneelToevoegenModal = ({
         setSuccess("");
         setLoading(true);
 
-        if(!formData.voornaam || !formData.achternaam || !formData.email || !formData.functie) {
+        if (!formData.voornaam || !formData.achternaam || !formData.email || !formData.functie) {
             setError("Alle velden zijn verplicht");
             setLoading(false);
             return;
@@ -83,7 +91,7 @@ const PersoneelToevoegenModal = ({
                 })
             });
             const data = await response.json();
-            if(!response.ok || !data.success) {
+            if (!response.ok || !data.success) {
                 setError(data.message || "Fout bij toevoegen personeelslid");
                 setLoading(false);
                 return;
@@ -99,7 +107,7 @@ const PersoneelToevoegenModal = ({
             });
             setTimeout(() => {
                 closeModal();
-                window.location.reload();
+                if (onCreated) onCreated();
             }, 3000);
         } catch (err) {
             console.error("Add staff error:", err);
@@ -112,7 +120,7 @@ const PersoneelToevoegenModal = ({
 
     if (!isOpen) return null;
 
-    const functieOpties= getFunctieOpties();
+    const functieOpties = getFunctieOpties();
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -129,7 +137,7 @@ const PersoneelToevoegenModal = ({
                         {error}
                     </div>
                 )}
-                
+
                 {success && (
                     <div className="mb-4 p-3 bg-green-100 text-green-700 text-sm rounded-lg">
                         {success}
@@ -200,9 +208,7 @@ const PersoneelToevoegenModal = ({
                             ))}
                         </select>
                         <p className="text-xs text-gray-500 mt-1">
-                            {userRole === "admin" 
-                                ? "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen"
-                                : "Als verantwoordelijke kun je tandartsen en assistenten toevoegen"}
+                            {roleDescriptions[userRole]|| "" }
                         </p>
                     </div>
 
@@ -219,7 +225,7 @@ const PersoneelToevoegenModal = ({
                         >
                             Annuleren
                         </button>
-                        
+
                         <button
                             type="submit"
                             disabled={loading}

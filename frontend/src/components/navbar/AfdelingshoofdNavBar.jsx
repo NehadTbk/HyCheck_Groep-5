@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import BaseNavBar from '../layout/BaseNavBar';
 import { useTranslation } from '../../i18n/useTranslation';
 import LanguageSwitcher from '../layout/LanguageSwitcher';
-import { useLanguage } from '../../i18n/useLanguage';
 
 
 function AfdelingshoofdNavBar() {

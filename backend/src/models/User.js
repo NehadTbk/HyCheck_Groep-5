@@ -30,7 +30,7 @@ export const createUser = async (userData) => {
         lastName, 
         email, 
         passwordHash,  
-        role = 'assistant', 
+        role, 
         isActive = 1, 
         badgeId = null 
     } = userData;

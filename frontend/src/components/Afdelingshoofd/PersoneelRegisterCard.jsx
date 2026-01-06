@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import PersoneelFilters, { ROLE_OPTIONS } from "./PersoneelFilters";
+import PersoneelFilters from "../personeel/PersoneelFilters";
 import PersoneelSearch from "./PersoneelSearch";
 import PersoneelTable from "./PersoneelTable";
+import { ROLE_OPTIONS } from "./constants";
 
 // DB role → UI
 const roleToKey = (role) => {
@@ -39,31 +40,33 @@ function PersoneelRegisterCard() {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   // 🔄 Centrale fetch (herbruikbaar)
-  const fetchUsers = useCallback(() => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
-    fetch("http://localhost:5001/api/users")
-      .then((res) => res.json())
-      .then((data) => {
-        const mapped = data
-          // 🔐 alleen actieve users
-          .filter((u) => u.is_active === 1)
-          .map((u) => ({
-            id: u.user_id,
-            code: `u${u.user_id}`,
-            lastName: u.last_name,
-            firstName: u.first_name,
-            roleKey: roleToKey(u.role),
-            roleLabel: roleToLabel(u.role),
-            email: u.email,
-          }));
+    try {
+      const res = fetch(`${API_BASE_URL}/api/users`);
+      const data = await res.json();
+      const mapped = data
+        .filter((u) => u.is_active === 1)
+        .map((u) => ({
+          id: u.user_id,
+          code: `u${u.user_id}`,
+          lastName: u.last_name,
+          firstName: u.first_name,
+          roleKey: roleToKey(u.role),
+          roleLabel: roleToLabel(u.role),
+          email: u.email,
+        }));
 
-        setRows(mapped);
-      })
-      .catch((err) => console.error("Fetch users error:", err))
-      .finally(() => setLoading(false));
-  }, []);
+      setRows(mapped);
+    } catch (err) {
+      console.error("Fetch users error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL]);
 
   // init
   useEffect(() => {
@@ -78,10 +81,8 @@ function PersoneelRegisterCard() {
     if (!confirm) return;
 
     try {
-      await fetch(`http://localhost:5001/api/users/${userId}`, {
-        method: "DELETE",
-      });
-
+      await fetch(`${API_BASE_URL}/api/users/${userId}`, { method: "DELETE" });
+      
       // 🔄 refresh lijst
       fetchUsers();
     } catch (err) {
@@ -91,16 +92,10 @@ function PersoneelRegisterCard() {
 
   // filters + search
   const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      const usingRoleFilter =
-        selectedRoles.length > 0 &&
-        selectedRoles.length < ROLE_OPTIONS.length;
-
-      if (usingRoleFilter && !selectedRoles.includes(row.roleKey)) {
-        return false;
-      }
-
+    return rows.filter(row => {
+      if (selectedRoles.length > 0 && !selectedRoles.includes(row.roleKey)) return false;
       if (!search) return true;
+
       const haystack = `${row.code} ${row.lastName} ${row.firstName} ${row.email}`.toLowerCase();
       return haystack.includes(search.toLowerCase());
     });
