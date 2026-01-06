@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Topbar from "../../components/layout/Topbar";
+import PageLayout from "../../components/layout/PageLayout";
 import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import HistoryModal from "../../components/Assistent/HistoryModal";
 import { Search, Eye } from "lucide-react";
@@ -33,10 +33,8 @@ function Historiek() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E5DCE7]">
-      <Topbar />
-      <main className="max-w-6xl mx-auto py-8 px-6 space-y-6">
-        <AssistentNavBar />
+    <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
+      <AssistentNavBar />
 
         <section className="bg-white rounded-3xl p-8 shadow-sm">
           <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
@@ -85,15 +83,14 @@ function Historiek() {
             </table>
           </div>
         </section>
-      </main>
 
       {selectedHistory && (
-        <HistoryModal 
-          data={selectedHistory} 
-          onClose={() => setSelectedHistory(null)} 
+        <HistoryModal
+          data={selectedHistory}
+          onClose={() => setSelectedHistory(null)}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }
 
