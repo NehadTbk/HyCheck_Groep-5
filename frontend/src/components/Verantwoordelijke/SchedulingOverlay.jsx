@@ -1,18 +1,33 @@
 import { use, useEffect, useState } from "react";
 import { X, Plus, Trash2, Clock } from "lucide-react";
 
-const [dentists, setDentists] = useState(null);
+function SchedulingOverlay() {
+const [dentists, setDentists] = useState([]);
+const [boxes, setBoxes] = useState([]);
+const [assistants, setAssistants] = useState([]);
 
 useEffect(() => {
-    async function fetchDentists() {
-        const response = await fetch("/api/dentists");
+    async function fetchData() {
+        const response = await fetch("/api/scheduling-data");
         const data = await response.json();
-        setDentists(data);
+
+        setDentists(data.dentists);
+        setBoxes(data.boxes);
+        setAssistants(data.assistants);
     }
 
-    fetchDentists();
+    fetchData();
 }, []);
 
-const dentistNames = dentists ? dentists.map(dentist => dentist.name) : [];
+return (
+    <div>
+      <select>
+        {dentists.map((d) => (
+          <option key={d}>{d}</option>
+        ))}
+      </select>
+    </div>
+);
+}
 
-export default dentistNames;
+export default SchedulingOverlay;
