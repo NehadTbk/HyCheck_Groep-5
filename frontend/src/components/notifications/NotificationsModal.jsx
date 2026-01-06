@@ -1,9 +1,56 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { X, Bell, CheckCircle, AlertCircle, Info } from "lucide-react";
 import { useTranslation } from "../../i18n/useTranslation";
 
 function NotificationsModal({ isOpen, onClose, notifications = [] }) {
   const { t } = useTranslation();
+  const [position, setPosition] = useState({ x: window.innerWidth / 2 - 192, y: 100 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset position when modal closes
+      setPosition({ x: window.innerWidth / 2 - 192, y: 100 });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isDragging) {
+        setPosition({
+          x: e.clientX - dragOffset.x,
+          y: e.clientY - dragOffset.y
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
+
+  const handleMouseDown = (e) => {
+    if (modalRef.current) {
+      const rect = modalRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+      setIsDragging(true);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -44,17 +91,26 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
 
   return (
     <>
-      {/* Backdrop with blur */}
+      {/* Backdrop without blur */}
       <div
-        className="fixed inset-0 backdrop-blur-sm z-40"
+        className="fixed inset-0 z-40"
         onClick={onClose}
       />
 
-      {/* Modal - Centered */}
-      <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-        <div className="w-96 max-h-[600px] bg-white rounded-xl shadow-2xl flex flex-col pointer-events-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      {/* Draggable Modal */}
+      <div
+        ref={modalRef}
+        className="fixed w-96 max-h-[600px] bg-white rounded-xl shadow-2xl flex flex-col z-50"
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+        }}
+      >
+        {/* Header - Draggable */}
+        <div
+          className="flex items-center justify-between p-4 border-b border-gray-200 cursor-move select-none"
+          onMouseDown={handleMouseDown}
+        >
           <div className="flex items-center gap-2">
             <Bell className="text-[#5C2D5F]" size={24} />
             <h2 className="text-xl font-bold text-gray-800">
@@ -68,6 +124,7 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
           </div>
           <button
             onClick={onClose}
+            onMouseDown={(e) => e.stopPropagation()}
             className="text-gray-500 hover:text-gray-700 transition"
           >
             <X size={24} />
@@ -146,7 +203,6 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
               )}
             </>
           )}
-        </div>
         </div>
       </div>
     </>
