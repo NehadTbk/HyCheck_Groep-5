@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import Topbar from "../../components/layout/Topbar";
 import PageLayout from "../../components/layout/PageLayout";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
-import Personeelsregister from '../../components/personeel/Personeelsregister';
+import Personeelsregister from '../../components/personeel/PersoneelsRegister';
 import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoegenModal';
 
 function AfdelingshoofdPersoneel() {
