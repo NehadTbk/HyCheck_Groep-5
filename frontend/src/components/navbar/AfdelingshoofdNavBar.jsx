@@ -22,14 +22,23 @@ function AfdelingshoofdNavBar() {
       label: t('navbar.mijnPersoneel'),
       href: '/afdelingshoofd/mijn-personeel',
       active: location.pathname === '/afdelingshoofd/mijn-personeel'
+    },
+    {
+      key: 'monthly-overview',
+      label: 'Maandoverzicht',
+      href: '/afdelingshoofd/overzicht-maanden',
+      active: location.pathname === '/afdelingshoofd/overzicht-maanden'
     }
   ];
 
   return (
     <BaseNavBar
       items={items}
-      showInstructions={false}
+      showInstructions={true}
       showNotifications={true}
+      activeColor="#C1A9CF"
+      activeTextColor="#2C1E33"
+      instructiesHref="/instructies"
     />
   );
 }

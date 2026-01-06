@@ -6,10 +6,12 @@ import AfdelingshoofdMonthlyOverview from "./pages/Afdelinghoofd/AfdelingshoofdM
 import VerantwoordelijkeDashboard from "./pages/Verantwoordelijke/VerantwoordelijkeDashboard";
 import VerantwoordelijkePersoneel from "./pages/Verantwoordelijke/VerantwoordelijkePersoneel";
 import VerantwoordelijkeRapport from "./pages/Verantwoordelijke/VerantwoordelijkeRapport";
+import VerantwoordelijkeBoxen from "./pages/Verantwoordelijke/VerantwoordelijkeBoxen";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
 import Historiek from "./pages/Assistent/Historiek";
+import Instructies from "./pages/Instructies";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -56,6 +58,13 @@ function App() {
           </ProtectedRoute>
           }
         />
+        <Route
+          path="/verantwoordelijke/boxen"
+          element={<ProtectedRoute allowedRoles={['responsible']}>
+            <VerantwoordelijkeBoxen />
+          </ProtectedRoute>
+          }
+        />
 
         {/* Assistent routes */}
         <Route
@@ -94,6 +103,16 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['assistant']}>
               <Historiek />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Shared Instructies route - accessible by all authenticated users */}
+        <Route
+          path="/instructies"
+          element={
+            <ProtectedRoute allowedRoles={['assistant', 'responsible', 'admin']}>
+              <Instructies />
             </ProtectedRoute>
           }
         />

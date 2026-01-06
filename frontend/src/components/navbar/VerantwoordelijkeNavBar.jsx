@@ -13,10 +13,10 @@ function VerantwoordelijkeNavBar() {
       active: location.pathname === '/verantwoordelijke/dashboard'
     },
     {
-      key: 'kalender',
+      key: 'boxen',
       label: 'Mijn Boxen',
-      href: '/verantwoordelijke/kalender',
-      active: location.pathname === '/verantwoordelijke/kalender'
+      href: '/verantwoordelijke/boxen',
+      active: location.pathname === '/verantwoordelijke/boxen'
     },
     {
       key: 'rapporten',
@@ -35,8 +35,11 @@ function VerantwoordelijkeNavBar() {
   return (
     <BaseNavBar
       items={items}
-      showInstructions={false}
+      showInstructions={true}
       showNotifications={true}
+      activeColor="#C1A9CF"
+      activeTextColor="#2C1E33"
+      instructiesHref="/instructies"
     />
   );
 }
