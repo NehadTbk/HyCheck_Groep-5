@@ -1,26 +1,80 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PageLayout from "../components/layout/PageLayout";
 import AssistentNavBar from "../components/navbar/AssistentNavBar";
 import VerantwoordelijkeNavBar from "../components/navbar/VerantwoordelijkeNavBar";
 import AfdelingshoofdNavBar from "../components/navbar/AfdelingshoofdNavBar";
-import { BookOpen, Edit2, Save, X } from "lucide-react";
+import { BookOpen, Edit2, Save, X, Image as ImageIcon } from "lucide-react";
+
+const IMG_BASE = "/instructions"; // files live in: frontend/public/instructions
 
 function Instructies() {
   const [isEditing, setIsEditing] = useState(false);
+
   const [instructions, setInstructions] = useState({
     title: "Instructies",
-    sections: [
+    tasks: [
+      { nr: 1, group: "Ochtend", title: "Filters", lines: ["Reinig de voorfilters."], images: ["task-1.png"] },
       {
-        id: 1,
-        title: "Sectie titel",
-        content: "Voeg hier uw instructie tekst toe..."
-      }
-    ]
+        nr: 2,
+        group: "Ochtend",
+        title: "Waterleidingen – Lange spoeling",
+        lines: [
+          "Plaats alle instrumenten die water gebruiken in de spoelhouder.",
+          "Buig de handstukken in een hoek van minstens 90° en start de lange spoeling.",
+        ],
+        images: ["task-2.png"],
+      },
+      {
+        nr: 3,
+        group: "Einde van de dag",
+        title: "Oppervlakken",
+        lines: ["Reinig de bekleding met een desinfectiemiddel dat door Planmeca is goedgekeurd."],
+        images: ["task-3.png"],
+      },
+      {
+        nr: 4,
+        group: "Einde van de dag",
+        title: "Afzuigsysteem – Reiniging van de afzuigslangen",
+        lines: [
+          "Plaats de afzuigslangen in de houder.",
+          "Start de reiniging van de afzuigslangen.",
+          "Desinfecteer de afzuigonderdelen in een thermodesinfector.",
+        ],
+        images: ["task-4.png"],
+      },
+      {
+        nr: 5,
+        group: "Einde van de dag",
+        title: "Speekselopvangbak (Crachot)",
+        lines: ["Leeg en reinig het filter.", "Leeg het filter niet in de afvoer!", "Vul met water tot max. 65°C."],
+        images: ["task-5.png"],
+      },
+      {
+        nr: 6,
+        group: "Elke week",
+        title: "MD555 cleaner – Wekelijkse reiniging",
+        lines: ["Gebruik MD 555 cleaner.", "1–2 liter oplossing via Orcosy.", "Laat 30 min–2 uur inwerken.", "Spoel met 2 liter water."],
+        images: ["task-6-1.png", "task-6-2.png", "task-6-3.png", "task-6-4.png"],
+      },
+      {
+        nr: 7,
+        group: "Elke maand",
+        title: "Afzuigsysteem en waterleidingen",
+        lines: ["Reinig spoelhouder in thermodesinfector.", "Zo nodig steriliseren in autoclaaf."],
+        images: ["task-7.png"],
+      },
+      {
+        nr: 8,
+        group: "Elke maand",
+        title: "Filters",
+        lines: ["Vervang de voorfilters.", "Leeg de VSA-fles.", "Leeg de oliecollector."],
+        images: ["task-8.png"],
+      },
+    ],
   });
 
   const [editedInstructions, setEditedInstructions] = useState(instructions);
 
-  // Get user from localStorage
   const user = (() => {
     try {
       return JSON.parse(localStorage.getItem("user"));
@@ -29,10 +83,8 @@ function Instructies() {
     }
   })();
 
-  // Check if user can edit (responsible or admin)
   const canEdit = user?.role === "responsible" || user?.role === "admin";
 
-  // Get appropriate navbar based on role
   const getNavBar = () => {
     switch (user?.role) {
       case "assistant":
@@ -57,49 +109,25 @@ function Instructies() {
   };
 
   const handleSave = () => {
-    // TODO: Save to backend/database
     setInstructions(editedInstructions);
     setIsEditing(false);
-    // Here you would typically make an API call to save the instructions
     console.log("Saving instructions:", editedInstructions);
   };
 
   const handleTitleChange = (e) => {
-    setEditedInstructions({
-      ...editedInstructions,
-      title: e.target.value
-    });
+    setEditedInstructions({ ...editedInstructions, title: e.target.value });
   };
 
-  const handleSectionChange = (sectionId, field, value) => {
+  const handleTaskChange = (taskNr, field, value) => {
     setEditedInstructions({
       ...editedInstructions,
-      sections: editedInstructions.sections.map(section =>
-        section.id === sectionId ? { ...section, [field]: value } : section
-      )
-    });
-  };
-
-  const addSection = () => {
-    const newSection = {
-      id: Date.now(),
-      title: "Nieuwe sectie",
-      content: "Voeg hier de instructies toe..."
-    };
-    setEditedInstructions({
-      ...editedInstructions,
-      sections: [...editedInstructions.sections, newSection]
-    });
-  };
-
-  const removeSection = (sectionId) => {
-    setEditedInstructions({
-      ...editedInstructions,
-      sections: editedInstructions.sections.filter(section => section.id !== sectionId)
+      tasks: editedInstructions.tasks.map((t) => (t.nr === taskNr ? { ...t, [field]: value } : t)),
     });
   };
 
   const displayInstructions = isEditing ? editedInstructions : instructions;
+
+  const groups = ["Ochtend", "Einde van de dag", "Elke week", "Elke maand"];
 
   return (
     <PageLayout>
@@ -122,7 +150,6 @@ function Instructies() {
             )}
           </div>
 
-          {/* Edit/Save buttons - only for responsible and admin */}
           {canEdit && (
             <div className="flex gap-2">
               {isEditing ? (
@@ -155,57 +182,138 @@ function Instructies() {
           )}
         </div>
 
-        {/* Content */}
-        <div className="space-y-6">
-          {displayInstructions.sections.map((section) => (
-            <div key={section.id} className="bg-gray-50 p-6 rounded-xl relative">
-              {isEditing && (
-                <button
-                  onClick={() => removeSection(section.id)}
-                  className="absolute top-4 right-4 text-red-500 hover:text-red-700"
-                  title="Verwijder sectie"
-                >
-                  <X size={20} />
-                </button>
-              )}
+        {/* Tasks grouped */}
+        <div className="space-y-8">
+          {groups.map((groupTitle) => {
+            const groupTasks = displayInstructions.tasks.filter((t) => t.group === groupTitle);
+            if (groupTasks.length === 0) return null;
 
-              {isEditing ? (
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={section.title}
-                    onChange={(e) => handleSectionChange(section.id, "title", e.target.value)}
-                    className="text-xl font-bold text-gray-800 w-full border-b-2 border-[#5C2D5F] focus:outline-none bg-transparent"
-                    placeholder="Sectie titel"
-                  />
-                  <textarea
-                    value={section.content}
-                    onChange={(e) => handleSectionChange(section.id, "content", e.target.value)}
-                    className="text-gray-700 text-sm w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#5C2D5F] min-h-[100px]"
-                    placeholder="Sectie inhoud"
-                  />
+            return (
+              <div key={groupTitle} className="bg-gray-50 p-6 rounded-xl">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">{groupTitle}</h2>
+
+                <div className="space-y-4">
+                  {groupTasks.map((task) => {
+                    const imgs = task.images || [];
+                    const isWeeklyTask6 = task.nr === 6;
+
+                    return (
+                      <div key={task.nr} className="bg-white rounded-xl border border-gray-200 p-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4">
+                          {/* LEFT: text */}
+                          <div className="flex items-start gap-4">
+                            <div className="w-8 h-8 rounded-full bg-[#5C2D5F] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                              {task.nr}
+                            </div>
+
+                            <div className="flex-1">
+                              {isEditing ? (
+                                <input
+                                  value={task.title}
+                                  onChange={(e) => handleTaskChange(task.nr, "title", e.target.value)}
+                                  className="w-full font-bold text-gray-800 border-b border-gray-300 focus:outline-none"
+                                />
+                              ) : (
+                                <div className="font-bold text-gray-800">{task.title}</div>
+                              )}
+
+                              {isEditing ? (
+                                <textarea
+                                  value={(task.lines || []).join("\n")}
+                                  onChange={(e) =>
+                                    handleTaskChange(
+                                      task.nr,
+                                      "lines",
+                                      e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)
+                                    )
+                                  }
+                                  className="mt-2 w-full text-sm p-2 border border-gray-300 rounded-lg focus:outline-none min-h-[90px]"
+                                />
+                              ) : (
+                                <ul className="mt-2 list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                  {(task.lines || []).map((line, idx) => (
+                                    <li key={idx}>{line}</li>
+                                  ))}
+                                </ul>
+                              )}
+
+                              {/* Edit image filenames */}
+                              {isEditing && (
+                                <div className="mt-3 text-xs text-gray-600">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <ImageIcon size={16} />
+                                    <span>Afbeeldingen (1 filename per lijn in /public/instructions)</span>
+                                  </div>
+                                  <textarea
+                                    value={imgs.join("\n")}
+                                    onChange={(e) =>
+                                      handleTaskChange(
+                                        task.nr,
+                                        "images",
+                                        e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)
+                                      )
+                                    }
+                                    placeholder={"task-1.png\n(1 per lijn)"}
+                                    className="w-full text-xs p-2 border border-gray-300 rounded-lg focus:outline-none min-h-[70px]"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* RIGHT: images */}
+                          <div className="rounded-lg border border-gray-200 bg-white p-3">
+                            {imgs.length === 0 ? (
+                              <div className="text-sm text-gray-500 p-4 text-center">Geen afbeelding ingesteld</div>
+                            ) : (
+                              <div
+                                className={
+                                  isWeeklyTask6
+                                    ? "flex flex-col gap-3" // ✅ TASK 6 vertical, in order
+                                    : imgs.length === 1
+                                    ? "grid grid-cols-1 gap-2"
+                                    : "grid grid-cols-2 gap-2"
+                                }
+                              >
+                                {imgs.map((file, idx) => {
+                                  const src = `${IMG_BASE}/${file}`;
+                                  const boxHeight = isWeeklyTask6 ? "h-[180px]" : "h-[160px]";
+
+                                  return (
+                                    <div
+                                      key={`${task.nr}-${idx}`}
+                                      className={`${boxHeight} rounded-md border border-gray-200 overflow-hidden flex items-center justify-center bg-white`}
+                                    >
+                                      <img
+                                        src={src}
+                                        alt={`Task ${task.nr} - ${idx + 1}`}
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = "none";
+                                          const parent = e.currentTarget.parentElement;
+                                          if (parent) {
+                                            parent.innerHTML = `<div style="font-size:12px;color:#6b7280;padding:8px;text-align:center">
+                                              Niet gevonden:<br/>${src}
+                                            </div>`;
+                                          }
+                                        }}
+                                      />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ) : (
-                <>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3">{section.title}</h3>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">{section.content}</p>
-                </>
-              )}
-            </div>
-          ))}
-
-          {/* Add section button - only in edit mode */}
-          {isEditing && (
-            <button
-              onClick={addSection}
-              className="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 text-gray-500 hover:border-[#5C2D5F] hover:text-[#5C2D5F] transition-colors"
-            >
-              + Nieuwe sectie toevoegen
-            </button>
-          )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Info section */}
         {!isEditing && (
           <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mt-8">
             <h3 className="font-bold text-gray-800 mb-2">Meer informatie nodig?</h3>
