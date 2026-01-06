@@ -1,4 +1,4 @@
-const db = require("../config/db");
+import db from "../config/db.js";
 
 const COMPANY_CONFIG = {
   openTime: "08:00",
@@ -7,12 +7,12 @@ const COMPANY_CONFIG = {
 };
 
 // Get de scheduling data
-exports.getSchedulingData = async (req, res) => {
+export const getSchedulingData = async (req, res) => {
   try {
     const [boxes] = await db.query(
       "SELECT id, name FROM boxes ORDER BY id ASC"
     );
-
+  
     //hardcoded demo data
     const dentists = [
       "Dr. Smith",
@@ -48,8 +48,8 @@ exports.getSchedulingData = async (req, res) => {
   }
 };
 
-// Post de box
-exports.createBox = async (req, res) => {
+// Create de box
+export const createBox = async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -73,7 +73,7 @@ exports.createBox = async (req, res) => {
 };
 
 // Delete de box
-exports.deleteBox = async (req, res) => {
+export const deleteBox = async (req, res) => {
   try {
     const { id } = req.params;
 
