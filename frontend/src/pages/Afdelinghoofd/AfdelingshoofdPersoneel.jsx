@@ -1,13 +1,22 @@
 // pages/Afdelinghoofd/AfdelingshoofdPersoneel.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Topbar from "../../components/layout/Topbar";
 import PageLayout from "../../components/layout/PageLayout";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import Personeelsregister from '../../components/personeel/Personeelsregister';
 import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoegenModal';
 
 function AfdelingshoofdPersoneel() {
+  const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(()=> {
+    if (location.state?.openAddPersonnel === true) {
+      setIsModalOpen(true);
+    }
+  }, [location.state]);
 
   const handleCreated = () => {
     setIsModalOpen(false);

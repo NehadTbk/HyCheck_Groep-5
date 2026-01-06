@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useLanguage } from '../../i18n/useLanguage';
 
 function BaseNavBar({
   items = [],
@@ -12,6 +13,7 @@ function BaseNavBar({
   instructiesHref = '#',
   children
 }) {
+  const { language, setLanguage } = useLanguage();
   const getActiveStyles = (isActive) => {
     if (isActive) {
       return 'font-semibold text-base py-2 px-4 rounded-full transition-all';
@@ -55,8 +57,7 @@ function BaseNavBar({
               <IoMdNotificationsOutline size={24} />
             </span>
           )}
-
-          <LanguageSwitcher variant="default" />
+          <LanguageSwitcher language={language} onLanguageChange={setLanguage} variant="default" />
 
           {children}
         </div>
