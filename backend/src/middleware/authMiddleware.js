@@ -1,14 +1,24 @@
 import jwt from "jsonwebtoken";
 
 export const authMiddleware = (req, res, next) => {
-    const token = req.headers.authorization?.split(" ") [1];
+    const authHeader = req.headers.authorization;
 
-    if(!token) return res.status(401).json({message: "No token provided"});
+    if(!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({message: "No token provided"});
+    }
+    const token = req.headers.authorization?.split(" ")[1];
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        req.user = {
+            id: decoded.id,
+            email: decoded.email,
+            role: decoded.role,
+            permissions: decoded.permissions || []
+        };
         next();
-    } catch {
-        res.status(401).json({message: "Invalid token"})
+    } catch (err) {
+        console.error("Auth error: ", err)
+        res.status(401).json({ message: "Invalid token" })
     }
 };
