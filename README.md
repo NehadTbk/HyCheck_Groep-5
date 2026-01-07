@@ -93,6 +93,7 @@ Daarna mag je deze commandos ook runnen:
 - npm install bcryptjs
 - npm install express-rate-limit
 - npm install
+- npm install nodemailer
 - npm install xlsx
 - npm install jspdf jspdf-autotable 
 

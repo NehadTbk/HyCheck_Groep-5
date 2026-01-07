@@ -10,7 +10,9 @@
     "errors": {
         "loginFailed": "Echec de connexion, veuillez réesayer.",
         "serverError": "Une erreur est survenue, veuillez réesayer plus tard...",
-        "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard..."
+        "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard...",
+        "serverUnavailable": "Connexion au serveur échoué... Veuillez réesayer plus tard",
+        "offline": "Vous etes hors ligne. Vérifier votre connexion internet"
     },
     "navbar": {
         "dashboard": "Tableau de bord",

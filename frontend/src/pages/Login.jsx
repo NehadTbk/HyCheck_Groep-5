@@ -31,11 +31,17 @@ function Login() {
 
             });
 
-            const data = await response.json();
+            let data = null;
+
+            try{
+            data = await response.json();
+            } catch {
+                console.log('Empty json');
+            }
 
             if (!response.ok) {
                 setError(
-                    t(`errors.${data.code}`) ||
+                    data?.message ||
                     t("errors.loginFailed")
                 );
                 return;
@@ -63,7 +69,9 @@ function Login() {
 
             navigate(redirectPath);
         } catch (err) {
-            setError("Server error");
+            setError(
+                navigator.onLine ? t("errors.serverUnavailable") : t("errors.offline")
+            );
             console.error("Login error:", err);
         } finally {
             setLoading(false);
