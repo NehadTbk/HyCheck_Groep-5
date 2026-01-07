@@ -87,7 +87,7 @@ const PersoneelToevoegenModal = ({
                     lastName: formData.achternaam,
                     email: formData.email,
                     role: role,
-                    sendEmail: false
+                    sendEmail: true
                 })
             });
             const data = await response.json();

@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { findUserByEmail, createUser } from "../models/User.js";
+import { sendWelcomeEmail } from "../utils/mailer.js";
+import pool from "../config/db.js";
 
 const rolePermissions = {
     admin: ["USER_CREATE", "USER_DELETE", "USER_VIEW"],
@@ -38,6 +40,19 @@ export const login = async (req, res) => {
             });
         }
 
+        if (user.must_change_password) {
+            return res.status(200).json({
+                success: true,
+                message: "Password must be changed",
+                mustChangePassword: true,
+                user: {
+                    id: user.user_id,
+                    email: user.email,
+                    role: user.role,
+                    fullName: `${user.first_name} ${user.last_name}`
+                }
+            });
+        }
         const permissions = rolePermissions[user.role] || [];
 
         // 4. JWT token genereren
@@ -52,17 +67,7 @@ export const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "24h" }
         );
-        res.json({
-            success: true,
-            token,
-            user: {
-                id: user.user_id,
-                fullName: `${user.first_name} ${user.last_name}`,
-                email: user.email,
-                role: user.role,
-                permissions: rolePermissions[user.role] || []
-            }
-        });
+
 
 
         // 5. Response sturen
@@ -95,7 +100,7 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-    const { firstName, lastName, email, role, sendEmail = false } = req.body;
+    const { firstName, lastName, email, role, sendEmail = true } = req.body;
 
     try {
 
@@ -129,11 +134,17 @@ export const register = async (req, res) => {
             passwordHash: hashedPassword,
             role: role,
             isActive: 1,
-            badgeId: null
+            badgeId: null,
+            mustChangePassword: 1
         });
 
         if (sendEmail) {
-            console.log(`E-mail zou gestuurd worden naar ${email}`);
+            try {
+                await sendWelcomeEmail(email, tempPassword, `${firstName} ${lastName}`);
+                console.log("Mail success verzonden naar: ", email);
+            } catch (err) {
+                console.error("Fout bij het verzenden van de welkom-mail: ", err);
+            }
         }
 
         res.status(201).json({
@@ -161,16 +172,56 @@ export const logout = async (req, res) => {
         if (token) {
             console.log('User logged out');
         }
-        res.json({
-            success: true,
-            message: "Uitgelogd"
-        });
+        res.json({ success: true, message: "Uitgelogd" });
+
 
     } catch (err) {
         console.error('Logout error:', err);
         res.status(500).json({
             success: false,
             message: "Server error"
+        });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const user = req.user;
+
+    try {
+       
+        const userToUpdate = await findUserByEmail(user.email);
+        if (!userToUpdate) {
+            return res.status(404).json({ success: false, message: "Gebruiker niet gevonden" });
+        }
+
+        // Controleer het oude wachtwoord
+        const match = await bcrypt.compare(oldPassword, userToUpdate.password_hash);
+        if (!match) {
+            return res.status(400).json({ success: false, message: "Oud wachtwoord klopt niet" });
+        }
+
+        
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await pool.query(
+            `UPDATE users 
+             SET password_hash = ?, must_change_password = 0
+             WHERE email = ?`,
+            [hashedPassword, user.email]
+        );
+
+        res.json({
+            success: true,
+            message: "Wachtwoord succesvol gewijzigd",
+            email: user.email
+        });
+
+    } catch (err) {
+        console.error("Change password error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Server error: " + err.message
         });
     }
 };
