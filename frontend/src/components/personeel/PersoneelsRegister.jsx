@@ -35,12 +35,23 @@ const roleToLabel = (role) => {
   }
 };
 
-function PersoneelRegisterCard() {
+// robust local user read (optional filtering)
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user"));
+  } catch {
+    return null;
+  }
+};
+
+function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
   const [rows, setRows] = useState([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+  // ✅ fallback + remove trailing slash
+  const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
 
   // 🔄 Centrale fetch (herbruikbaar)
   const fetchUsers = useCallback(async () => {
@@ -48,54 +59,72 @@ function PersoneelRegisterCard() {
     try {
       const res = await fetch(`${API_BASE_URL}/api/users`, {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-      const data = await res.json();
-        const mapped = data
-          .filter((u) => u.is_active === 1)
-          .map((u) => ({
-            id: u.user_id,
-            code: `u${u.user_id}`,
-            lastName: u.last_name,
-            firstName: u.first_name,
-            roleKey: roleToKey(u.role),
-            roleLabel: roleToLabel(u.role),
-            email: u.email,
-          }));
 
-        setRows(mapped);
-      } catch (err) {
-        console.error("Fetch users error:", err);
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`GET /api/users failed (${res.status}): ${txt?.slice(0, 200)}`);
       }
-    }, [API_BASE_URL]);
 
-  // init
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : [];
+
+      // ✅ accept is_active as 1 / "1" / true
+      let mapped = list
+        .filter((u) => u.is_active === 1 || u.is_active === "1" || u.is_active === true)
+        .map((u) => ({
+          id: u.user_id,
+          code: `u${u.user_id}`,
+          lastName: u.last_name,
+          firstName: u.first_name,
+          roleKey: roleToKey(u.role),
+          roleLabel: roleToLabel(u.role),
+          email: u.email,
+        }));
+
+      // Optional: if NOT showAllUsers, a responsible user only sees dentist + assistant
+      if (!showAllUsers) {
+        const currentUser = getLocalUser();
+        if (currentUser?.role === "responsible") {
+          mapped = mapped.filter((r) => r.roleKey === "tandarts" || r.roleKey === "tandartsassistent");
+        }
+      }
+
+      setRows(mapped);
+    } catch (err) {
+      console.error("Fetch users error:", err);
+      setRows([]); // keep UI consistent
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, showAllUsers]);
+
+  // init + refetch when modal created (refreshKey changes)
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, [fetchUsers, refreshKey]);
 
   // 🗑 verwijderen
   const handleDelete = async (userId) => {
-    const confirm = window.confirm(
-      "Ben je zeker dat je dit personeelslid wil verwijderen?"
-    );
+    const confirm = window.confirm("Ben je zeker dat je dit personeelslid wil verwijderen?");
     if (!confirm) return;
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json"
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
       });
-      if(!res.ok){
-        const errData = await res.json();
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
         throw new Error(errData.message || "Delete failed");
       }
+
       fetchUsers();
     } catch (err) {
       console.error("Delete user error:", err);
@@ -107,8 +136,7 @@ function PersoneelRegisterCard() {
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
       const usingRoleFilter =
-        selectedRoles.length > 0 &&
-        selectedRoles.length < ROLE_OPTIONS.length;
+        selectedRoles.length > 0 && selectedRoles.length < ROLE_OPTIONS.length;
 
       if (usingRoleFilter && !selectedRoles.includes(row.roleKey)) {
         return false;
@@ -126,10 +154,7 @@ function PersoneelRegisterCard() {
         <h1 className="text-3xl font-semibold">Personeelsregister</h1>
 
         <div className="flex items-center gap-4">
-          <PersoneelFilters
-            selectedRoles={selectedRoles}
-            onChange={setSelectedRoles}
-          />
+          <PersoneelFilters selectedRoles={selectedRoles} onChange={setSelectedRoles} />
           <PersoneelSearch value={search} onChange={setSearch} />
         </div>
       </div>
@@ -137,10 +162,7 @@ function PersoneelRegisterCard() {
       {loading ? (
         <p className="mt-6 text-sm text-gray-500">Personeel laden…</p>
       ) : (
-        <PersoneelTable
-          rows={filteredRows}
-          onDelete={handleDelete}   // 👈 doorgeven
-        />
+        <PersoneelTable rows={filteredRows} onDelete={handleDelete} />
       )}
     </div>
   );

@@ -13,6 +13,7 @@ function Rapporten({ data = [] }) {
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Aantal taken</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Soort taken</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Reden</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,6 +30,7 @@ function Rapporten({ data = [] }) {
                                 </span>
                             </td>
                             <td className="px-6 py-4 text-sm">{item.status}</td>
+                            <td>{item.reden || "N.v.t."}</td>
                         </tr>
                     ))}
                     {data.length === 0 && (
