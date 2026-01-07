@@ -123,11 +123,11 @@ export default function SchedulingOverlay() {
       prev.map((s) =>
         s.id === shiftId
           ? {
-              ...s,
-              tasks: s.tasks.includes(task)
-                ? s.tasks.filter((t) => t !== task)
-                : [...s.tasks, task],
-            }
+            ...s,
+            tasks: s.tasks.includes(task)
+              ? s.tasks.filter((t) => t !== task)
+              : [...s.tasks, task],
+          }
           : s
       )
     );
@@ -223,22 +223,30 @@ export default function SchedulingOverlay() {
             {Object.entries(TASK_GROUPS).map(([key, g]) => (
               <Toggle
                 key={key}
+                label={g.label}
                 active={shift.groups.includes(key)}
                 onClick={() => toggleGroup(shift.id, key)}
-                label={g.label}
+                colorClass={typeColors[key]}
               />
             ))}
           </Section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {shift.tasks.map((t) => (
-              <Toggle
-                key={t}
-                active
-                onClick={() => toggleTask(shift.id, t)}
-                label={t}
-              />
-            ))}
+            {shift.tasks.map((task) => {
+              const groupKey = Object.keys(TASK_GROUPS).find((key) =>
+                TASK_GROUPS[key].tasks.includes(task)
+              );
+
+              return (
+                <Toggle
+                  key={task}
+                  label={task}
+                  active
+                  onClick={() => toggleTask(shift.id, task)}
+                  colorClass={typeColors[groupKey]}
+                />
+              );
+            })}
           </div>
         </div>
       ))}
@@ -261,11 +269,10 @@ function Toggle({ label, active, onClick, colorClass }) {
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded border text-center transition w-full ${
-        active
-          ? colorClass
-          : "bg-white border-gray-300 text-gray-600"
-      }`}
+      className={`p-2 rounded border text-center transition w-full ${active
+        ? colorClass
+        : "bg-white border-gray-300 text-gray-600"
+        }`}
     >
       {label}
     </button>
