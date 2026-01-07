@@ -4,10 +4,7 @@ import { Plus, Trash2, Clock } from "lucide-react";
 const TASK_GROUPS = {
   ochtend: {
     label: "Ochtend",
-    tasks: [
-      "Filters",
-      "Waterleidingen – Lange spoeling",
-    ],
+    tasks: ["Filters", "Waterleidingen – Lange spoeling"],
   },
   avond: {
     label: "Avond",
@@ -49,15 +46,11 @@ export default function SchedulingOverlay() {
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const res = await fetch("http://localhost:5001/api/scheduling-data");
-        const data = await res.json();
-        setDentists(data.dentists);
-        setBoxes(data.boxes);
-        setAssistants(data.assistants);
-      } catch (e) {
-        console.error(e);
-      }
+      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const data = await res.json();
+      setDentists(data.dentists);
+      setBoxes(data.boxes);
+      setAssistants(data.assistants);
     }
     fetchData();
   }, []);
@@ -67,13 +60,13 @@ export default function SchedulingOverlay() {
       ...prev,
       {
         id: Date.now(),
-        dentist: "",
-        box: "",
-        assistant: "",
+        dentist: null,
+        box: null,
+        assistant: null,
         start: "08:00",
         end: "17:00",
-        selectedGroups: [],
-        selectedTasks: [],
+        groups: [],
+        tasks: [],
       },
     ]);
   };
@@ -84,36 +77,32 @@ export default function SchedulingOverlay() {
     );
   };
 
-  const removeShift = (id) => {
+  const removeShift = (id) =>
     setShifts((prev) => prev.filter((s) => s.id !== id));
-  };
 
-  const toggleGroup = (shiftId, groupKey) => {
+  const toggleGroup = (shiftId, key) => {
     setShifts((prev) =>
       prev.map((s) => {
         if (s.id !== shiftId) return s;
 
-        const isActive = s.selectedGroups.includes(groupKey);
-        let newGroups;
-        let newTasks = [...s.selectedTasks];
+        const active = s.groups.includes(key);
+        let groups = active
+          ? s.groups.filter((g) => g !== key)
+          : [...s.groups, key];
 
-        if (isActive) {
-          newGroups = s.selectedGroups.filter((g) => g !== groupKey);
-          newTasks = newTasks.filter(
-            (t) => !TASK_GROUPS[groupKey].tasks.includes(t)
+        let tasks = [...s.tasks];
+
+        if (active) {
+          tasks = tasks.filter(
+            (t) => !TASK_GROUPS[key].tasks.includes(t)
           );
         } else {
-          newGroups = [...s.selectedGroups, groupKey];
-          TASK_GROUPS[groupKey].tasks.forEach((t) => {
-            if (!newTasks.includes(t)) newTasks.push(t);
+          TASK_GROUPS[key].tasks.forEach((t) => {
+            if (!tasks.includes(t)) tasks.push(t);
           });
         }
 
-        return {
-          ...s,
-          selectedGroups: newGroups,
-          selectedTasks: newTasks,
-        };
+        return { ...s, groups, tasks };
       })
     );
   };
@@ -124,9 +113,9 @@ export default function SchedulingOverlay() {
         s.id === shiftId
           ? {
               ...s,
-              selectedTasks: s.selectedTasks.includes(task)
-                ? s.selectedTasks.filter((t) => t !== task)
-                : [...s.selectedTasks, task],
+              tasks: s.tasks.includes(task)
+                ? s.tasks.filter((t) => t !== task)
+                : [...s.tasks, task],
             }
           : s
       )
@@ -134,9 +123,9 @@ export default function SchedulingOverlay() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
           <label className="font-semibold">Datum</label>
           <input
             type="date"
@@ -148,74 +137,53 @@ export default function SchedulingOverlay() {
 
         <button
           onClick={addShift}
-          className="bg-[#582F5B] text-white px-4 py-2 rounded flex items-center gap-2 hover:opacity-90"
+          className="bg-[#582F5B] text-white px-4 py-2 rounded flex items-center gap-2"
         >
           <Plus size={16} /> Add shift
         </button>
       </div>
 
       {shifts.map((shift) => (
-        <div
-          key={shift.id}
-          className="border rounded-lg p-4 space-y-4 bg-[#F9F6F9]"
-        >
+        <div key={shift.id} className="border rounded-lg p-4 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold text-[#582F5B]">Shift</h3>
             <button onClick={() => removeShift(shift.id)}>
-              <Trash2 className="text-red-500" size={18} />
+              <Trash2 size={18} className="text-red-500" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input
-              list="dentists"
-              placeholder="Tandarts"
-              value={shift.dentist}
-              onChange={(e) =>
-                updateShift(shift.id, "dentist", e.target.value)
-              }
-              className={`p-2 border rounded ${
-                shift.dentist && "bg-[#582F5B] text-white"
-              }`}
-            />
-            <datalist id="dentists">
-              {dentists.map((d) => (
-                <option key={d} value={d} />
-              ))}
-            </datalist>
+          <Section title="Tandarts">
+            {dentists.map((d) => (
+              <Toggle
+                key={d}
+                active={shift.dentist === d}
+                onClick={() => updateShift(shift.id, "dentist", d)}
+                label={d}
+              />
+            ))}
+          </Section>
 
-            <input
-              list="boxes"
-              placeholder="Box"
-              value={shift.box}
-              onChange={(e) => updateShift(shift.id, "box", e.target.value)}
-              className={`p-2 border rounded ${
-                shift.box && "bg-[#582F5B] text-white"
-              }`}
-            />
-            <datalist id="boxes">
-              {boxes.map((b) => (
-                <option key={b.id} value={b.name} />
-              ))}
-            </datalist>
+          <Section title="Behandelbox">
+            {boxes.map((b) => (
+              <Toggle
+                key={b.id}
+                active={shift.box === b.name}
+                onClick={() => updateShift(shift.id, "box", b.name)}
+                label={b.name}
+              />
+            ))}
+          </Section>
 
-            <input
-              list="assistants"
-              placeholder="Assistent"
-              value={shift.assistant}
-              onChange={(e) =>
-                updateShift(shift.id, "assistant", e.target.value)
-              }
-              className={`p-2 border rounded ${
-                shift.assistant && "bg-[#582F5B] text-white"
-              }`}
-            />
-            <datalist id="assistants">
-              {assistants.map((a) => (
-                <option key={a} value={a} />
-              ))}
-            </datalist>
-          </div>
+          <Section title="Assistent">
+            {assistants.map((a) => (
+              <Toggle
+                key={a}
+                active={shift.assistant === a}
+                onClick={() => updateShift(shift.id, "assistant", a)}
+                label={a}
+              />
+            ))}
+          </Section>
 
           <div className="flex items-center gap-3">
             <Clock size={16} />
@@ -240,35 +208,55 @@ export default function SchedulingOverlay() {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {Object.entries(TASK_GROUPS).map(([key, group]) => (
-              <button
+          <Section title="Taken">
+            {Object.entries(TASK_GROUPS).map(([key, g]) => (
+              <Toggle
                 key={key}
+                active={shift.groups.includes(key)}
                 onClick={() => toggleGroup(shift.id, key)}
-                className={`p-2 rounded border ${
-                  shift.selectedGroups.includes(key)
-                    ? "bg-[#582F5B] text-white"
-                    : "bg-white"
-                }`}
-              >
-                {group.label}
-              </button>
+                label={g.label}
+              />
             ))}
-          </div>
+          </Section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {shift.selectedTasks.map((task) => (
-              <button
-                key={task}
-                onClick={() => toggleTask(shift.id, task)}
-                className="p-2 border rounded bg-[#582F5B] text-white text-left"
-              >
-                {task}
-              </button>
+            {shift.tasks.map((t) => (
+              <Toggle
+                key={t}
+                active
+                onClick={() => toggleTask(shift.id, t)}
+                label={t}
+              />
             ))}
           </div>
         </div>
       ))}
     </div>
+  );
+}
+
+function Section({ title, children }) {
+  return (
+    <div>
+      <h4 className="font-medium mb-2">{title}</h4>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Toggle({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`p-2 rounded border text-center transition ${
+        active
+          ? "bg-[#582F5B] text-white"
+          : "bg-white border-gray-300"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
