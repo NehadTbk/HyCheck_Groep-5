@@ -9,13 +9,44 @@ router.get('/', async (req, res) => {
                 r.report_id AS id, 
                 r.start_date AS datum, 
                 r.period_type AS soort,
-                'Box 1' AS box, 
-                'Dr. Van Damme' AS tandarts, 
+                
+                
+                (SELECT b.name 
+                 FROM shift_assignments sa
+                 JOIN box b ON sa.box_id = b.box_id 
+                 WHERE sa.assignment_id = (
+                    SELECT assignment_id FROM shift_assignments 
+                    ORDER BY assignment_id DESC LIMIT 1
+                 ) LIMIT 1) AS box,
+
+                
+                
+                
                 CONCAT(u.first_name, ' ', u.last_name) AS assistent,
-                5 AS aantal,
-                'Voltooid' AS status
+
+                
+                (SELECT COUNT(*) FROM cleaning_task_status WHERE session_id = r.report_id) AS aantal,
+
+                
+                CASE 
+                    WHEN (SELECT COUNT(*) FROM cleaning_task_status WHERE session_id = r.report_id AND completed = 1) = 
+                         (SELECT COUNT(*) FROM cleaning_task_status WHERE session_id = r.report_id) 
+                         AND (SELECT COUNT(*) FROM cleaning_task_status WHERE session_id = r.report_id) > 0
+                    THEN 'Voltooid'
+                    ELSE 'Openstaand'
+                END AS status,
+
+                
+                (SELECT GROUP_CONCAT(DISTINCT 
+                COALESCE(cts.custom_comment, co.common_comment) 
+                SEPARATOR ', ') 
+                FROM cleaning_task_status cts
+                LEFT JOIN comment_option co ON cts.selected_comment_option_id = co.option_id
+                WHERE cts.session_id = r.report_id) AS reden
+
             FROM reports r
-            LEFT JOIN users u ON r.generated_by_user_id = u.user_id`;
+            LEFT JOIN users u ON r.generated_by_user_id = u.user_id
+            ORDER BY r.start_date DESC`;
 
         const [results] = await db.query(query);
         res.json(results);
@@ -25,5 +56,6 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 export default router;

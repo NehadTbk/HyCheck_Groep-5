@@ -8,11 +8,11 @@ function Rapporten({ data = [] }) {
                     <tr className="bg-[#F8F9FA]">
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Datum</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Box</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Tandarts</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Assistent</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Aantal taken</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Soort taken</th>
                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Reden</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,7 +20,6 @@ function Rapporten({ data = [] }) {
                         <tr key={item.id} className="bg-white hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4 text-sm border-b border-gray-100">{item.datum}</td>
                             <td className="px-6 py-4 text-sm border-b border-gray-100">{item.box}</td>
-                            <td className="px-6 py-4 text-sm border-b border-gray-100">{item.tandarts}</td>
                             <td className="px-6 py-4 text-sm border-b border-gray-100">{item.assistent}</td>
                             <td className="px-6 py-4 text-sm border-b border-gray-100">{item.aantal}</td>
                             <td className="px-6 py-4 text-sm border-b border-gray-100">
@@ -29,6 +28,7 @@ function Rapporten({ data = [] }) {
                                 </span>
                             </td>
                             <td className="px-6 py-4 text-sm">{item.status}</td>
+                            <td>{item.reden || "N.v.t."}</td>
                         </tr>
                     ))}
                     {data.length === 0 && (
