@@ -13,7 +13,7 @@ function StatsCard({ title, value, subtitle, icon = "default" }) {
   const IconComponent = iconMap[icon] || iconMap.default;
 
   return (
-    <div className="bg-white rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+    <div className="bg-white rounded-xl p-6 flex flex-col justify-between shadow-lg">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-sm font-medium text-gray-900">{title}</h3>

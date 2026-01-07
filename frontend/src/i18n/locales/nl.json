@@ -21,6 +21,15 @@
         "dashboard": "Dashboard",
         "mijnPersoneel": "Mijn Personeel",
         "maandoverzicht": "Maandoverzicht"
+    },
+    "notifications": {
+        "title": "Meldingen",
+        "noAlerts": "Geen nieuwe meldingen",
+        "new": "Nieuw",
+        "older": "Eerder",
+        "minutesAgo": "minuten geleden",
+        "hoursAgo": "uur geleden",
+        "daysAgo": "dagen geleden"
     }
 
 }

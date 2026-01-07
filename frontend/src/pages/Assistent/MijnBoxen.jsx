@@ -51,8 +51,8 @@ function MijnBoxen() {
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
-        <section className="bg-white rounded-3xl p-6 shadow-sm">
-          <h1 className="text-lg font-semibold text-gray-900 mb-4">Alle Boxen</h1>
+        <section className="bg-white rounded-xl p-6 shadow-lg">
+          <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Alle Boxen</h1>
           <BoxList 
             boxes={boxes} 
             onBoxCheck={handleDirectCheck} 
