@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { IoMdNotificationsOutline } from 'react-icons/io';
-import LanguageSwitcher from './LanguageSwitcher';
-import { useLanguage } from '../../i18n/useLanguage';
-import NotificationsModal from '../notifications/NotificationsModal';
+import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "../../i18n/useLanguage";
+import NotificationsModal from "../notifications/NotificationsModal";
 
 function BaseNavBar({
   items = [],
   showInstructions = false,
   showNotifications = true,
-  activeColor = '#C1A9CF',
-  activeTextColor = '#2C1E33',
-  instructiesHref = '#',
-  children
+  activeColor = "#C1A9CF",
+  activeTextColor = "#2C1E33",
+  instructiesHref = "#",
+  children,
 }) {
   const { language, setLanguage } = useLanguage();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  // Get user from localStorage to filter notifications
+  // Optional: keep reading user from localStorage if you use it elsewhere
   const user = (() => {
     try {
       return JSON.parse(localStorage.getItem("user"));
@@ -27,62 +27,68 @@ function BaseNavBar({
     }
   })();
 
-  // Load notifications - TODO: Replace with API call
-  useEffect(() => {
-    // Sample notifications - in production, fetch from backend
-    const sampleNotifications = [
-      {
-        id: 1,
-        title: "Nieuwe box toegewezen",
-        message: "Box 5 is aan u toegewezen voor vandaag",
-        date: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 min ago
-        type: "info",
-        read: false,
-        role: "assistant"
-      },
-      {
-        id: 2,
-        title: "Taak voltooid",
-        message: "Box 3 is succesvol schoongemaakt",
-        date: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-        type: "success",
-        read: false,
-        role: "assistant"
-      },
-      {
-        id: 3,
-        title: "Rapport beschikbaar",
-        message: "Het maandrapport van november is nu beschikbaar",
-        date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-        type: "info",
-        read: true,
-        role: "responsible"
-      },
-      {
-        id: 4,
-        title: "Nieuw personeelslid",
-        message: "Jan Janssen is toegevoegd aan het systeem",
-        date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
-        type: "success",
-        read: true,
-        role: "admin"
+  const token = localStorage.getItem("token"); // ✅ adjust if needed
+
+  const fetchNotifications = useCallback(async () => {
+    if (!token) {
+      setNotifications([]);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/notifications?limit=30", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        console.error("Notifications fetch failed:", res.status);
+        setNotifications([]);
+        return;
       }
-    ];
 
-    // Filter notifications by user role
-    const userNotifications = sampleNotifications.filter(
-      n => n.role === user?.role || n.role === "all"
-    );
-    setNotifications(userNotifications);
-  }, [user?.role]);
+      const data = await res.json();
+      setNotifications(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Notifications fetch error:", err);
+      setNotifications([]);
+    }
+  }, [token]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  useEffect(() => {
+    // load on mount + when token changes
+    fetchNotifications();
+  }, [fetchNotifications]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const getActiveStyles = (isActive) => {
     if (isActive) {
-      return 'font-semibold text-base py-2 px-4 rounded-full transition-all';
+      return "font-semibold text-base py-2 px-4 rounded-full transition-all";
     }
-    return 'text-gray-500 text-base py-2 px-4 hover:text-black transition-all';
+    return "text-gray-500 text-base py-2 px-4 hover:text-black transition-all";
+  };
+
+  const openNotifications = async () => {
+    const nextOpen = !isNotificationsOpen;
+    setIsNotificationsOpen(nextOpen);
+
+    // If opening modal: mark as read + refetch so badge updates
+    if (nextOpen && token) {
+      try {
+        await fetch("/api/notifications/read-all", {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (err) {
+        console.error("Mark read-all error:", err);
+      }
+
+      await fetchNotifications();
+    }
   };
 
   return (
@@ -95,10 +101,14 @@ function BaseNavBar({
               key={item.key}
               to={item.href}
               className={getActiveStyles(item.active)}
-              style={item.active ? {
-                backgroundColor: activeColor,
-                color: activeTextColor
-              } : {}}
+              style={
+                item.active
+                  ? {
+                      backgroundColor: activeColor,
+                      color: activeTextColor,
+                    }
+                  : {}
+              }
             >
               {item.label}
             </Link>
@@ -119,8 +129,11 @@ function BaseNavBar({
           {showNotifications && (
             <div className="relative">
               <button
-                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                onClick={openNotifications}
                 className="text-gray-500 cursor-pointer hover:text-gray-700 relative"
+                title="Notificaties"
+                aria-label="Notificaties"
+                type="button"
               >
                 <IoMdNotificationsOutline size={24} />
                 {unreadCount > 0 && (
@@ -131,7 +144,12 @@ function BaseNavBar({
               </button>
             </div>
           )}
-          <LanguageSwitcher language={language} onLanguageChange={setLanguage} variant="default" />
+
+          <LanguageSwitcher
+            language={language}
+            onLanguageChange={setLanguage}
+            variant="default"
+          />
 
           {children}
         </div>
