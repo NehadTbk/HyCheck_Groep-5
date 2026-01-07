@@ -70,10 +70,10 @@ function VerantwoordelijkeRapport() {
         
         return matchAssistent && matchVan && matchTot;
     });
-    const exportToExcel = () => {
     
+    const exportToExcel = () => {
     const exportData = gefilterdeData.map(item => ({
-        Datum: item.datum,
+        Datum: item.datum.split('T')[0],
         Box: item.box,
         Tandarts: item.tandarts,
         Assistent: item.assistent,
@@ -82,13 +82,30 @@ function VerantwoordelijkeRapport() {
         Status: item.status,
         Reden: item.reden || "-"
     }));
+
     const worksheet = XLSX.utils.json_to_sheet(exportData);
+    
+    
+    const wscols = [
+        { wch: 12 },
+        { wch: 5 },  
+        { wch: 20 }, 
+        { wch: 20 }, 
+        { wch: 8 },  
+        { wch: 10 }, 
+        { wch: 12 }, 
+        { wch: 40 } 
+    ];
+    worksheet['!cols'] = wscols;
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Rapport");
-    const filename = `Rapport_${filters.assistentZoek || 'HyCheck'}_${new Date().toLocaleDateString()}.xlsx`;
-    XLSX.writeFile(workbook, filename);
-    };
-    const exportToPDF = () => {
+    
+const filename = `Rapport_${filters.assistentZoek || 'HyCheck'}_${new Date().toISOString().split('T')[0]}.xlsx`;
+XLSX.writeFile(workbook, filename);
+};
+
+const exportToPDF = () => {
     const doc = new jsPDF();
     
     doc.text("Rapport Overzicht", 14, 15);
@@ -125,29 +142,40 @@ img.onload = () => {
     
 
     autoTable(doc, {
-        startY: 35,
-        head: [tableColumn],
-        body: tableRows,
-        theme: 'grid',
+    startY: 35,
+    head: [tableColumn],
+    body: tableRows,
+    theme: 'grid',
 
-        styles: {
-            fontSize: 9,
-            cellPadding: 5,
-            overflow: 'linebreak'
-        },
+    styles: {
+        fontSize: 8, 
+        cellPadding: 3,
+        valign: 'middle',
+        overflow: 'linebreak'
+    },
 
-        headStyles: {
-            fillColor: [74, 33, 68],
-            textColor: 255
-        },
+    headStyles: {
+        fillColor: [74, 33, 68],
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'center'
+    },
 
-        columnStyles: {
-            4: { cellWidth: 40 },
-            5: { cellWidth: 28 }
-        }
-    });
+    columnStyles: {
+        0: { cellWidth: 22 }, 
+        1: { cellWidth: 12, halign: 'center' }, 
+        2: { cellWidth: 'auto' }, 
+        3: { cellWidth: 'auto' }, 
+        4: { cellWidth: 15, halign: 'center' }, 
+        5: { cellWidth: 25, halign: 'center' }, 
+        6: { cellWidth: 45 }  
+    },
 
-    doc.save(`Rapport_${filters.assistentZoek || 'HyCheck'}.pdf`);
+
+    margin: { left: 15, right: 15 }
+});
+
+doc.save(`Rapport_${filters.assistentZoek || 'HyCheck'}.pdf`);
 };
     };
     return (
@@ -182,4 +210,4 @@ img.onload = () => {
     );
 }
 
-export default VerantwoordelijkeRapport;
+export default VerantwoordelijkeRapport; 
