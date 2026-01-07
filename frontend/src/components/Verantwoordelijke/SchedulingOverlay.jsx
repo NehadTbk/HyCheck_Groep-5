@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Clock } from "lucide-react";
 
+const typeColors = {
+  ochtend: "bg-blue-100 text-blue-700 border-blue-300",
+  avond: "bg-purple-100 text-purple-700 border-purple-300",
+  wekelijks: "bg-orange-100 text-orange-700 border-orange-300",
+  maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
+};
+
+const baseStyle =
+  "border rounded-lg px-3 py-2 text-sm font-medium cursor-pointer transition w-full text-center";
+
 const TASK_GROUPS = {
   ochtend: {
     label: "Ochtend",
