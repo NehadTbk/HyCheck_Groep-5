@@ -40,24 +40,36 @@ function VerantwoordelijkeDashboard() {
 
   useEffect(() => {
     setDagen(generateWeekDays(weekStart));
+  }, [weekStart]);
 
-    async function fetchWeekData() {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/api/calendar?weekStart=${weekStart
-            .toISOString()
-            .slice(0, 10)}`
-        );
-        const data = await res.json();
-
-        setBoxen(data.boxen || []);
-        setPlanning(data.planning || {});
-      } catch (err) {
-        console.error("Fout bij laden agenda:", err);
+  async function fetchWeekData() {
+    try {
+      const res = await fetch(
+        `http://localhost:5001/api/calendar?weekStart=${weekStart
+          .toISOString()
+          .slice(0, 10)}`
+      );
+      if (!res.ok) {
+        console.error("GET /api/calendar failed", await res.text());
+        return;
       }
+      const data = await res.json();
+      setBoxen(data.boxen || []);
+      setPlanning(data.planning || {});
+    } catch (err) {
+      console.error("Fout bij laden agenda:", err);
     }
+  }
 
+  useEffect(() => {
     fetchWeekData();
+
+    const handler = (e) => {
+      fetchWeekData();
+    };
+    window.addEventListener("calendarUpdated", handler);
+
+    return () => window.removeEventListener("calendarUpdated", handler);
   }, [weekStart]);
 
   const changeWeek = (direction) => {
@@ -91,7 +103,6 @@ function VerantwoordelijkeDashboard() {
         </div>
 
         <div className="grid grid-cols-5 gap-3 min-w-[900px]">
-
           {dagen.map((dag) => (
             <div
               key={dag.datumISO}
@@ -102,6 +113,10 @@ function VerantwoordelijkeDashboard() {
               </div>
               <div className="text-lg font-bold text-gray-900">
                 {dag.datumLabel}
+              </div>
+
+              <div className="text-xs text-gray-500 mt-1">
+                {boxen.length ? `${boxen.length} boxen` : "—"}
               </div>
             </div>
           ))}
@@ -116,13 +131,18 @@ function VerantwoordelijkeDashboard() {
               </div>
 
               {dagen.map((dag) => {
-                const cel =
-                  planning?.[dag.datumISO]?.[box.box_id] || null;
+                const cel = planning?.[dag.datumISO]?.[box.box_id] || null;
 
                 return (
                   <div
                     key={`${dag.datumISO}-${box.box_id}`}
-                    className="p-3 rounded-md border flex items-center justify-center min-h-[50px]"
+                    className={`p-3 rounded-md border flex items-center justify-center min-h-[50px] ${cel && cel.color_code
+                        ? "text-white"
+                        : "bg-gray-50 text-gray-700"
+                      }`}
+                    style={{
+                      backgroundColor: cel && cel.color_code ? cel.color_code : undefined,
+                    }}
                   >
                     {cel ? cel.label : ""}
                   </div>
