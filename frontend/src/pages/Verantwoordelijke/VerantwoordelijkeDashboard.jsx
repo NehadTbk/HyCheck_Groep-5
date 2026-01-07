@@ -32,8 +32,7 @@ function VerantwoordelijkeDashboard() {
 
 
   const renderBoxenRijen = (boxData) => {
-    // Haalt het nummer uit de boxData of gebruikt 2 als fallback (voor de zekerheid)
-    // We gebruiken de nummer property voor de dagen, maar de volledige naam voor de eerste kolom.
+    
     const boxNummerMatch = boxData.naam.match(/Box\s\d+/);
     const boxNummer = boxNummerMatch ? boxNummerMatch[0].split(' ')[1] : boxData.nummer || 2;
 
