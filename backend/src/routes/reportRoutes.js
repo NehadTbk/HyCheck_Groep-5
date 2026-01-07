@@ -20,10 +20,6 @@ router.get('/', async (req, res) => {
                  ) LIMIT 1) AS box,
 
                 
-                (SELECT CONCAT(d.first_name, ' ', d.last_name)
-                 FROM users d
-                 JOIN shift_assignments sa ON d.user_id = sa.dentist_user_id
-                 ORDER BY sa.assignment_id DESC LIMIT 1) AS tandarts,
                 
                 
                 CONCAT(u.first_name, ' ', u.last_name) AS assistent,
