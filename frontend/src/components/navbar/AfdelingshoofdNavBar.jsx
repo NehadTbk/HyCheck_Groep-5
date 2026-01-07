@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import BaseNavBar from '../layout/BaseNavBar';
 import { useTranslation } from '../../i18n/useTranslation';
 import LanguageSwitcher from '../layout/LanguageSwitcher';
-import { useLanguage } from '../../i18n/useLanguage';
 
 
 function AfdelingshoofdNavBar() {
@@ -25,7 +24,7 @@ function AfdelingshoofdNavBar() {
     },
     {
       key: 'monthly-overview',
-      label: 'Maandoverzicht',
+      label: t('navbar.maandoverzicht'),
       href: '/afdelingshoofd/overzicht-maanden',
       active: location.pathname === '/afdelingshoofd/overzicht-maanden'
     }

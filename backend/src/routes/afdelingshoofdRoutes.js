@@ -18,22 +18,20 @@ function monthKey(year, month) {
   return `${year}-${String(month).padStart(2, "0")}`; // month: 1..12
 }
 
-// GET /api/afdelingshoofd/monthly-overview?months=6&box_id=1&category=morning&requiredOnly=1
+// GET /api/afdelingshoofd/monthly-overview?year=2026&box_id=1&category=morning&requiredOnly=1
 router.get("/monthly-overview", async (req, res) => {
   try {
-    const months = Math.max(1, Math.min(parseInt(req.query.months || "6", 10), 24));
+    const year = req.query.year ? parseInt(req.query.year, 10) : new Date().getFullYear();
 
-    // optional filters
     const boxId = req.query.box_id ? parseInt(req.query.box_id, 10) : null;
-    const category = req.query.category || null; // morning/evening/weekly/monthly
-    const requiredOnly = req.query.requiredOnly === "0" ? 0 : 1; // default ON
+    const category = req.query.category || null;
+    const requiredOnly = req.query.requiredOnly === "0" ? 0 : 1;
 
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1);
-    const startISO = start.toISOString().slice(0, 10); // YYYY-MM-DD
+    const startISO = `${year}-01-01`;
+    const endISO = `${year}-12-31`;
 
-    const where = [`DATE(cs.started_at) >= ?`];
-    const params = [startISO];
+    const where = [`DATE(cs.started_at) BETWEEN ? AND ?`];
+    const params = [startISO, endISO];
 
     if (requiredOnly) where.push(`tt.is_required = 1`);
     if (category) {
@@ -57,27 +55,23 @@ router.get("/monthly-overview", async (req, res) => {
       INNER JOIN shift_assignments sa ON sa.assignment_id = cs.assignment_id
       WHERE ${where.join(" AND ")}
       GROUP BY YEAR(cs.started_at), MONTH(cs.started_at)
-      ORDER BY YEAR(cs.started_at) DESC, MONTH(cs.started_at) DESC;
+      ORDER BY YEAR(cs.started_at), MONTH(cs.started_at);
     `;
 
     const [rows] = await db.query(query, params);
 
     const byMonth = new Map();
     for (const r of rows) {
-      byMonth.set(monthKey(r.year, r.month), {
+      byMonth.set(Number(r.month), {
         total: Number(r.total) || 0,
         done: Number(r.done) || 0,
       });
     }
 
-    // newest -> oldest (same as your UI expectation)
+    // ✅ Always return Jan..Dec (12 items)
     const out = [];
-    for (let i = 0; i < months; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const y = d.getFullYear();
-      const m = d.getMonth() + 1;
-
-      const rec = byMonth.get(monthKey(y, m)) || { total: 0, done: 0 };
+    for (let m = 1; m <= 12; m++) {
+      const rec = byMonth.get(m) || { total: 0, done: 0 };
       const pct = rec.total > 0 ? Math.round((rec.done / rec.total) * 100) : 0;
 
       out.push({
@@ -85,6 +79,8 @@ router.get("/monthly-overview", async (req, res) => {
         percentage: pct,
         status: statusFromPercentage(pct),
         meta: {
+          year,
+          month: m,
           total: rec.total,
           done: rec.done,
           requiredOnly: !!requiredOnly,
