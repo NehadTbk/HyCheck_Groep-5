@@ -161,17 +161,15 @@ export default function TaskTypeSchedulingOverlay() {
 
     selectedDates.forEach((date) => {
       assignments.forEach((assignment) => {
-        selectedTaskTypes.forEach((taskType) => {
-          shifts.push({
-            date: date,
-            dentist: assignment.dentist,
-            box: assignment.box,
-            assistant: assignment.assistant,
-            start: taskTypeTimes[taskType].start,
-            end: taskTypeTimes[taskType].end,
-            groups: [taskType],
-            taskType: taskType,
-          });
+        // Create ONE shift per assignment with ALL selected task types
+        shifts.push({
+          date: date,
+          dentist: assignment.dentist || null,
+          box: assignment.box,
+          assistant: assignment.assistant,
+          start: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].start : "08:00",
+          end: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].end : "17:00",
+          groups: selectedTaskTypes, // All selected task types
         });
       });
     });
@@ -181,10 +179,19 @@ export default function TaskTypeSchedulingOverlay() {
       selectedTaskTypes,
       taskTypeTimes,
       shifts,
+      totalShifts: shifts.length,
     });
 
-    // TODO: Send to backend
-    alert(`${shifts.length} shift(s) created (${selectedDates.length} dates × ${assignments.length} assignments × ${selectedTaskTypes.length} task types)`);
+    // Calculate total shift_assignments that will be created in database
+    const totalAssignments = selectedDates.length * assignments.length * selectedTaskTypes.length;
+
+    alert(
+      `✅ Ready to create:\n\n` +
+      `${shifts.length} shift(s) for backend\n` +
+      `(${selectedDates.length} date(s) × ${assignments.length} assignment(s))\n\n` +
+      `This will create ${totalAssignments} shift assignment(s) in database\n` +
+      `(${shifts.length} × ${selectedTaskTypes.length} task type(s))`
+    );
   };
 
   return (
