@@ -133,6 +133,21 @@ export default function SchedulingOverlay() {
     );
   };
 
+  const isShiftValid = (shift) => {
+    return (
+      shift.dentist &&
+      shift.box &&
+      shift.assistant &&
+      shift.start &&
+      shift.end &&
+      shift.start < shift.end &&
+      shift.tasks.length > 0
+    );
+  };
+
+  const canConfirm =
+    shifts.length > 0 && shifts.every(isShiftValid);
+
   return (
     <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-6">
       <div className="flex justify-between items-center">
@@ -248,6 +263,23 @@ export default function SchedulingOverlay() {
               );
             })}
           </div>
+          <div className="flex justify-end pt-6 border-t mt-6">
+            <button
+              disabled={!canConfirm}
+              onClick={() => {
+                console.log("CONFIRMED SCHEDULE:", {
+                  date,
+                  shifts,
+                });
+              }}
+              className={`px-6 py-3 rounded-lg font-semibold transition ${canConfirm
+                ? "bg-[#582F5B] text-white hover:bg-[#4a254c]"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
+            >
+              Bevestigen
+            </button>
+          </div>
         </div>
       ))}
     </div>
@@ -273,11 +305,10 @@ function Toggle({ label, active, onClick, colorClass }) {
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded border text-center transition w-full ${
-        active
-          ? activeClass
-          : "bg-white border-gray-300 text-gray-600"
-      }`}
+      className={`p-2 rounded border text-center transition w-full ${active
+        ? activeClass
+        : "bg-white border-gray-300 text-gray-600"
+        }`}
     >
       {label}
     </button>
