@@ -13,7 +13,6 @@ HyCheck digitaliseert dit proces en zorgt voor:
 - tijdsbesparing
 - betere opvolging van hygiëneprotocollen
 
----
 
 ## Gebruikersrollen
 
@@ -33,7 +32,6 @@ HyCheck digitaliseert dit proces en zorgt voor:
 - Beheert boxen en basisconfiguratie
 - Toegang tot alle gegevens
 
----
 
 ## Functionaliteiten
 
@@ -56,7 +54,6 @@ HyCheck digitaliseert dit proces en zorgt voor:
   - Volledige of gedeeltelijke shifts
   - Meerdere assistenten per dag mogelijk
 
----
 
 ## Technologieën
 
@@ -72,7 +69,6 @@ HyCheck digitaliseert dit proces en zorgt voor:
 - JWT-authenticatie
 - MySQL
 
----
 
 ## Authenticatie
 
@@ -80,7 +76,6 @@ HyCheck digitaliseert dit proces en zorgt voor:
 - JWT-tokens voor beveiligde routes
 - Rolgebaseerde toegang (assistant / responsible / admin)
 
----
 
 ## Installatie
 
