@@ -28,6 +28,17 @@ function VerantwoordelijkeRapport() {
             const response = await fetch("http://localhost:5001/api/reports");
             const data = await response.json();
 
+            if (Array.isArray(data)) {
+                const geformatteerdeData = data.map(item => ({
+                    ...item,
+                    datum: item.datum ? item.datum.split('T')[0] : "Geen datum"
+                }));
+                setRapporten(geformatteerdeData);
+            } else {
+                console.error("Ontvangen data is geen array:", data);
+                setRapporten([]);
+            }
+
             const geformatteerdeData = data.map(item => ({
                 ...item,
                 datum: item.datum ? item.datum.split('T')[0] : "Geen datum"
@@ -68,7 +79,8 @@ function VerantwoordelijkeRapport() {
         Assistent: item.assistent,
         Taken: item.aantal,
         Soort: item.soort,
-        Status: item.status
+        Status: item.status,
+        Reden: item.reden || "-"
     }));
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
@@ -81,14 +93,15 @@ function VerantwoordelijkeRapport() {
     
     doc.text("Rapport Overzicht", 14, 15);
     
-    const tableColumn = ["Datum", "Box", "Tandarts", "Assistent", "Aantal", "Status"];
+    const tableColumn = ["Datum", "Box", "Tandarts", "Assistent", "Aantal", "Status", "Reden"];
     const tableRows = gefilterdeData.map(item => [
         item.datum,
         item.box,
         item.tandarts,
         item.assistent,
         item.aantal,
-        item.status
+        item.status,
+        item.reden || "-"
     ]);
 
     autoTable(doc, {
@@ -96,7 +109,8 @@ function VerantwoordelijkeRapport() {
         body: tableRows,
         startY: 20,
         theme: 'striped',
-        headStyles: { fillColor: [74, 33, 68] }
+        headStyles: { fillColor: [74, 33, 68] },
+        columnStyles: { 4: { cellWidth: 40 } }
     });
 
     doc.save(`Rapport_${filters.assistentZoek || 'HyCheck'}.pdf`);
