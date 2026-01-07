@@ -1,4 +1,5 @@
 import db from "../config/db.js";
+import { getAllBoxes, getAllAssistants, getAllDentists } from "../models/Assignment.js";
 
 const COMPANY_CONFIG = {
   openTime: "08:00",
@@ -9,41 +10,38 @@ const COMPANY_CONFIG = {
 // Get de scheduling data
 export const getSchedulingData = async (req, res) => {
   try {
-    const [boxes] = await db.query(
-      "SELECT box_id, name FROM box ORDER BY box_id ASC"
-    );
-  
-    //hardcoded demo data
-    const dentists = [
-      "Dr. Smith",
-      "Dr. Johnson",
-      "Dr. Williams",
-      "Dr. Brown",
-      "Dr. Davis",
-      "Dr. Martinez",
-      "Dr. Garcia",
-      "Dr. Lee",
-    ];
+    // DEBUG: Check what roles exist in the database
+    const [allUsers] = await db.query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+    console.log("DEBUG - Roles in database:", allUsers);
 
-    const assistants = [
-      "Anna Martinez",
-      "Sarah Wilson",
-      "Emily Taylor",
-      "Jessica Moore",
-      "Lisa Anderson",
-      "Maria Rodriguez",
-    ];
+    // Get boxes from database
+    const boxes = await getAllBoxes();
+    console.log("Boxes fetched:", boxes.length);
+
+    // Get dentists from database
+    const dentistRows = await getAllDentists();
+    const dentists = dentistRows.map(d => d.username);
+    console.log("Dentists fetched:", dentists.length);
+    console.log("Dentist rows:", dentistRows);
+
+    // Get assistants from database
+    const assistantRows = await getAllAssistants();
+    const assistants = assistantRows.map(a => a.username);
+    console.log("Assistants fetched:", assistants.length);
+    console.log("Assistant rows:", assistantRows);
 
     res.status(200).json({
-      dentists,
-      assistants,
-      boxes,
+      dentists: dentists || [],
+      assistants: assistants || [],
+      boxes: boxes || [],
       company: COMPANY_CONFIG,
     });
   } catch (error) {
-    console.error("getSchedulingData:", error);
+    console.error("getSchedulingData ERROR:", error);
+    console.error("Error stack:", error.stack);
     res.status(500).json({
       message: "Kon scheduling data niet ophalen",
+      error: error.message,
     });
   }
 };
