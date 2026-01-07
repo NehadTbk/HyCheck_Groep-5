@@ -15,7 +15,9 @@
     "errors": {
         "loginFailed": "Login mislukt, probeer opnieuw.",
         "serverError": "Er ging iets mis, probeer later opnieuw.",
-        "too_many_requests": "Te veel verkeerde loginpogingen. Probeer later opnieuw..."
+        "too_many_requests": "Te veel verkeerde loginpogingen. Probeer later opnieuw...",
+        "serverUnavailable": "Kan geen verbinding maken met de server. Probeer later opnieuw.",
+        "offline": "Je bent offline. Controleer je internetverbinding."
     },
     "navbar": {
         "dashboard": "Dashboard",
@@ -31,5 +33,4 @@
         "hoursAgo": "uur geleden",
         "daysAgo": "dagen geleden"
     }
-
 }
