@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Clock } from "lucide-react";
 
+const typeColors = {
+  ochtend: "bg-blue-100 text-blue-700 border-blue-300",
+  avond: "bg-purple-100 text-purple-700 border-purple-300",
+  wekelijks: "bg-orange-100 text-orange-700 border-orange-300",
+  maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
+};
+
+const baseStyle =
+  "border rounded-lg px-3 py-2 text-sm font-medium cursor-pointer transition w-full text-center";
+
 const TASK_GROUPS = {
   ochtend: {
     label: "Ochtend",
-    tasks: [
-      "Filters",
-      "Waterleidingen – Lange spoeling",
-    ],
+    tasks: ["Filters", "Waterleidingen – Lange spoeling"],
   },
   avond: {
     label: "Avond",
@@ -37,6 +44,7 @@ export default function SchedulingOverlay() {
   const [assistants, setAssistants] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
   const [shifts, setShifts] = useState([]);
+  const [selectedTasks, setSelectedTasks] = useState([]);
 
   useEffect(() => {
     const slots = [];
@@ -49,15 +57,11 @@ export default function SchedulingOverlay() {
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const res = await fetch("http://localhost:5001/api/scheduling-data");
-        const data = await res.json();
-        setDentists(data.dentists);
-        setBoxes(data.boxes);
-        setAssistants(data.assistants);
-      } catch (e) {
-        console.error(e);
-      }
+      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const data = await res.json();
+      setDentists(data.dentists);
+      setBoxes(data.boxes);
+      setAssistants(data.assistants);
     }
     fetchData();
   }, []);
@@ -67,13 +71,13 @@ export default function SchedulingOverlay() {
       ...prev,
       {
         id: Date.now(),
-        dentist: "",
-        box: "",
-        assistant: "",
+        dentist: null,
+        box: null,
+        assistant: null,
         start: "08:00",
         end: "17:00",
-        selectedGroups: [],
-        selectedTasks: [],
+        groups: [],
+        tasks: [],
       },
     ]);
   };
@@ -84,36 +88,32 @@ export default function SchedulingOverlay() {
     );
   };
 
-  const removeShift = (id) => {
+  const removeShift = (id) =>
     setShifts((prev) => prev.filter((s) => s.id !== id));
-  };
 
-  const toggleGroup = (shiftId, groupKey) => {
+  const toggleGroup = (shiftId, key) => {
     setShifts((prev) =>
       prev.map((s) => {
         if (s.id !== shiftId) return s;
 
-        const isActive = s.selectedGroups.includes(groupKey);
-        let newGroups;
-        let newTasks = [...s.selectedTasks];
+        const active = s.groups.includes(key);
+        let groups = active
+          ? s.groups.filter((g) => g !== key)
+          : [...s.groups, key];
 
-        if (isActive) {
-          newGroups = s.selectedGroups.filter((g) => g !== groupKey);
-          newTasks = newTasks.filter(
-            (t) => !TASK_GROUPS[groupKey].tasks.includes(t)
+        let tasks = [...s.tasks];
+
+        if (active) {
+          tasks = tasks.filter(
+            (t) => !TASK_GROUPS[key].tasks.includes(t)
           );
         } else {
-          newGroups = [...s.selectedGroups, groupKey];
-          TASK_GROUPS[groupKey].tasks.forEach((t) => {
-            if (!newTasks.includes(t)) newTasks.push(t);
+          TASK_GROUPS[key].tasks.forEach((t) => {
+            if (!tasks.includes(t)) tasks.push(t);
           });
         }
 
-        return {
-          ...s,
-          selectedGroups: newGroups,
-          selectedTasks: newTasks,
-        };
+        return { ...s, groups, tasks };
       })
     );
   };
@@ -123,20 +123,35 @@ export default function SchedulingOverlay() {
       prev.map((s) =>
         s.id === shiftId
           ? {
-              ...s,
-              selectedTasks: s.selectedTasks.includes(task)
-                ? s.selectedTasks.filter((t) => t !== task)
-                : [...s.selectedTasks, task],
-            }
+            ...s,
+            tasks: s.tasks.includes(task)
+              ? s.tasks.filter((t) => t !== task)
+              : [...s.tasks, task],
+          }
           : s
       )
     );
   };
 
+  const isShiftValid = (shift) => {
+    return (
+      shift.dentist &&
+      shift.box &&
+      shift.assistant &&
+      shift.start &&
+      shift.end &&
+      shift.start < shift.end &&
+      shift.tasks.length > 0
+    );
+  };
+
+  const canConfirm =
+    shifts.length > 0 && shifts.every(isShiftValid);
+
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
           <label className="font-semibold">Datum</label>
           <input
             type="date"
@@ -148,74 +163,53 @@ export default function SchedulingOverlay() {
 
         <button
           onClick={addShift}
-          className="bg-[#582F5B] text-white px-4 py-2 rounded flex items-center gap-2 hover:opacity-90"
+          className="bg-[#582F5B] text-white px-4 py-2 rounded flex items-center gap-2"
         >
           <Plus size={16} /> Add shift
         </button>
       </div>
 
       {shifts.map((shift) => (
-        <div
-          key={shift.id}
-          className="border rounded-lg p-4 space-y-4 bg-[#F9F6F9]"
-        >
+        <div key={shift.id} className="border rounded-lg p-4 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold text-[#582F5B]">Shift</h3>
             <button onClick={() => removeShift(shift.id)}>
-              <Trash2 className="text-red-500" size={18} />
+              <Trash2 size={18} className="text-red-500" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input
-              list="dentists"
-              placeholder="Tandarts"
-              value={shift.dentist}
-              onChange={(e) =>
-                updateShift(shift.id, "dentist", e.target.value)
-              }
-              className={`p-2 border rounded ${
-                shift.dentist && "bg-[#582F5B] text-white"
-              }`}
-            />
-            <datalist id="dentists">
-              {dentists.map((d) => (
-                <option key={d} value={d} />
-              ))}
-            </datalist>
+          <Section title="Tandarts">
+            {dentists.map((d) => (
+              <Toggle
+                key={d}
+                active={shift.dentist === d}
+                onClick={() => updateShift(shift.id, "dentist", d)}
+                label={d}
+              />
+            ))}
+          </Section>
 
-            <input
-              list="boxes"
-              placeholder="Box"
-              value={shift.box}
-              onChange={(e) => updateShift(shift.id, "box", e.target.value)}
-              className={`p-2 border rounded ${
-                shift.box && "bg-[#582F5B] text-white"
-              }`}
-            />
-            <datalist id="boxes">
-              {boxes.map((b) => (
-                <option key={b.id} value={b.name} />
-              ))}
-            </datalist>
+          <Section title="Behandelbox">
+            {boxes.map((b) => (
+              <Toggle
+                key={b.id}
+                active={shift.box === b.name}
+                onClick={() => updateShift(shift.id, "box", b.name)}
+                label={b.name}
+              />
+            ))}
+          </Section>
 
-            <input
-              list="assistants"
-              placeholder="Assistent"
-              value={shift.assistant}
-              onChange={(e) =>
-                updateShift(shift.id, "assistant", e.target.value)
-              }
-              className={`p-2 border rounded ${
-                shift.assistant && "bg-[#582F5B] text-white"
-              }`}
-            />
-            <datalist id="assistants">
-              {assistants.map((a) => (
-                <option key={a} value={a} />
-              ))}
-            </datalist>
-          </div>
+          <Section title="Assistent">
+            {assistants.map((a) => (
+              <Toggle
+                key={a}
+                active={shift.assistant === a}
+                onClick={() => updateShift(shift.id, "assistant", a)}
+                label={a}
+              />
+            ))}
+          </Section>
 
           <div className="flex items-center gap-3">
             <Clock size={16} />
@@ -240,35 +234,84 @@ export default function SchedulingOverlay() {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {Object.entries(TASK_GROUPS).map(([key, group]) => (
-              <button
+          <Section title="Taken">
+            {Object.entries(TASK_GROUPS).map(([key, g]) => (
+              <Toggle
                 key={key}
+                label={g.label}
+                active={shift.groups.includes(key)}
                 onClick={() => toggleGroup(shift.id, key)}
-                className={`p-2 rounded border ${
-                  shift.selectedGroups.includes(key)
-                    ? "bg-[#582F5B] text-white"
-                    : "bg-white"
-                }`}
-              >
-                {group.label}
-              </button>
+                colorClass={typeColors[key]}
+              />
             ))}
-          </div>
+          </Section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {shift.selectedTasks.map((task) => (
-              <button
-                key={task}
-                onClick={() => toggleTask(shift.id, task)}
-                className="p-2 border rounded bg-[#582F5B] text-white text-left"
-              >
-                {task}
-              </button>
-            ))}
+            {shift.tasks.map((task) => {
+              const groupKey = Object.keys(TASK_GROUPS).find((key) =>
+                TASK_GROUPS[key].tasks.includes(task)
+              );
+
+              return (
+                <Toggle
+                  key={task}
+                  label={task}
+                  active
+                  onClick={() => toggleTask(shift.id, task)}
+                  colorClass={typeColors[groupKey]}
+                />
+              );
+            })}
+          </div>
+          <div className="flex justify-end pt-6 border-t mt-6">
+            <button
+              disabled={!canConfirm}
+              onClick={() => {
+                console.log("CONFIRMED SCHEDULE:", {
+                  date,
+                  shifts,
+                });
+              }}
+              className={`px-6 py-3 rounded-lg font-semibold transition ${canConfirm
+                ? "bg-[#582F5B] text-white hover:bg-[#4a254c]"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
+            >
+              Bevestigen
+            </button>
           </div>
         </div>
       ))}
     </div>
   );
 }
+
+function Section({ title, children }) {
+  return (
+    <div>
+      <h4 className="font-medium mb-2">{title}</h4>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Toggle({ label, active, onClick, colorClass }) {
+  const activeClass = colorClass
+    ? colorClass
+    : "bg-[#582F5B] text-white border-[#582F5B]";
+
+  return (
+    <button
+      onClick={onClick}
+      className={`p-2 rounded border text-center transition w-full ${active
+        ? activeClass
+        : "bg-white border-gray-300 text-gray-600"
+        }`}
+    >
+      {label}
+    </button>
+  );
+}
+

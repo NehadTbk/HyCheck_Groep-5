@@ -190,19 +190,19 @@ function Instructies() {
 
             return (
               <div key={groupTitle} className="bg-gray-50 p-6 rounded-xl">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">{groupTitle}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-5">{groupTitle}</h2>
 
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {groupTasks.map((task) => {
                     const imgs = task.images || [];
                     const isWeeklyTask6 = task.nr === 6;
 
                     return (
-                      <div key={task.nr} className="bg-white rounded-xl border border-gray-200 p-4">
-                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4">
+                      <div key={task.nr} className="bg-white rounded-xl border border-gray-200 p-5">
+                        <div className={isWeeklyTask6 ? "space-y-5" : "grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5"}>
                           {/* LEFT: text */}
                           <div className="flex items-start gap-4">
-                            <div className="w-8 h-8 rounded-full bg-[#5C2D5F] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-[#5C2D5F] text-white flex items-center justify-center text-base font-bold shrink-0">
                               {task.nr}
                             </div>
 
@@ -211,10 +211,10 @@ function Instructies() {
                                 <input
                                   value={task.title}
                                   onChange={(e) => handleTaskChange(task.nr, "title", e.target.value)}
-                                  className="w-full font-bold text-gray-800 border-b border-gray-300 focus:outline-none"
+                                  className="w-full text-lg font-bold text-gray-800 border-b border-gray-300 focus:outline-none"
                                 />
                               ) : (
-                                <div className="font-bold text-gray-800">{task.title}</div>
+                                <div className="text-lg font-bold text-gray-800 mb-2">{task.title}</div>
                               )}
 
                               {isEditing ? (
@@ -227,10 +227,10 @@ function Instructies() {
                                       e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)
                                     )
                                   }
-                                  className="mt-2 w-full text-sm p-2 border border-gray-300 rounded-lg focus:outline-none min-h-[90px]"
+                                  className="mt-2 w-full text-base p-2 border border-gray-300 rounded-lg focus:outline-none min-h-[90px]"
                                 />
                               ) : (
-                                <ul className="mt-2 list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                <ul className="mt-1 list-disc pl-5 text-base text-gray-700 space-y-2 leading-relaxed">
                                   {(task.lines || []).map((line, idx) => (
                                     <li key={idx}>{line}</li>
                                   ))}
@@ -269,7 +269,7 @@ function Instructies() {
                               <div
                                 className={
                                   isWeeklyTask6
-                                    ? "flex flex-col gap-3" // ✅ TASK 6 vertical, in order
+                                    ? "grid grid-cols-2 gap-3" // ✅ TASK 6 horizontal grid, 2 columns
                                     : imgs.length === 1
                                     ? "grid grid-cols-1 gap-2"
                                     : "grid grid-cols-2 gap-2"
@@ -277,7 +277,7 @@ function Instructies() {
                               >
                                 {imgs.map((file, idx) => {
                                   const src = `${IMG_BASE}/${file}`;
-                                  const boxHeight = isWeeklyTask6 ? "h-[180px]" : "h-[160px]";
+                                  const boxHeight = isWeeklyTask6 ? "h-[200px]" : "h-[160px]";
 
                                   return (
                                     <div
@@ -315,9 +315,9 @@ function Instructies() {
         </div>
 
         {!isEditing && (
-          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mt-8">
-            <h3 className="font-bold text-gray-800 mb-2">Meer informatie nodig?</h3>
-            <p className="text-gray-700 text-sm">
+          <div className="bg-blue-50 border border-blue-200 p-5 rounded-lg mt-8">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Meer informatie nodig?</h3>
+            <p className="text-gray-700 text-base">
               Neem contact op met uw leidinggevende als u vragen heeft of hulp nodig heeft bij het uitvoeren van uw taken.
             </p>
           </div>
