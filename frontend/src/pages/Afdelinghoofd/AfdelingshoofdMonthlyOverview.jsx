@@ -9,7 +9,7 @@ function AfdelingshoofdMonthlyOverview() {
   useEffect(() => {
     async function fetchMonthData() {
       try {
-        const res = await fetch("/api/afdelingshoofd/monthly-overview"); //We hebben nog geen api's voor dynamische data
+        const res = await fetch(`/api/afdelingshoofd/monthly-overview?year=${new Date().getFullYear()}`); //We hebben nog geen api's voor dynamische data
         const data = await res.json();
         setMonthData(data);
       } catch (err) {
