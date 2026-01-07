@@ -7,6 +7,7 @@ import usersRoutes from "./src/routes/usersRoutes.js";
 import schedulingRoutes from "./src/routes/schedulingRoutes.js";
 import reportRoutes from "./src/routes/reportRoutes.js";
 import afdelingshoofdRoutes from "./src/routes/afdelingshoofdRoutes.js";
+import notificationsRoutes from "./src/routes/notificationsRoutes.js";
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use("/auth", authRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", schedulingRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/notifications", notificationsRoutes);
+
 
 // ✅ ADD THIS (and make sure it's BEFORE listen)
 app.use("/api/afdelingshoofd", afdelingshoofdRoutes);

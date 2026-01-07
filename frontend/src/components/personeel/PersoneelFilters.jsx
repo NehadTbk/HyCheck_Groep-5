@@ -28,7 +28,7 @@ function PersoneelFilters({ selectedRoles, onChange }) {
             className={[
               "px-4 py-1 rounded-full text-xs transition-colors",
               isActive
-                ? "bg-[#C6939F] text-white"
+                ? "bg-[#C1A9CF] text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300",
             ].join(" ")}
           >

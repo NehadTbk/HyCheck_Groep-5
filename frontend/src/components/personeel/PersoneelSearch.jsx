@@ -2,7 +2,7 @@ import React from "react";
 
 function PersoneelSearch({ value, onChange }) {
   return (
-    <div className="flex items-center bg-[#F9C8C8] rounded-full px-4 py-1 w-56">
+    <div className="flex items-center bg-[#C1A9CF] rounded-full px-4 py-1 w-56">
       <input
         type="text"
         placeholder="Zoek Personeel"
