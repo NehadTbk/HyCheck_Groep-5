@@ -58,7 +58,7 @@ function Topbar() {
     }
   };
 
-  //Logout
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -68,7 +68,7 @@ function Topbar() {
   return (
     <header className="bg-[#4A2144] text-white px-12 py-3 flex items-center justify-between">
 
-      {/* Links */}
+      
       <div className="flex items-center gap-4">
         <button
           onClick={goHome}
@@ -83,7 +83,7 @@ function Topbar() {
         <span className="text-lg font-semibold">HyCheck</span>
       </div>
 
-      {/* Rechts */}
+      
       <div className="flex items-center gap-4">
         <div className="flex items-center bg-gray-100 text-black rounded-full px-4 py-1">
           <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-semibold">

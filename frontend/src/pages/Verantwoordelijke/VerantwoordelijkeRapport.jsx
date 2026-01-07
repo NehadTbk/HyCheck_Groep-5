@@ -103,18 +103,53 @@ function VerantwoordelijkeRapport() {
         item.status,
         item.reden || "-"
     ]);
+const img = new Image();
+img.src = '/hycheck-logo.png';
+
+img.onload = () => {
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const imgWidth = 20;
+    const imgHeight = 20;
+    const margin = 14;
+
+    
+    doc.addImage(
+        img,
+        'PNG',
+        pageWidth - imgWidth - margin,
+        10,
+        imgWidth,
+        imgHeight
+    );
+    doc.setFontSize(16);
+    
 
     autoTable(doc, {
+        startY: 35,
         head: [tableColumn],
         body: tableRows,
-        startY: 20,
-        theme: 'striped',
-        headStyles: { fillColor: [74, 33, 68] },
-        columnStyles: { 4: { cellWidth: 40 } }
+        theme: 'grid',
+
+        styles: {
+            fontSize: 9,
+            cellPadding: 5,
+            overflow: 'linebreak'
+        },
+
+        headStyles: {
+            fillColor: [74, 33, 68],
+            textColor: 255
+        },
+
+        columnStyles: {
+            4: { cellWidth: 40 },
+            5: { cellWidth: 28 }
+        }
     });
 
     doc.save(`Rapport_${filters.assistentZoek || 'HyCheck'}.pdf`);
 };
+    };
     return (
         <PageLayout>
             <VerantwoordelijkeNavBar />
