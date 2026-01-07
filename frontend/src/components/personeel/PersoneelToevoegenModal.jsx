@@ -85,7 +85,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
           lastName: formData.achternaam,
           email: formData.email,
           role: role,
-          sendEmail: false,
+          sendEmail: true,
         }),
       });
 
