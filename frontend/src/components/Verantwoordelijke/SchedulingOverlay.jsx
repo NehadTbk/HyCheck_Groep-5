@@ -44,6 +44,7 @@ export default function SchedulingOverlay() {
   const [assistants, setAssistants] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
   const [shifts, setShifts] = useState([]);
+  const [selectedTasks, setSelectedTasks] = useState([]);
 
   useEffect(() => {
     const slots = [];
@@ -256,14 +257,14 @@ function Section({ title, children }) {
   );
 }
 
-function Toggle({ label, active, onClick }) {
+function Toggle({ label, active, onClick, colorClass }) {
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded border text-center transition ${
+      className={`p-2 rounded border text-center transition w-full ${
         active
-          ? "bg-[#582F5B] text-white"
-          : "bg-white border-gray-300"
+          ? colorClass
+          : "bg-white border-gray-300 text-gray-600"
       }`}
     >
       {label}
