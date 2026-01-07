@@ -1,35 +1,18 @@
-import React from "react";
+import React, { useEffect, useState} from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
 
 function VerantwoordelijkeDashboard() {
+const [weekStart, setWeekStart] = useState(getMonday(new Date()));
+const [dagen, setDagen] = useState([]);
+const [boxen, setBoxen] = useState([]);
 
-  const dagen = [
-    { dagNaam: "Maandag", datum: "17/11" },
-    { dagNaam: "Dinsdag", datum: "18/11" },
-    { dagNaam: "Woensdag", datum: "19/11" },
-    { dagNaam: "Donderdag", datum: "20/11" },
-    { dagNaam: "Vrijdag", datum: "21/11" }
-  ];
-
-
-  const boxen = [
-    { nummer: 1, naam: "Box 1 / Sofia", status: "Groen" },
-    { nummer: 2, naam: "Box 2 / Shima", status: "Rood" },
-    { nummer: 3, naam: "Box 3", status: "Grijs" },
-    { nummer: 4, naam: "Box 4", status: "Grijs" },
-    { nummer: 5, naam: "Box 5", status: "Grijs" },
-    { nummer: 6, naam: "Box 6", status: "Grijs" },
-    { nummer: 7, naam: "Box 7", status: "Grijs" },
-    { nummer: 8, naam: "Box 8", status: "Grijs" },
-    { nummer: 9, naam: "Box 9", status: "Grijs" },
-    { nummer: 10, naam: "Box 10", status: "Grijs" },
-    { nummer: 11, naam: "Box 11", status: "Grijs" },
-    { nummer: 12, naam: "Box 12", status: "Grijs" },
-    { nummer: 13, naam: "Box 13", status: "Grijs" },
-    { nummer: 14, naam: "Box 14", status: "Grijs" }
-  ];
-
+function getMonday(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
 
   const renderBoxenRijen = (boxData) => {
     // Haalt het nummer uit de boxData of gebruikt 2 als fallback (voor de zekerheid)
