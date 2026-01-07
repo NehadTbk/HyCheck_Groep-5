@@ -16,6 +16,7 @@ Daarna mag je deze commandos ook runnen:
 - npm install bcryptjs
 - npm install express-rate-limit
 - npm install
+- npm install nodemailer
 
 Voor dev: 
 - npm install --save-dev nodemon // deze zorgt ervoor dat wij onze webapp niet constant moeten sluiten en heropenen na het opslaan van aanpassingen
