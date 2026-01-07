@@ -266,15 +266,21 @@ function Section({ title, children }) {
 }
 
 function Toggle({ label, active, onClick, colorClass }) {
+  const activeClass = colorClass
+    ? colorClass
+    : "bg-[#582F5B] text-white border-[#582F5B]";
+
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded border text-center transition w-full ${active
-        ? colorClass
-        : "bg-white border-gray-300 text-gray-600"
-        }`}
+      className={`p-2 rounded border text-center transition w-full ${
+        active
+          ? activeClass
+          : "bg-white border-gray-300 text-gray-600"
+      }`}
     >
       {label}
     </button>
   );
 }
+
