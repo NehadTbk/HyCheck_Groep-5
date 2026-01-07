@@ -3,7 +3,7 @@ import {
   getSchedulingData,
   createBox,
   deleteBox,
-} from "../controllers/schedulingController.js";
+} from "../controllers/SchedulingController.js";
 
 const router = express.Router();
 
