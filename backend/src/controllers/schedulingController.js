@@ -10,25 +10,16 @@ const COMPANY_CONFIG = {
 // Get de scheduling data
 export const getSchedulingData = async (req, res) => {
   try {
-    // DEBUG: Check what roles exist in the database
-    const [allUsers] = await db.query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
-    console.log("DEBUG - Roles in database:", allUsers);
-
     // Get boxes from database
     const boxes = await getAllBoxes();
-    console.log("Boxes fetched:", boxes.length);
 
     // Get dentists from database
     const dentistRows = await getAllDentists();
     const dentists = dentistRows.map(d => d.username);
-    console.log("Dentists fetched:", dentists.length);
-    console.log("Dentist rows:", dentistRows);
 
     // Get assistants from database
     const assistantRows = await getAllAssistants();
     const assistants = assistantRows.map(a => a.username);
-    console.log("Assistants fetched:", assistants.length);
-    console.log("Assistant rows:", assistantRows);
 
     res.status(200).json({
       dentists: dentists || [],
