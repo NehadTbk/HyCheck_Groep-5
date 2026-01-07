@@ -8,6 +8,8 @@ import schedulingRoutes from "./src/routes/schedulingRoutes.js";
 import reportRoutes from "./src/routes/reportRoutes.js";
 import afdelingshoofdRoutes from "./src/routes/afdelingshoofdRoutes.js";
 import notificationsRoutes from "./src/routes/notificationsRoutes.js";
+import assignmentRoutes from "./src/routes/assignmentRoutes.js";
+import migrationRoutes from "./src/routes/migrationRoutes.js";
 
 dotenv.config();
 
@@ -21,8 +23,10 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", schedulingRoutes);
+app.use("/api", assignmentRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationsRoutes);
+app.use("/api/migrations", migrationRoutes);
 
 
 // ✅ ADD THIS (and make sure it's BEFORE listen)

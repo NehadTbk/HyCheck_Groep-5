@@ -155,7 +155,7 @@ export default function TaskTypeSchedulingOverlay() {
     assignments.every(isAssignmentValid);
 
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     // Prepare data for backend
     const shifts = [];
 
@@ -182,16 +182,39 @@ export default function TaskTypeSchedulingOverlay() {
       totalShifts: shifts.length,
     });
 
-    // Calculate total shift_assignments that will be created in database
-    const totalAssignments = selectedDates.length * assignments.length * selectedTaskTypes.length;
+    try {
+      const response = await fetch("http://localhost:5001/api/assignments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ shifts }),
+      });
 
-    alert(
-      `✅ Ready to create:\n\n` +
-      `${shifts.length} shift(s) for backend\n` +
-      `(${selectedDates.length} date(s) × ${assignments.length} assignment(s))\n\n` +
-      `This will create ${totalAssignments} shift assignment(s) in database\n` +
-      `(${shifts.length} × ${selectedTaskTypes.length} task type(s))`
-    );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create assignments");
+      }
+
+      const result = await response.json();
+
+      alert(
+        `✅ Successfully created ${result.assignments.length} assignment(s)!\n\n` +
+        `The assignments will now appear in the agenda.`
+      );
+
+      // Dispatch custom event to trigger calendar refresh
+      window.dispatchEvent(new Event("calendarUpdated"));
+
+      // Reset form
+      setSelectedDates([new Date().toISOString().slice(0, 10)]);
+      setSelectedTaskTypes([]);
+      setTaskTypeTimes({});
+      setAssignments([]);
+    } catch (error) {
+      console.error("Error creating assignments:", error);
+      alert(`❌ Error: ${error.message}\n\nPlease check the console for more details.`);
+    }
   };
 
   return (
