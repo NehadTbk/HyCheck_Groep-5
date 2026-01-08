@@ -39,7 +39,7 @@ export default function ResetPassword() {
             setTimeout(() => navigate("/login"), 2000);
 
         } catch (err) {
-            setError("Serverfout");
+            setError("Serverfout", err);
         }
     };
 
