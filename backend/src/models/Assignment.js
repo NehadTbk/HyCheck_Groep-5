@@ -167,28 +167,29 @@ export const getAllBoxes = async () => {
  * Get shift assignments for a date range
  */
 export const getShiftAssignmentsByDateRange = async (startDate, endDate) => {
-  try {
-    const [rows] = await pool.query(
-      `SELECT
-         sa.assignment_id,
-         sa.box_id,
-         sa.shift_date,
-         sa.start_time,
-         sa.end_time,
-         sa.dentist_name,
-         b.name as box_name,
-         b.color_code as box_color,
-         CONCAT(u.first_name, ' ', u.last_name) as assistant_name,
-         GROUP_CONCAT(stg.group_type) as task_groups
-       FROM shift_assignments sa
-       JOIN box b ON sa.box_id = b.box_id
-       LEFT JOIN users u ON sa.user_id = u.user_id
-       LEFT JOIN shift_task_groups stg ON sa.assignment_id = stg.assignment_id
-       WHERE sa.shift_date BETWEEN ? AND ?
-       GROUP BY sa.assignment_id
-       ORDER BY sa.shift_date, sa.start_time`,
-      [startDate, endDate]
-    );
+  try { // Voeg het try blok hier weer toe
+    const query = `
+      SELECT
+        sa.assignment_id,
+        sa.box_id,
+        sa.shift_date,
+        sa.assignment_start AS start_time, 
+        sa.assignment_end AS end_time,     
+        sa.dentist_user_id,                
+        b.name as box_name,
+        b.color_code as box_color,
+        CONCAT(u.first_name, ' ', u.last_name) as assistant_name,
+        GROUP_CONCAT(stg.group_type) as task_groups
+      FROM shift_assignments sa
+      JOIN box b ON sa.box_id = b.box_id
+      LEFT JOIN users u ON sa.user_id = u.user_id 
+      LEFT JOIN shift_task_groups stg ON sa.assignment_id = stg.assignment_id
+      WHERE sa.shift_date BETWEEN ? AND ?
+      GROUP BY sa.assignment_id
+      ORDER BY sa.shift_date, sa.assignment_start`; 
+
+    // Gebruik hier pool.query in plaats van db.query
+    const [rows] = await pool.query(query, [startDate, endDate]);
     return rows;
   } catch (error) {
     console.error("Error getting shift assignments by date range:", error.message);

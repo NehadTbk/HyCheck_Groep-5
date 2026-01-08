@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Circle, CheckCircle2 } from "lucide-react";
 
 const typeColors = {
@@ -28,19 +28,32 @@ const taskData = {
 function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
+  const [standardOptions, setStandardOptions] = useState([]);
+  const [selectedOptionId, setSelectedOptionId] = useState(null);
+
+  // Haal de common options op uit de database zodra de modal opent
+  useEffect(() => {
+    fetch("http://localhost:5001/api/tasks/options")
+      .then((res) => res.json())
+      .then((data) => setStandardOptions(data))
+      .catch((err) => console.error("Fout bij ophalen opties:", err));
+  }, []);
 
   if (!box) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-gray-200">
-        <div className="p-6 border-b flex justify-between items-center">
+        
+        {/* Header */}
+        <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
           <h2 className="text-3xl font-bold text-gray-900">{box.name}</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X size={24} />
           </button>
         </div>
         
+        {/* Taken Lijst */}
         <div className="overflow-y-auto p-6 space-y-8">
           {box.types.map((type) => (
             <div key={type} className="border border-gray-100 rounded-2xl p-5 bg-gray-50/50">
@@ -77,52 +90,81 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
           ))}
         </div>
         
+        {/* Reden Sectie */}
         <div className="p-6 border-t bg-white">
           {showReasonInput ? (
-            <div className="space-y-3 mb-4">
-              <label className="text-sm font-semibold text-gray-700">Reden toevoegen:</label>
-              <textarea
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                placeholder="Typ hier de reden waarom een taak niet voltooid is..."
-                className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5C2D5F]/20 focus:border-[#5C2D5F] resize-none"
-                rows={3}
-                autoFocus
-              />
-              <div className="flex gap-2">
+            <div className="space-y-4 mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Standaard redenen:</label>
+              
+              <div className="grid grid-cols-1 gap-2">
+                {standardOptions.map((opt) => (
+                  <label 
+                    key={opt.option_id} 
+                    className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${
+                      selectedOptionId === opt.option_id ? "bg-[#5C2D5F]/5 border-[#5C2D5F]" : "bg-white border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="reasonOption"
+                      className="w-4 h-4 accent-[#5C2D5F]"
+                      onChange={() => {
+                        setSelectedOptionId(opt.option_id);
+                        setReason(""); // Maak vrije tekst leeg als je een standaard optie kiest
+                      }}
+                      checked={selectedOptionId === opt.option_id}
+                    />
+                    <span className="text-sm text-gray-700 font-medium">{opt.common_comment}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div className="pt-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-2">Eigen reden (overschrijft keuze):</label>
+                <textarea
+                  value={reason}
+                  onChange={(e) => {
+                    setReason(e.target.value);
+                    setSelectedOptionId(null); // Deselecteer radiobutton als je zelf begint te typen
+                  }}
+                  placeholder="Typ hier de reden waarom een taak niet voltooid is..."
+                  className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5C2D5F]/20 focus:border-[#5C2D5F] resize-none bg-white"
+                  rows={2}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2">
                 <button
                   onClick={() => {
                     setShowReasonInput(false);
                     setReason("");
+                    setSelectedOptionId(null);
                   }}
-                  className="text-gray-600 text-sm font-semibold hover:text-gray-800 px-3 py-1"
+                  className="text-gray-500 text-xs font-bold px-4 py-2 hover:text-gray-700"
                 >
-                  Annuleren
+                  ANNULEREN
                 </button>
                 <button
-                  onClick={() => {
-                    console.log("Reden opgeslagen:", reason);
-                    setShowReasonInput(false);
-                  }}
-                  className="bg-[#5C2D5F] hover:bg-[#4A2144] text-white px-4 py-1 rounded-lg text-sm font-semibold transition-colors"
+                  onClick={() => setShowReasonInput(false)}
+                  className="bg-[#5C2D5F] text-white px-6 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-[#4a244d]"
                 >
-                  Bevestigen
+                  REDEN BEVESTIGEN
                 </button>
               </div>
             </div>
           ) : (
             <button
-              className="text-[#5C2D5F] font-bold hover:underline mb-4"
+              className="text-[#5C2D5F] font-bold hover:underline mb-4 flex items-center gap-2"
               onClick={() => setShowReasonInput(true)}
             >
-              + Reden toevoegen
+              <span className="text-xl">+</span> Reden toevoegen
             </button>
           )}
 
           <div className="flex justify-end">
             <button
-              className="bg-[#5C2D5F] hover:bg-[#4a244d] text-white px-10 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95"
-              onClick={() => onSave(box.id)}
+              className="bg-[#5C2D5F] hover:bg-[#4a244d] text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 text-lg"
+              onClick={() => onSave(box.id, selectedOptionId, reason)}
             >
               Opslaan & Sluiten
             </button>
