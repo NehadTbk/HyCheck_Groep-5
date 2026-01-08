@@ -3,7 +3,9 @@
     "allow": [
       "Bash(find:*)",
       "Bash(curl:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(dir /b)",
+      "Bash(mysql:*)"
     ]
   }
 }
