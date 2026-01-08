@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
@@ -40,7 +40,7 @@ function Login() {
                     t("errors.loginFailed")
                 );
                 return;
-
+                
             }
             console.log("Login response:", data);
 
@@ -84,7 +84,7 @@ function Login() {
         } finally {
             setLoading(false);
         }
-
+        
     };
 
 
@@ -143,13 +143,11 @@ function Login() {
 
                         {/* Forgot Password */}
                         <div className="mt-4 text-center">
-                            <button
-                                type="button"
-                                onClick={() => navigate("/forgot-password")}
-                                className="text-sm text-blue-600 hover:underline">
+                            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
                                 {t("login.forgotPassword")}
-                            </button>
+                            </Link>
                         </div>
+
                     </div>
                 </div >
             </div >

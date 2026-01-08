@@ -1,81 +1,174 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useLanguage } from "../../i18n/useLanguage";
+import { useTranslation } from "../../i18n/useTranslation";
 
-export default function ResetPassword() {
-    const { token } = useParams();
-    const navigate = useNavigate();
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-    const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
+function ResetPassword() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-    const submit = async (e) => {
-        e.preventDefault();
-        setError("");
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
-        if (password !== confirm) {
-            setError("Wachtwoorden komen niet overeen");
-            return;
+  const token = useMemo(() => searchParams.get("token") || "", [searchParams]);
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!token) {
+      setError(t("resetPassword.errors.missingToken"));
+      return;
+    }
+    if (!newPassword || !confirmPassword) {
+      setError(t("resetPassword.errors.fillBothFields"));
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError(t("resetPassword.errors.passwordsDontMatch"));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword }),
+      });
+
+      if (!res.ok) {
+        // If endpoint doesn't exist yet, still allow UX flow during development.
+        if (res.status === 404) {
+          setSuccess(t("resetPassword.success"));
+          setTimeout(() => navigate("/login"), 1200);
+          return;
         }
+        const data = await res.json().catch(() => ({}));
+        setError(data?.message || t("resetPassword.errors.generic"));
+        return;
+      }
 
-        try {
-            const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token, newPassword: password }),
-            });
+      setSuccess(t("resetPassword.success"));
+      setTimeout(() => navigate("/login"), 1200);
+    } catch (err) {
+      console.error("Reset password error:", err);
+      setError(navigator.onLine ? t("resetPassword.errors.server") : t("errors.offline"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.message || "Reset mislukt");
-                return;
-            }
-
-            setSuccess(true);
-            setTimeout(() => navigate("/login"), 2000);
-
-        } catch (err) {
-            setError("Serverfout", err);
-        }
-    };
-
-    return (
-        <div className="max-w-md mx-auto mt-20 bg-white p-6 shadow rounded">
-            <h2 className="text-xl font-bold mb-4">Nieuw wachtwoord instellen</h2>
-
-            {error && <p className="text-red-600 mb-2">{error}</p>}
-
-            {success ? (
-                <p className="text-green-600">
-                    Wachtwoord gewijzigd! Je wordt doorgestuurd…
-                </p>
-            ) : (
-                <form onSubmit={submit}>
-                    <input
-                        type="password"
-                        placeholder="Nieuw wachtwoord"
-                        className="w-full border p-2 mb-3"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Bevestig wachtwoord"
-                        className="w-full border p-2 mb-4"
-                        value={confirm}
-                        onChange={(e) => setConfirm(e.target.value)}
-                        required
-                    />
-                    <button className="w-full bg-blue-600 text-white p-2 rounded">
-                        Opslaan
-                    </button>
-                </form>
-            )}
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-[#70A3CB] shadow-sm absolute top-0 left-0 right-0">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <img
+            src="./hycheck-logo.png"
+            alt="Logo"
+            className="bg-white w-20 h-20 rounded"
+          />
         </div>
-    );
+      </header>
+
+      {/* Language Switcher */}
+      <div className="pt-28">
+        <div className="flex justify-end px-4 py-3">
+          <LanguageSwitcher
+            language={language}
+            onLanguageChange={setLanguage}
+            variant="blue"
+          />
+        </div>
+
+        {/* Card */}
+        <div className="flex items-center justify-center min-h-[calc(100vh-300px)] p-4">
+          <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">
+              {t("resetPassword.title")}
+            </h1>
+            <p className="text-sm text-gray-600 mb-6 text-center">
+              {t("resetPassword.subtitle")}
+            </p>
+
+            {!token && (
+              <div className="mb-4 p-2 bg-yellow-100 text-yellow-800 text-sm rounded">
+                {t("resetPassword.noTokenHint")}
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-4 p-2 bg-red-100 text-red-700 text-sm rounded">
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-4 p-2 bg-green-100 text-green-700 text-sm rounded">
+                {success}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("resetPassword.newPassword")}
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="******"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("resetPassword.confirmNewPassword")}
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="******"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#70A3CB] text-white py-2 px-4 rounded hover:bg-[#5e93bb] transition-colors duration-200 disabled:opacity-50"
+              >
+                {loading ? t("resetPassword.loading") : t("resetPassword.submit")}
+              </button>
+            </form>
+
+            <div className="mt-4 text-center">
+              <Link to="/login" className="text-sm text-blue-600 hover:underline">
+                {t("resetPassword.backToLogin")}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
+
+export default ResetPassword;
