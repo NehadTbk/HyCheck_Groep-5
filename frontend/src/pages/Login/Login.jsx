@@ -40,7 +40,7 @@ function Login() {
                     t("errors.loginFailed")
                 );
                 return;
-                
+
             }
             console.log("Login response:", data);
 
@@ -84,7 +84,7 @@ function Login() {
         } finally {
             setLoading(false);
         }
-        
+
     };
 
 
@@ -143,11 +143,13 @@ function Login() {
 
                         {/* Forgot Password */}
                         <div className="mt-4 text-center">
-                            <a href="#" className="text-sm text-blue-600 hover:underline">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/forgot-password")}
+                                className="text-sm text-blue-600 hover:underline">
                                 {t("login.forgotPassword")}
-                            </a>
+                            </button>
                         </div>
-
                     </div>
                 </div >
             </div >

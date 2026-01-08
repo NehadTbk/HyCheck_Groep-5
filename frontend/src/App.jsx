@@ -15,6 +15,8 @@ import Instructies from "./pages/Instructies";
 import "./index.css";
 import Login from "./pages/Login/Login";
 import ChangePassword from "./pages/Login/ChangePassword";
+import ForgotPassword from "./pages/Login/ForgotPassword";
+import ResetPassword from "./pages/Login/ResetPassword";
 
 
 function App() {
@@ -28,9 +30,15 @@ function App() {
         <Route
           path="/" element={<Login />}
         />
-        {/* Change passwoord route voor users met een temp wachtwoord */}
+        {/* Password routes */}
         <Route
           path="/change-password" element={<ChangePassword />} />
+
+        <Route
+          path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+          path="/reset-password/:token" element={<ResetPassword />} />
+
         {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
