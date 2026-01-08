@@ -1,8 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { findUserByEmail, createUser } from "../models/User.js";
-import { sendWelcomeEmail } from "../utils/mailer.js";
+import { sendResetPasswordEmail, sendWelcomeEmail } from "../utils/mailer.js";
 import pool from "../config/db.js";
+import { generateResetToken } from "../utils/token.js";
+import crypto, { hash } from 'crypto';
+import { raw } from "mysql2";
 
 const rolePermissions = {
     admin: ["USER_CREATE", "USER_DELETE", "USER_VIEW"],
@@ -23,7 +26,7 @@ export const login = async (req, res) => {
                 message: "Ongeldige email of wachtwoord"
             });
         }
-       
+
 
         const match = await bcrypt.compare(password, user.password_hash);
 
@@ -71,7 +74,7 @@ export const login = async (req, res) => {
             mustChangePassword: false,
             user: {
                 id: user.user_id,
-                    firstName: user.first_name,
+                firstName: user.first_name,
                 lastName: user.last_name,
                 fullName: `${user.first_name} ${user.last_name}`,
                 email: user.email,
@@ -180,7 +183,7 @@ export const changePassword = async (req, res) => {
     const { oldPassword, newPassword, email } = req.body;
 
     try {
-    const userEmail = email;
+        const userEmail = email;
         const userToUpdate = await findUserByEmail(userEmail);
         if (!userToUpdate) {
             return res.status(404).json({ success: false, message: "Gebruiker niet gevonden" });
@@ -214,6 +217,100 @@ export const changePassword = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Server error: " + err.message
+        });
+    }
+};
+
+export const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await findUserByEmail(email);
+        if (!user) {
+            return res.json({
+                success: true,
+                message: "Als het e-mailadres bestaat, is er een mail naar verstuurd"
+            });
+        }
+        const rawToken = generateResetToken();
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(rawToken)
+            .digest("hex");
+
+        const expires = new Date(Date.now() + 60 * 60 * 1000);
+
+        await pool.query(
+            `UPDATE users
+        SET reset_password_token = ?, reset_password_expires = ?
+        WHERE email = ?`,
+            [hashedToken, expires, email]
+        );
+
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`; 
+
+        console.log("Resetlink: ", resetLink);
+
+        try {
+            await sendResetPasswordEmail(email, resetLink, `${user.first_name} ${user.last_name}`)
+        } catch (mailErr) {
+            console.error("Mail sending error: ", mailErr);
+        }
+        res.json({
+            success: true,
+            message: "Als het e-mailadres bestaat, is er een mail naar verstuurd",
+        });
+
+    } catch (err) {
+        console.error("Forgot password error: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+    try {
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(token)
+            .digest("hex");
+
+        const [rows] = await pool.query(
+            `SELECT * FROM users
+        WHERE reset_password_token = ?
+        AND reset_password_expires > NOW()`,
+            [hashedToken]
+        );
+
+        if (rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Token ongeldig of verlopen"
+            });
+        }
+        const user = rows[0];
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await pool.query(
+            `UPDATE users
+            SET password_hash = ?,
+            reset_password_token = NULL,
+            reset_password_expires = NULL
+            WHERE user_id = ?`,
+            [hashedPassword, user.user_id]
+        );
+        res.json({
+            success: true,
+            message: "Wachtwoord succesvol gewijzigd!"
+        });
+
+    } catch (err) {
+        console.error("Reset password error: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
         });
     }
 };
