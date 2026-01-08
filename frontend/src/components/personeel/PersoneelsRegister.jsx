@@ -51,7 +51,10 @@ function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
   const [loading, setLoading] = useState(true);
 
   // ✅ fallback + remove trailing slash
-  const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
+  const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(
+    /\/$/,
+    ""
+  );
 
   // 🔄 Centrale fetch (herbruikbaar)
   const fetchUsers = useCallback(async () => {
@@ -88,7 +91,9 @@ function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
       if (!showAllUsers) {
         const currentUser = getLocalUser();
         if (currentUser?.role === "responsible") {
-          mapped = mapped.filter((r) => r.roleKey === "tandarts" || r.roleKey === "tandartsassistent");
+          mapped = mapped.filter(
+            (r) => r.roleKey === "tandarts" || r.roleKey === "tandartsassistent"
+          );
         }
       }
 
