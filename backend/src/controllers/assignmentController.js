@@ -3,6 +3,7 @@ import {
   findBoxByName,
   findAssistantByUsername,
   findDentistByUsername,
+  createShift,
   createShiftAssignment,
   createTaskGroups,
   getAllBoxes,
@@ -61,17 +62,26 @@ export const createAssignments = async (req, res) => {
           dentistUserId = dentist.user_id;
         }
 
-        // 4. Create shift assignment
-        const assignmentId = await createShiftAssignment({
-          boxId: box.box_id,
-          userId: assistant.user_id,
-          dentistName: shift.dentist || null,
-          dentistUserId: dentistUserId,
+        const shiftUserId = req.user?.user_id || assistant.user_id;
+
+        const shiftId = await createShift({
+          userId: shiftUserId,
           shiftDate: shift.date,
           startTime: shift.start,
-          endTime: shift.end,
-          createdBy: req.user?.user_id || null,
+          endTime: shift.end
         }, connection);
+
+        // 4. Create shift assignment
+        const assignmentId = await createShiftAssignment({
+          shiftId,
+          boxId: box.box_id,
+          userId: assistant.user_id,
+          dentistUserId,
+          assignmentStart: shift.start,
+          assignmentEnd: shift.end,
+          createdBy: req.user?.user_id || null
+        }, connection);
+
 
         // 5. Create task groups for this assignment
         await createTaskGroups(assignmentId, shift.groups, connection);
@@ -148,7 +158,7 @@ export const getCalendarData = async (req, res) => {
       // Create label from task groups and times
       const groups = assignment.task_groups ? assignment.task_groups.split(',') : [];
       const groupLabels = groups.map(g => {
-        switch(g) {
+        switch (g) {
           case 'ochtend': return 'O';
           case 'avond': return 'A';
           case 'wekelijks': return 'W';
