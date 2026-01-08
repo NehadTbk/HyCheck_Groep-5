@@ -148,6 +148,49 @@ export default function SchedulingOverlay() {
   const canConfirm =
     shifts.length > 0 && shifts.every(isShiftValid);
 
+  // Confirm: stuur shifts naar backend createAssignments endpoint
+  const confirmSchedule = async () => {
+    if (!canConfirm) return;
+
+    const payload = {
+      shifts: shifts.map((s) => ({
+        date,
+        box: s.box, // overlay stores box as name
+        dentist: s.dentist || null,
+        assistant: s.assistant || null,
+        start: s.start,
+        end: s.end,
+        groups: s.groups || [],
+      })),
+    };
+
+    try {
+      const res = await fetch("http://localhost:5001/api/assignments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await res.text(); // read response for logging
+      let json;
+      try { json = JSON.parse(text); } catch(e) { json = text; }
+
+      if (!res.ok) {
+        console.error("POST /api/assignments failed", json);
+        return;
+      }
+
+      // notify other parts (dashboard) to refresh
+      window.dispatchEvent(new CustomEvent("calendarUpdated", { detail: { date } }));
+
+      // optional: clear shifts after success
+      setShifts([]);
+      console.log("Shifts saved response:", json);
+    } catch (err) {
+      console.error("Kon schema niet verzenden", err);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-6">
       <div className="flex justify-between items-center">
@@ -192,7 +235,7 @@ export default function SchedulingOverlay() {
           <Section title="Behandelbox">
             {boxes.map((b) => (
               <Toggle
-                key={b.id}
+                key={b.box_id}            // changed: use box_id
                 active={shift.box === b.name}
                 onClick={() => updateShift(shift.id, "box", b.name)}
                 label={b.name}
@@ -266,12 +309,7 @@ export default function SchedulingOverlay() {
           <div className="flex justify-end pt-6 border-t mt-6">
             <button
               disabled={!canConfirm}
-              onClick={() => {
-                console.log("CONFIRMED SCHEDULE:", {
-                  date,
-                  shifts,
-                });
-              }}
+              onClick={confirmSchedule}
               className={`px-6 py-3 rounded-lg font-semibold transition ${canConfirm
                 ? "bg-[#582F5B] text-white hover:bg-[#4a254c]"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
