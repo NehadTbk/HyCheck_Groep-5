@@ -12,9 +12,9 @@ import AssistentDashboard from "./pages/Assistent/AssistentDashboard";
 import MijnBoxen from "./pages/Assistent/MijnBoxen";
 import Historiek from "./pages/Assistent/Historiek";
 import Instructies from "./pages/Instructies";
-
 import "./index.css";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
+import ChangePassword from "./pages/Login/ChangePassword";
 
 
 function App() {
@@ -28,6 +28,9 @@ function App() {
         <Route
           path="/" element={<Login />}
         />
+        {/* Change passwoord route voor users met een temp wachtwoord */}
+        <Route
+          path="/change-password" element={<ChangePassword />} />
         {/* Afdelingshoofd */}
         <Route
           path="/afdelingshoofd/dashboard"
@@ -96,7 +99,7 @@ function App() {
           </ProtectedRoute>
           }
         />
-        
+
         {/* Route aangepast naar de Historiek component */}
         <Route
           path="/assistant/historiek"
