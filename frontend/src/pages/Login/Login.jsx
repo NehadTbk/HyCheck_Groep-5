@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LanguageSwitcher from "../components/layout/LanguageSwitcher";
-import { useTranslation } from "../i18n/useTranslation";
-import { useLanguage } from "../i18n/useLanguage";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function Login() {
@@ -31,13 +31,8 @@ function Login() {
 
             });
 
-            let data = null;
+            const data = await response.json();
 
-            try{
-            data = await response.json();
-            } catch {
-                console.log('Empty json');
-            }
 
             if (!response.ok) {
                 setError(
@@ -45,10 +40,23 @@ function Login() {
                     t("errors.loginFailed")
                 );
                 return;
+                
             }
+            console.log("Login response:", data);
+
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
+
+            if (data.mustChangePassword) {
+                navigate("/change-password", {
+                    state: {
+                        email: data.user.email,
+                        mustChangePassword: true
+                    }
+                });
+                return;
+            }
 
             let redirectPath = "/login";
 
@@ -76,6 +84,7 @@ function Login() {
         } finally {
             setLoading(false);
         }
+        
     };
 
 
