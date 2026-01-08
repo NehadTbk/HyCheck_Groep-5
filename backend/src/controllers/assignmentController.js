@@ -145,11 +145,14 @@ export const getCalendarData = async (req, res) => {
       endDate.toISOString().slice(0, 10)
     );
 
+    // Debug: log what we fetched
+    console.log(`[getCalendarData] weekStart=${weekStart} start=${weekStart} end=${endDate.toISOString().slice(0,10)} assignments=${assignments.length}`);
+
     // 3. Structure the planning data: planning[date][box_id]
     const planning = {};
 
     assignments.forEach((assignment) => {
-      const dateKey = assignment.shift_date.toISOString().slice(0, 10);
+      const dateKey = new Date(assignment.shift_date).toISOString().slice(0, 10);
 
       if (!planning[dateKey]) {
         planning[dateKey] = {};
@@ -175,8 +178,14 @@ export const getCalendarData = async (req, res) => {
         start_time: assignment.start_time,
         end_time: assignment.end_time,
         task_groups: groups,
+        // keep original fields to help frontend debugging
+        shift_date: assignment.shift_date,
+        box_id: assignment.box_id,
       };
     });
+
+    // Debug: log planning summary
+    console.log("[getCalendarData] planning keys:", Object.keys(planning).map(k => `${k}:${Object.keys(planning[k]).length}`).join(", "));
 
     res.status(200).json({
       boxen: boxes,
