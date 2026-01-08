@@ -1,4 +1,3 @@
-// pages/Afdelinghoofd/AfdelingshoofdPersoneel.jsx
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Topbar from "../../components/layout/Topbar";
@@ -9,7 +8,10 @@ import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoeg
 
 function AfdelingshoofdPersoneel() {
   const location = useLocation();
-  const [isModalOpen, setIsModalOpen] = useState(location.state?.openAddPersonnel === true);
+    const user = JSON.parse(localStorage.getItem("user"));
+  const canCreateUser = user?.permissions?.includes("USER_CREATE");
+
+  const [isModalOpen, setIsModalOpen] = useState(canCreateUser && location.state?.openAddPersonnel === true);
   const [refreshKey, setRefreshKey] = useState(0);
 
 
@@ -18,8 +20,6 @@ function AfdelingshoofdPersoneel() {
     setIsModalOpen(false);
     setRefreshKey((k) => k + 1); // triggers refetch in register
   };
-  const user = JSON.parse(localStorage.getItem("user"));
-  const canCreateUser = user?.permissions?.includes("USER_CREATE");
 
   return (
     <PageLayout>
@@ -43,12 +43,14 @@ function AfdelingshoofdPersoneel() {
         <Personeelsregister showAllUsers={true} refreshKey={refreshKey} />
       </div>
 
+      {canCreateUser && (
+        <PersoneelToevoegenModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onCreated={handleCreated}
+        />
+      )}
 
-      <PersoneelToevoegenModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreated={handleCreated}
-      />
     </PageLayout>
   );
 }

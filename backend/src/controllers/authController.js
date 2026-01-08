@@ -17,18 +17,13 @@ export const login = async (req, res) => {
         // 1. Haal gebruiker op
         const user = await findUserByEmail(email);
 
-        if (!user) {
+        if (!user || !user.password_hash) {
             return res.status(400).json({
                 success: false,
                 message: "Ongeldige email of wachtwoord"
             });
         }
-        if (!user.password_hash) {
-            return res.status(400).json({
-                success: false,
-                message: "Account heeft geen wachtwoord ingesteld"
-            });
-        }
+       
 
         const match = await bcrypt.compare(password, user.password_hash);
 
@@ -43,7 +38,6 @@ export const login = async (req, res) => {
         if (user.must_change_password) {
             return res.status(200).json({
                 success: true,
-                message: "Password must be changed",
                 mustChangePassword: true,
                 user: {
                     id: user.user_id,
@@ -71,22 +65,20 @@ export const login = async (req, res) => {
 
 
         // 5. Response sturen
-        const responseData = {
+        res.json({
             success: true,
             token,
+            mustChangePassword: false,
             user: {
                 id: user.user_id,
-                firstName: user.first_name,
+                    firstName: user.first_name,
                 lastName: user.last_name,
                 fullName: `${user.first_name} ${user.last_name}`,
                 email: user.email,
                 role: user.role,
-                permissions: permissions
-            },
-            message: "Login succesvol"
-        };
-
-        res.json(responseData);
+                permissions
+            }
+        });
 
     } catch (err) {
         console.error("\n LOGIN ERROR:", err);
@@ -185,36 +177,36 @@ export const logout = async (req, res) => {
 };
 
 export const changePassword = async (req, res) => {
-    const { oldPassword, newPassword } = req.body;
-    const user = req.user;
+    const { oldPassword, newPassword, email } = req.body;
 
     try {
-       
-        const userToUpdate = await findUserByEmail(user.email);
+    const userEmail = email;
+        const userToUpdate = await findUserByEmail(userEmail);
         if (!userToUpdate) {
             return res.status(404).json({ success: false, message: "Gebruiker niet gevonden" });
         }
 
         // Controleer het oude wachtwoord
-        const match = await bcrypt.compare(oldPassword, userToUpdate.password_hash);
-        if (!match) {
-            return res.status(400).json({ success: false, message: "Oud wachtwoord klopt niet" });
+        if (oldPassword) {
+            const match = await bcrypt.compare(oldPassword, userToUpdate.password_hash);
+            if (!match) {
+                return res.status(400).json({ success: false, message: "Oud wachtwoord klopt niet" });
+            }
         }
 
-        
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         await pool.query(
             `UPDATE users 
              SET password_hash = ?, must_change_password = 0
              WHERE email = ?`,
-            [hashedPassword, user.email]
+            [hashedPassword, userToUpdate.email]
         );
 
         res.json({
             success: true,
             message: "Wachtwoord succesvol gewijzigd",
-            email: user.email
+            email: userToUpdate.email
         });
 
     } catch (err) {
