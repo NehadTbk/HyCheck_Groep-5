@@ -19,12 +19,6 @@ function MijnBoxen() {
   const [selectedBox, setSelectedBox] = useState(null);
   const [tasksState, setTasksState] = useState({});
 
-  const handleDirectCheck = (id) => {
-    setBoxes(prev => prev.map(box => 
-      box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box
-    ));
-  };
-
   const handleToggleTask = (boxId, taskId) => {
     setTasksState(prev => ({
       ...prev,
@@ -32,40 +26,51 @@ function MijnBoxen() {
     }));
   };
 
-  const handleSaveTasks = (boxId) => {
-    const currentBox = boxes.find(b => b.id === boxId);
-    const boxTasks = tasksState[boxId] || {};
-    const completedCount = Object.values(boxTasks).filter(v => v === true).length;
-    
-    let newStatus = "openstaand";
-    if (completedCount >= currentBox.tasksCount) {
-      newStatus = "voltooid";
-    } else if (completedCount > 0) {
-      newStatus = "gedeeltelijk";
-    }
+  const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
+    // We bouwen de payload op voor de backend
+    const payload = {
+      session_id: boxId,
+      task_type_id: 999, // Jouw nieuwe Algemene Schoonmaak taak ID
+      selected_option_id: selectedOptionId || null, 
+      custom_text: customText && customText.trim() !== "" ? customText : null,
+      completed: 0 
+    };
 
-    setBoxes(prev => prev.map(b => b.id === boxId ? { ...b, status: newStatus } : b));
-    setSelectedBox(null);
+    try {
+      const response = await fetch("http://localhost:5001/api/tasks/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        setSelectedBox(null);
+        // Zet status lokaal op openstaand in de lijst
+        setBoxes(prev => prev.map(b => b.id === boxId ? { ...b, status: "openstaand" } : b));
+      }
+    } catch (error) {
+      console.error("Opslaan mislukt:", error);
+    }
   };
 
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
-        <section className="bg-white rounded-xl p-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Alle Boxen</h1>
-          <BoxList 
-            boxes={boxes} 
-            onBoxCheck={handleDirectCheck} 
-            onBoxClick={(box) => setSelectedBox(box)} 
-          />
-        </section>
+      <section className="bg-white rounded-xl p-6 shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Alle Boxen</h1>
+        <BoxList 
+          boxes={boxes} 
+          onBoxCheck={(id) => setBoxes(prev => prev.map(box => box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box))} 
+          onBoxClick={(box) => setSelectedBox(box)} 
+        />
+      </section>
 
       {selectedBox && (
         <TaskModal
           box={selectedBox}
           tasksState={tasksState}
           onToggleTask={handleToggleTask}
-          onSave={handleSaveTasks}
+          onSave={handleSaveTasks} // Hier worden boxId, optionId en text doorgegeven
           onClose={() => setSelectedBox(null)}
         />
       )}

@@ -1,29 +1,48 @@
 {
-    "login": {
-        "title": "Connexion",
-        "email": "Adresse mail",
-        "password": "Mot de passe",
-        "loginButton": "Se connecter",
-        "loading": "Chargement...",
-        "forgotPassword": "Mot de passe oublié?"
-    },
+  "login": {
+    "title": "Connexion",
+    "email": "Adresse mail",
+    "password": "Mot de passe",
+    "loginButton": "Se connecter",
+    "loading": "Chargement...",
+    "forgotPassword": "Mot de passe oublié?"
+  },
+  "changePassword": {
+    "title": "Modifier votre mot de passe",
+    "subtitleMustChange": "Pour des raisons de sécurité, vous devez d'abord changer votre mot de passe.",
+    "oldPassword": "Ancien mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "submit": "Changer le mot de passe",
+    "loading": "Chargement...",
+    "back": "Retour",
+    "success": "Mot de passe modifié avec succès !",
     "errors": {
-        "loginFailed": "Echec de connexion, veuillez réesayer.",
-        "serverError": "Une erreur est survenue, veuillez réesayer plus tard...",
-        "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard..."
-    },
-    "navbar": {
-        "dashboard": "Tableau de bord",
-        "mijnPersoneel": "Mon Personnel",
-        "maandoverzicht": "Aperçu mensuel"
-    },
-    "notifications": {
-        "title": "Notifications",
-        "noAlerts": "Aucune nouvelle notification",
-        "new": "Nouveau",
-        "older": "Anciennes",
-        "minutesAgo": "minutes",
-        "hoursAgo": "heures",
-        "daysAgo": "jours"
+      "fillBothFields": "Veuillez remplir les deux champs",
+      "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+      "generic": "Erreur lors du changement de mot de passe",
+      "server": "Erreur serveur"
     }
+  },
+  "errors": {
+    "loginFailed": "Echec de connexion, veuillez réesayer.",
+    "serverError": "Une erreur est survenue, veuillez réesayer plus tard...",
+    "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard...",
+    "serverUnavailable": "Connexion au serveur échoué... Veuillez réesayer plus tard",
+    "offline": "Vous etes hors ligne. Vérifier votre connexion internet"
+  },
+  "navbar": {
+    "dashboard": "Tableau de bord",
+    "mijnPersoneel": "Mon Personnel",
+    "maandoverzicht": "Aperçu mensuel"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noAlerts": "Aucune nouvelle notification",
+    "new": "Nouveau",
+    "older": "Anciennes",
+    "minutesAgo": "minutes",
+    "hoursAgo": "heures",
+    "daysAgo": "jours"
+  }
 }

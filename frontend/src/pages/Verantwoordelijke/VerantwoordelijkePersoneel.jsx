@@ -78,7 +78,7 @@ function VerantwoordelijkePersoneel() {
           lastName: formData.achternaam,
           email: formData.email,
           role: role,
-          sendEmail: false,
+          sendEmail: true,
         }),
       });
 

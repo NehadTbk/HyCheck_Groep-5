@@ -5,6 +5,8 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../../i18n/useLanguage";
 import NotificationsModal from "../notifications/NotificationsModal";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function BaseNavBar({
   items = [],
   showInstructions = false,
@@ -27,7 +29,10 @@ function BaseNavBar({
     }
   })();
 
-  const token = localStorage.getItem("token"); // ✅ adjust if needed
+  const [token, setToken] = useState(null);
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   const fetchNotifications = useCallback(async () => {
     if (!token) {
@@ -36,7 +41,7 @@ function BaseNavBar({
     }
 
     try {
-      const res = await fetch("/api/notifications?limit=30", {
+      const res = await fetch(`${API_BASE_URL}/api/notifications?limit=30`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -77,7 +82,7 @@ function BaseNavBar({
     // If opening modal: mark as read + refetch so badge updates
     if (nextOpen && token) {
       try {
-        await fetch("/api/notifications/read-all", {
+        await fetch(`${API_BASE_URL}/api/notifications/read-all`, {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -90,7 +95,9 @@ function BaseNavBar({
       await fetchNotifications();
     }
   };
-
+  if (!token || !user) {
+    return null;
+  }
   return (
     <nav className="bg-white py-3 shadow-sm rounded-3xl mt-4 mb-6">
       <div className="w-full mx-auto px-4 flex items-center justify-between">
@@ -104,9 +111,9 @@ function BaseNavBar({
               style={
                 item.active
                   ? {
-                      backgroundColor: activeColor,
-                      color: activeTextColor,
-                    }
+                    backgroundColor: activeColor,
+                    color: activeTextColor,
+                  }
                   : {}
               }
             >

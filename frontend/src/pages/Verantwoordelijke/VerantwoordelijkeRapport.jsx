@@ -16,9 +16,9 @@ function VerantwoordelijkeRapport() {
     const [loading, setLoading] = useState(true);
     
     const [filters, setFilters] = useState({
-        periode: "Aangepast",
-        vanDatum: "",
-        totDatum: "",
+        periode: "Dagelijks",
+        vanDatum: new Date().toISOString().split('T')[0], 
+        totDatum: new Date().toISOString().split('T')[0],
         assistentZoek: ""
     });
 
@@ -57,9 +57,31 @@ function VerantwoordelijkeRapport() {
 
 }, []);
 
-    
-    const handleFilterChange = (name, value) => {
-        setFilters(prev => ({ ...prev, [name]: value }));
+const handleFilterChange = (name, value) => {
+        let newFilters = { ...filters, [name]: value };
+
+        if (name === "periode") {
+            const vandaag = new Date().toISOString().split('T')[0];
+            let vanDatum = "";
+
+            if (value === "Dagelijks") {
+                vanDatum = vandaag;
+            } else if (value === "Wekelijks") {
+                const weekGeleden = new Date();
+                weekGeleden.setDate(weekGeleden.getDate() - 7);
+                vanDatum = weekGeleden.toISOString().split('T')[0];
+            } else if (value === "Maandelijks") {
+                const maandGeleden = new Date();
+                maandGeleden.setMonth(maandGeleden.getMonth() - 1);
+                vanDatum = maandGeleden.toISOString().split('T')[0];
+            }
+
+            if (value !== "Aangepast") {
+                newFilters.vanDatum = vanDatum;
+                newFilters.totDatum = vandaag;
+            }
+        }
+        setFilters(newFilters);
     };
 
     
@@ -75,7 +97,6 @@ function VerantwoordelijkeRapport() {
     const exportData = gefilterdeData.map(item => ({
         Datum: item.datum.split('T')[0],
         Box: item.box,
-        Tandarts: item.tandarts,
         Assistent: item.assistent,
         Taken: item.aantal,
         Soort: item.soort,
@@ -110,11 +131,10 @@ const exportToPDF = () => {
     
     doc.text("Rapport Overzicht", 14, 15);
     
-    const tableColumn = ["Datum", "Box", "Tandarts", "Assistent", "Aantal", "Status", "Reden"];
+    const tableColumn = ["Datum", "Box", "Assistent", "Aantal", "Status", "Reden"];
     const tableRows = gefilterdeData.map(item => [
         item.datum,
         item.box,
-        item.tandarts,
         item.assistent,
         item.aantal,
         item.status,

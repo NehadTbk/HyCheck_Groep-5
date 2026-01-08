@@ -11,7 +11,8 @@ export const findUserByEmail = async (email) => {
                 password_hash,  
                 role, 
                 is_active, 
-                badge_id 
+                badge_id,
+                must_change_password
             FROM users 
             WHERE email = ?`,
             [email]
