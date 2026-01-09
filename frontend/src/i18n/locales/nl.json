@@ -181,5 +181,8 @@
             "admin": "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen",
             "responsible": "Als verantwoordelijke kun je tandartsen en assistenten toevoegen"
         }
+    },
+    "personeelSearch": {
+        "placeholder": "Zoek Personeel"
     }
 }

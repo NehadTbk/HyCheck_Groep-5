@@ -176,5 +176,8 @@
             "admin": "En tant que chef de service, vous pouvez ajouter des responsables, des dentistes et des assistants",
             "responsible": "En tant que responsable, vous pouvez ajouter des dentistes et des assistants"
         }
+    },
+    "personeelSearch": {
+        "placeholder": "Rechercher du personnel"
     }
 }
