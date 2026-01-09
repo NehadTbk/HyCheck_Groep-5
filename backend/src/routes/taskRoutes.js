@@ -1,10 +1,11 @@
 import express from 'express';
 import db from '../config/db.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Route om de redenen op te halen voor de modal
-router.get('/options', async (req, res) => {
+router.get('/options', authMiddleware, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT option_id, common_comment FROM comment_option");
         res.json(rows);
@@ -14,7 +15,7 @@ router.get('/options', async (req, res) => {
 });
 
 // Route om de schoonmaakstatus en reden op te slaan
-router.post('/update', async (req, res) => {
+router.post('/update', authMiddleware, async (req, res) => {
     const { session_id, task_type_id, selected_option_id, custom_text, completed } = req.body;
 
     try {
