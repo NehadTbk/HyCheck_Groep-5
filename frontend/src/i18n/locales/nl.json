@@ -139,21 +139,5 @@
         "status": "Status",
         "actions": "Acties",
         "details": "Details"
-    },
-    "filters": {
-        "all": "Alles",
-        "pending": "Openstaand",
-        "completed": "Voltooid"
-    },
-    "status": {
-        "pending": "Openstaand",
-        "completed": "Voltooid",
-        "partial": "Gedeeltelijk"
-    },
-    "taskTypes": {
-        "morning": "Ochtend",
-        "evening": "Avond",
-        "weekly": "Wekelijks",
-        "monthly": "Maandelijks"
     }
 }
