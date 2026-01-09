@@ -70,7 +70,8 @@
     "navbar": {
         "dashboard": "Dashboard",
         "mijnPersoneel": "Mijn Personeel",
-        "maandoverzicht": "Maandoverzicht"
+        "maandoverzicht": "Maandoverzicht",
+        "instructions": "Instructies"
     },
     "notifications": {
         "title": "Meldingen",
@@ -112,5 +113,20 @@
         "addReason": "Reden toevoegen",
         "confirmReason": "REDEN BEVESTIGEN",
         "saveAndClose": "Opslaan & Sluiten"
+    },
+    "assistentNav": {
+        "dashboard": "Dashboard",
+        "boxes": "Mijn Boxen",
+        "history": "Historiek"
+    },
+    "topbar": {
+        "appName": "HyCheck",
+        "guest": "Gast",
+        "logout": "Uitloggen",
+        "roles": {
+            "assistant": "Assistent",
+            "responsible": "Verantwoordelijke",
+            "admin": "Afdelingshoofd"
+        }
     }
 }

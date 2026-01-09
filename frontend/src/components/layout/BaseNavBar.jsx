@@ -4,6 +4,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../../i18n/useLanguage";
 import NotificationsModal from "../notifications/NotificationsModal";
+import { useTranslation } from "../../i18n/useTranslation";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -19,6 +20,7 @@ function BaseNavBar({
   const { language, setLanguage } = useLanguage();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const { t } = useTranslation();
 
   // Optional: keep reading user from localStorage if you use it elsewhere
   const [user] = useState(() => {
@@ -132,7 +134,7 @@ function BaseNavBar({
               to={instructiesHref}
               className="text-base text-gray-900 font-medium hover:opacity-80 transition"
             >
-              Instructies
+              {t("navbar.instructions")}
             </Link>
           )}
 

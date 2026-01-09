@@ -65,7 +65,8 @@
     "navbar": {
         "dashboard": "Tableau de bord",
         "mijnPersoneel": "Mon Personnel",
-        "maandoverzicht": "Aperçu mensuel"
+        "maandoverzicht": "Aperçu mensuel",
+        "instructions": "Instructions"
     },
     "notifications": {
         "title": "Notifications",
@@ -107,5 +108,20 @@
         "confirmReason": "CONFIRMER LA RAISON",
         "addReason": "Ajouter une raison",
         "saveAndClose": "Enregistrer & Fermer"
+    },
+    "assistentNav": {
+        "dashboard": "Tableau de bord",
+        "boxes": "Mes boîtes",
+        "history": "Historique"
+    },
+    "topbar": {
+        "appName": "HyCheck",
+        "guest": "Invité",
+        "logout": "Se déconnecter",
+        "roles": {
+            "assistant": "Assistant",
+            "responsible": "Responsable",
+            "admin": "Chef de service"
+        }
     }
 }

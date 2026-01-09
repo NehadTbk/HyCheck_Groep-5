@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "../../i18n/useTranslation";
 
 function Topbar() {
   const navigate = useNavigate();
@@ -13,11 +14,11 @@ function Topbar() {
     }
   })();
 
-  const roleMap = {
-    assistant: "Assistent",
-    responsible: "Verantwoordelijke",
-    admin: "Afdelingshoofd",
+  const getRoleLabel = (role) => {
+    if (!role) return "";
+    return t(`topbar.roles.${role}`);
   };
+
 
   //Initialen vormen
   const getInitials = () => {
@@ -58,17 +59,19 @@ function Topbar() {
     }
   };
 
-  
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
   };
 
+  const { t } = useTranslation();
+
   return (
     <header className="bg-[#4A2144] text-white px-12 py-3 flex items-center justify-between">
 
-      
+
       <div className="flex items-center gap-4">
         <button
           onClick={goHome}
@@ -80,10 +83,10 @@ function Topbar() {
             className="w-14 h-14 object-contain"
           />
         </button>
-        <span className="text-lg font-semibold">HyCheck</span>
+        <span className="text-lg font-semibold">{t("topbar.appName")}</span>
       </div>
 
-      
+
       <div className="flex items-center gap-4">
         <div className="flex items-center bg-gray-100 text-black rounded-full px-4 py-1">
           <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-semibold">
@@ -93,10 +96,10 @@ function Topbar() {
             <div className="font-semibold">
               {user?.fullName ||
                 `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
-                "Gast"}
+                t("topbar.guest")}
             </div>
             <div className="text-xs text-gray-600">
-              {roleMap[user?.role] || ""}
+              {getRoleLabel(user?.role) || ""}
             </div>
           </div>
         </div>
@@ -106,7 +109,7 @@ function Topbar() {
           className="
             bg-white text-black font-semibold rounded-lg px-5 py-2 shadow-sm cursor-pointer transition hover:bg-gray-200 hover:shadow-md"
         >
-          Uitloggen
+          {t("topbar.logout")}
         </button>
       </div>
     </header>
