@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -21,50 +21,46 @@ function BaseNavBar({
   const [notifications, setNotifications] = useState([]);
 
   // Optional: keep reading user from localStorage if you use it elsewhere
-  const user = (() => {
+  const [user] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user"));
     } catch {
       return null;
     }
-  })();
+  });
 
-  const [token, setToken] = useState(null);
+  const [token] = useState(() => localStorage.getItem("token"));
+
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
-  }, []);
-
-  const fetchNotifications = useCallback(async () => {
-    if (!token) {
-      setNotifications([]);
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/notifications?limit=30`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        console.error("Notifications fetch failed:", res.status);
+    const loadNotifications = async () => {
+      if (!token) {
         setNotifications([]);
         return;
       }
 
-      const data = await res.json();
-      setNotifications(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Notifications fetch error:", err);
-      setNotifications([]);
-    }
-  }, [token]);
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/notifications?limit=30`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  useEffect(() => {
-    // load on mount + when token changes
-    fetchNotifications();
-  }, [fetchNotifications]);
+        if (!res.ok) {
+          console.error("Notifications fetch failed:", res.status);
+          setNotifications([]);
+          return;
+        }
+
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Notifications fetch error:", err);
+        setNotifications([]);
+      }
+    };
+
+    loadNotifications();
+  }, [token]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -91,8 +87,15 @@ function BaseNavBar({
       } catch (err) {
         console.error("Mark read-all error:", err);
       }
-
-      await fetchNotifications();
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/notifications?limit=30`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data : []);
+      } catch {
+        setNotifications([]);
+      }
     }
   };
   if (!token || !user) {
