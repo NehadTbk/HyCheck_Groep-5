@@ -231,5 +231,8 @@
         "selectAssistantAndBox": "Sélectionnez un assistant et cliquez sur la/les box(es)",
         "confirmAssignments": "Confirmer les affectations",
         "selectTaskTypesToProceed": "Sélectionnez d'abord les types de tâches"
+    },
+    "verantwoordelijkeBoxen": {
+        "title": "Mes Boxes"
     }
 }

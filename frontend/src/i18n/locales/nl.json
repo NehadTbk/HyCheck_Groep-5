@@ -239,5 +239,8 @@
         "selectAssistantAndBox": "Selecteer assistent en klik op box(en)",
         "confirmAssignments": "Bevestig Toewijzingen",
         "selectTaskTypesToProceed": "Selecteer eerst taak types"
+    },
+    "verantwoordelijkeBoxen": {
+        "title": "Mijn Boxen"
     }
 }
