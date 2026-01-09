@@ -37,7 +37,6 @@ export const sendResetPasswordEmail = async (toEmail, resetLink, fullName) => {
         <p>Bonjour, ${fullName}, </p>
         <p>Vous avez fait une demande pour changer le mot de passe pour le compte de <strong>Hycheck</strong>. </p>
         <p>Cliquez sur le lien en dessous pour configurer un nouveau mot de passe: </p>
-        <br/>
         <p>
         <a href="${resetLink}" target="_blank">
         Reconfigurer le mot de passe
