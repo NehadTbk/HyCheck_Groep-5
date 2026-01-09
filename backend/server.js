@@ -12,6 +12,7 @@ import afdelingshoofdRoutes from "./src/routes/afdelingshoofdRoutes.js";
 import notificationsRoutes from "./src/routes/notificationsRoutes.js";
 import assignmentRoutes from "./src/routes/assignmentRoutes.js";
 import taskRoutes from './src/routes/taskRoutes.js';
+import assistantRoutes from "./src/routes/assistantRoutes.js";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use("/api", assignmentRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use("/api/assistant", assistantRoutes);
 
 
 // ✅ ADD THIS (and make sure it's BEFORE listen)
@@ -51,4 +53,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);
 });
-
