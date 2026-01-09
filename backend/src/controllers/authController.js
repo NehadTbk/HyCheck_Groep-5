@@ -118,7 +118,6 @@ export const register = async (req, res) => {
         }
         const tempPassword = Math.random().toString(36).slice(-8) + "A1!";
 
-        console.log(`Tijdelijk wachtwoord voor ${email} is: ${tempPassword}`);
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
 
@@ -136,7 +135,6 @@ export const register = async (req, res) => {
         if (sendEmail) {
             try {
                 await sendWelcomeEmail(email, tempPassword, `${firstName} ${lastName}`);
-                console.log("Mail success verzonden naar: ", email);
             } catch (err) {
                 console.error("Fout bij het verzenden van de welkom-mail: ", err);
             }
