@@ -146,6 +146,9 @@
         "title": "Registre du personnel",
         "loading": "Chargement du personnel…"
     },
+    "personeelSearch": {
+        "placeholder": "Par nom, prénom ou e-mail..."
+    },
     "personeelTable": {
         "id": "ID",
         "lastName": "Nom",
