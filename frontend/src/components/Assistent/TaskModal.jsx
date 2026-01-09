@@ -8,43 +8,43 @@ const typeColors = {
   Maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
 };
 
-const taskData = {
-  Ochtend: [
-    { id: "o1", title: "Filters schoonmaken", desc: "De voorfilters schoonmaken" },
-    { id: "o2", title: "Waterleidingen spoelen", desc: "Plaats alle instrumenten in de spoelstandaard..." },
-  ],
-  Avond: [
-    { id: "a1", title: "Oppervlakken reinigen", desc: "De bekleding schoonmaken met desinfectiemiddel" },
-    { id: "a2", title: "Aspiratiesysteem reinigen", desc: "Volledig reinigen van de slangen..." },
-  ],
-  Wekelijks: [
-    { id: "w1", title: "MD555-oplossing", desc: "1 à 2 liter MD555-oplossing aanzuigen..." },
-  ],
-  Maandelijks: [
-    { id: "m1", title: "Standaards schoonmaken", desc: "De spoelstandaards schoonmaken..." },
-  ],
-};
 
 function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [standardOptions, setStandardOptions] = useState([]);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
+  const [taskByType, setTaskByType] = useState({});
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    if (!box) return;
+    const params = new URLSearchParams({
+      date: new Date().toISOString().split("T")[0],
+    });
+    fetch(`${API_BASE_URL}/api/boxes/${box.id}/tasks?${params}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch tasks");
+        return res.json();
+      })
+      .then((data) => setTaskByType(data))
+      .catch(err => console.error("Error fetching tasks: ", err));
+  }, [box, API_BASE_URL]);
 
   // Haal de common options op uit de database zodra de modal opent
   useEffect(() => {
-    fetch("http://localhost:5001/api/tasks/options")
+    fetch(`${API_BASE_URL}/api/tasks/options`)
       .then((res) => res.json())
       .then((data) => setStandardOptions(data))
       .catch((err) => console.error("Fout bij ophalen opties:", err));
-  }, []);
+  }, [API_BASE_URL]);
 
   if (!box) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-gray-200">
-        
+
         {/* Header */}
         <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
           <h2 className="text-3xl font-bold text-gray-900">{box.name}</h2>
@@ -52,7 +52,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
             <X size={24} />
           </button>
         </div>
-        
+
         {/* Taken Lijst */}
         <div className="overflow-y-auto p-6 space-y-8">
           {box.types.map((type) => (
@@ -63,14 +63,14 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
                   {type}
                 </span>
               </div>
-              
+
               <div className="space-y-6">
-                {taskData[type]?.map((task) => {
+                {taskByType[type]?.map((task) => {
                   const isDone = tasksState[box.id]?.[task.id];
                   return (
-                    <div 
-                      key={task.id} 
-                      className="flex gap-4 cursor-pointer group" 
+                    <div
+                      key={task.id}
+                      className="flex gap-4 cursor-pointer group"
                       onClick={() => onToggleTask(box.id, task.id)}
                     >
                       <div className={`transition-colors ${isDone ? "text-green-500" : "text-gray-300 group-hover:text-gray-400"}`}>
@@ -89,20 +89,19 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
             </div>
           ))}
         </div>
-        
+
         {/* Reden Sectie */}
         <div className="p-6 border-t bg-white">
           {showReasonInput ? (
             <div className="space-y-4 mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Standaard redenen:</label>
-              
+
               <div className="grid grid-cols-1 gap-2">
                 {standardOptions.map((opt) => (
-                  <label 
-                    key={opt.option_id} 
-                    className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${
-                      selectedOptionId === opt.option_id ? "bg-[#5C2D5F]/5 border-[#5C2D5F]" : "bg-white border-gray-200 hover:border-gray-300"
-                    }`}
+                  <label
+                    key={opt.option_id}
+                    className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${selectedOptionId === opt.option_id ? "bg-[#5C2D5F]/5 border-[#5C2D5F]" : "bg-white border-gray-200 hover:border-gray-300"
+                      }`}
                   >
                     <input
                       type="radio"
