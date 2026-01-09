@@ -80,5 +80,12 @@
         "minutesAgo": "minuten geleden",
         "hoursAgo": "uur geleden",
         "daysAgo": "dagen geleden"
+    },
+    "boxCard": {
+        "completed": "Voltooid",
+        "partiallyCompleted": "Gedeeltelijk voltooid",
+        "notCompleted": "Niet voltooid",
+        "dentist": "Tandarts",
+        "taskCount": "Aantal taken"
     }
 }

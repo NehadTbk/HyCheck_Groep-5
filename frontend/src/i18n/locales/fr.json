@@ -75,5 +75,12 @@
         "minutesAgo": "minutes",
         "hoursAgo": "heures",
         "daysAgo": "jours"
+    },
+    "boxCard": {
+        "completed": "Complété",
+        "partiallyCompleted": "Partiellement complété",
+        "notCompleted": "Non complété",
+        "dentist": "Dentiste",
+        "taskCount": "Nombre de tâches"
     }
 }
