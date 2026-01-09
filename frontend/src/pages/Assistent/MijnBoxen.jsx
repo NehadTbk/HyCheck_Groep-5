@@ -9,7 +9,6 @@ import { useLanguage } from "../../i18n/useLanguage";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-
 function MijnBoxen() {
   const [boxes, setBoxes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,35 +43,38 @@ function MijnBoxen() {
   }, []);
 
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
-    // We bouwen de payload op voor de backend
-    const payload = {
-      session_id: boxId,
-      task_type_id: 999, // Jouw nieuwe Algemene Schoonmaak taak ID
-      selected_option_id: selectedOptionId || null,
-      custom_text: customText && customText.trim() !== "" ? customText : null,
-      completed: 0
-    };
+    console.log("Ontvangen parameters:", { boxId, selectedOptionId, customText });
 
     try {
+      const payload = {
+        session_id: Number(boxId),
+        task_type_id: 999, // Pas dit aan naar je werkelijke type indien nodig
+        selected_option_id: selectedOptionId || null,
+        custom_text: customText?.trim() || null,
+        completed: 0
+      };
+
       const response = await fetch(`${API_BASE_URL}/api/tasks/update`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      if (response.ok) {
-        setSelectedBox(null);
-        // Zet status lokaal op openstaand in de lijst
-        setBoxes(prev => prev.map(b => b.id === boxId ? { ...b, status: "openstaand" } : b));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Server fout");
       }
-    } catch (error) {
-      console.error("Opslaan mislukt:", error);
+
+
+      setSelectedBox(null); // Sluit de modal na succes
+    } catch (err) {
+      console.error("ER IS EEN FOUT GEBEURD:", err.message);
+      alert("Fout: " + err.message);
     }
   };
 
-  const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
-
+  useLanguage();
 
   if (loading) {
     return (

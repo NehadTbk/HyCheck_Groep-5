@@ -129,7 +129,7 @@
     },
     "historyAll": {
         "title": "Détails",
-        "search": "Chercher par date ou boîte...",
+        "search": "Chercher par date/boîte...",
         "date": "Date",
         "status": "Statut",
         "actions": "Actions",
