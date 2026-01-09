@@ -65,6 +65,8 @@ export const createAssignments = async (req, res) => {
 
         const shiftUserId = req.user?.user_id || assistant.user_id;
 
+        console.log(`[DEBUG CREATE] Received date from frontend: ${shift.date}`);
+
         const shiftId = await createShift({
           userId: shiftUserId,
           shiftDate: shift.date,
@@ -137,23 +139,41 @@ export const getCalendarData = async (req, res) => {
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 4); // Monday to Friday
 
+    // Format end date without timezone issues
+    const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+
     // 1. Get all boxes using model
     const boxes = await getAllBoxes();
 
     // 2. Get all shift assignments for this week using model
     const assignments = await getShiftAssignmentsByDateRange(
       weekStart,
-      endDate.toISOString().slice(0, 10)
+      endDateStr
     );
 
     // Debug: log what we fetched
-    console.log(`[getCalendarData] weekStart=${weekStart} start=${weekStart} end=${endDate.toISOString().slice(0,10)} assignments=${assignments.length}`);
+    console.log(`[getCalendarData] weekStart=${weekStart} start=${weekStart} end=${endDateStr} assignments=${assignments.length}`);
 
     // 3. Structure the planning data: planning[date][box_id]
     const planning = {};
 
     assignments.forEach((assignment) => {
-      const dateKey = new Date(assignment.shift_date).toISOString().slice(0, 10);
+      // Format date as YYYY-MM-DD string
+      const shiftDate = assignment.shift_date;
+      let dateKey;
+
+      if (shiftDate instanceof Date) {
+        // MySQL returns Date object - extract year, month, day in local time
+        const year = shiftDate.getFullYear();
+        const month = String(shiftDate.getMonth() + 1).padStart(2, '0');
+        const day = String(shiftDate.getDate()).padStart(2, '0');
+        dateKey = `${year}-${month}-${day}`;
+      } else {
+        // Already a string
+        dateKey = String(shiftDate).slice(0, 10);
+      }
+
+      console.log(`[DEBUG] shift_date type: ${typeof shiftDate}, value: ${shiftDate}, dateKey: ${dateKey}`);
 
       if (!planning[dateKey]) {
         planning[dateKey] = {};
