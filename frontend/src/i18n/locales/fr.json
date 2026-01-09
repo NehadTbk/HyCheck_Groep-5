@@ -179,5 +179,10 @@
     },
     "createAccountCard": {
         "title": "Créer un compte"
+    },
+    "periodicCard": {
+        "title": "Nettoyage périodique",
+        "weekly": "Hebdomadaire: ",
+        "monthly": "Mensuel: "
     }
 }

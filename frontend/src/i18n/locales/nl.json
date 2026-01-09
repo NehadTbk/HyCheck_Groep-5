@@ -187,5 +187,10 @@
     },
     "createAccountCard": {
         "title": "Account Aanmaken"
+    },
+    "periodicCard": {
+        "title": "Periodieke reinigingen",
+        "weekly": "Wekelijks:",
+        "monthly": "Maandelijks:"
     }
 }
