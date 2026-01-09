@@ -8,6 +8,7 @@ import {
   createTaskGroups,
   getAllBoxes,
   getShiftAssignmentsByDateRange,
+  deleteShiftAssignment,
 } from "../models/Assignment.js";
 
 /**
@@ -171,6 +172,7 @@ export const getCalendarData = async (req, res) => {
       }).join('+');
 
       planning[dateKey][assignment.box_id] = {
+        assignment_id: assignment.assignment_id,
         label: groupLabels || 'Task',
         color_code: assignment.box_color || '#9e9e9e',
         dentist: assignment.dentist_name,
@@ -178,6 +180,7 @@ export const getCalendarData = async (req, res) => {
         start_time: assignment.start_time,
         end_time: assignment.end_time,
         task_groups: groups,
+        box_name: assignment.box_name,
         // keep original fields to help frontend debugging
         shift_date: assignment.shift_date,
         box_id: assignment.box_id,
@@ -195,6 +198,34 @@ export const getCalendarData = async (req, res) => {
     console.error("getCalendarData error:", error);
     res.status(500).json({
       message: "Failed to fetch calendar data",
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Delete a shift assignment
+ * DELETE /api/assignments/:id
+ */
+export const deleteAssignment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Assignment ID is required" });
+    }
+
+    const deleted = await deleteShiftAssignment(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.status(200).json({ message: "Assignment deleted successfully" });
+  } catch (error) {
+    console.error("deleteAssignment error:", error);
+    res.status(500).json({
+      message: "Failed to delete assignment",
       error: error.message
     });
   }

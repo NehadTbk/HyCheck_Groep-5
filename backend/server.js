@@ -9,7 +9,6 @@ import reportRoutes from "./src/routes/reportRoutes.js";
 import afdelingshoofdRoutes from "./src/routes/afdelingshoofdRoutes.js";
 import notificationsRoutes from "./src/routes/notificationsRoutes.js";
 import assignmentRoutes from "./src/routes/assignmentRoutes.js";
-import migrationRoutes from "./src/routes/migrationRoutes.js";
 import taskRoutes from './src/routes/taskRoutes.js';
 
 dotenv.config();
@@ -27,7 +26,6 @@ app.use("/api", schedulingRoutes);
 app.use("/api", assignmentRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationsRoutes);
-app.use("/api/migrations", migrationRoutes);
 app.use('/api/tasks', taskRoutes);
 
 
