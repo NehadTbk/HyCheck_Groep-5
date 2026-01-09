@@ -30,7 +30,7 @@ router.post('/update', async (req, res) => {
             custom_comment = VALUES(custom_comment),
             completed = VALUES(completed)`;
 
-        await db.query(query, [session_id, task_type_id, selected_option_id, custom_text, completed]);
+        await db.query(query, [session_id, task_type_id, optionValue, commentValue, completed]);
         
         res.status(200).json({ message: "Succesvol opgeslagen!" });
     } catch (error) {
