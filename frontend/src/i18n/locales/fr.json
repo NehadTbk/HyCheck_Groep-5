@@ -134,5 +134,9 @@
         "status": "Statut",
         "actions": "Actions",
         "details": "Détails"
+    },
+    "afdelingshoofdPersoneel": {
+        "title": "Gestion du personnel",
+        "addPersonnelButton": "+ Ajouter du personnel"
     }
 }
