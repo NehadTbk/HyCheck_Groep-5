@@ -65,7 +65,8 @@
     "navbar": {
         "dashboard": "Tableau de bord",
         "mijnPersoneel": "Mon Personnel",
-        "maandoverzicht": "Aperçu mensuel"
+        "maandoverzicht": "Aperçu mensuel",
+        "instructions": "Instructions"
     },
     "notifications": {
         "title": "Notifications",
@@ -75,5 +76,63 @@
         "minutesAgo": "minutes",
         "hoursAgo": "heures",
         "daysAgo": "jours"
+    },
+    "boxCard": {
+        "completed": "Complété",
+        "partiallyCompleted": "Partiellement complété",
+        "notCompleted": "Non complété",
+        "dentist": "Dentiste",
+        "taskCount": "Nombre de tâches"
+    },
+    "historyModal": {
+        "title": "Détails",
+        "tasks": "Tâches effectuées",
+        "close": "Fermer"
+    },
+    "periodicStatsCard": {
+        "title": "Nettoyage périodique",
+        "weekly": "Hebdomadaire :",
+        "monthly": "Mensuel :"
+    },
+    "assistentDashboard": {
+        "todayCompleted": "Terminé aujourd'hui",
+        "completedSubtitle": "Box nettoyées",
+        "openstaand": "En attente",
+        "pendingSubtitle": "Box en attente",
+        "assignedBoxes": "Mes box assignées"
+    },
+    "taskModal": {
+        "reasonOptions": "Raisons standard :",
+        "customReason": "Raison personnalisée (écrase la sélection) :",
+        "cancel": "ANNULER",
+        "confirmReason": "CONFIRMER LA RAISON",
+        "addReason": "Ajouter une raison",
+        "saveAndClose": "Enregistrer & Fermer"
+    },
+    "assistentNav": {
+        "dashboard": "Tableau de bord",
+        "boxes": "Mes boîtes",
+        "history": "Historique"
+    },
+    "topbar": {
+        "appName": "HyCheck",
+        "guest": "Invité",
+        "logout": "Se déconnecter",
+        "roles": {
+            "assistant": "Assistant",
+            "responsible": "Responsable",
+            "admin": "Chef de service"
+        }
+    },
+    "assistentBoxen": {
+        "allBoxes": "Toutes les boîtes"
+    },
+    "historyAll": {
+        "title": "Détails",
+        "search": "Chercher par date ou boîte...",
+        "date": "Date",
+        "status": "Statut",
+        "actions": "Actions",
+        "details": "Détails"
     }
 }

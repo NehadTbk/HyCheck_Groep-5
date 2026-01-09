@@ -34,7 +34,7 @@ const TASK_TYPES = {
 };
 
 export default function TaskTypeSchedulingOverlay() {
-  const [selectedDates, setSelectedDates] = useState([new Date().toISOString().slice(0, 10)]);
+  const [selectedDates, setSelectedDates] = useState([]);
   const [dentists, setDentists] = useState([]);
   const [boxes, setBoxes] = useState([]);
   const [assistants, setAssistants] = useState([]);
@@ -45,8 +45,12 @@ export default function TaskTypeSchedulingOverlay() {
   // Step 2: Set times for selected task types
   const [taskTypeTimes, setTaskTypeTimes] = useState({});
 
-  // Step 3: Assign boxes -> dentist -> assistant
-  const [assignments, setAssignments] = useState([]);
+  // Step 3: Select ONE assistant
+  const [selectedAssistant, setSelectedAssistant] = useState("");
+
+  // Step 4: Add dentist-box pairs (select tandarts, then box, repeat)
+  const [selectedDentist, setSelectedDentist] = useState("");
+  const [assignments, setAssignments] = useState([]); // Array of { dentist, box }
 
   useEffect(() => {
     fetchData();
@@ -62,9 +66,7 @@ export default function TaskTypeSchedulingOverlay() {
       const sortedBoxes = (data.boxes || []).sort((a, b) => {
         const getBoxValue = (name) => {
           const num = name.replace("Box ", "");
-          // If it's a number, return it as number for sorting
           if (!isNaN(num)) return parseInt(num);
-          // If it's a letter, return a high number + charCode for sorting after numbers
           return 1000 + num.charCodeAt(0);
         };
         return getBoxValue(a.name) - getBoxValue(b.name);
@@ -81,13 +83,11 @@ export default function TaskTypeSchedulingOverlay() {
     const isSelected = selectedTaskTypes.includes(taskType);
 
     if (isSelected) {
-      // Deselect this task type
       const newTypes = selectedTaskTypes.filter((t) => t !== taskType);
       const { [taskType]: removed, ...rest } = taskTypeTimes;
       setSelectedTaskTypes(newTypes);
       setTaskTypeTimes(rest);
     } else {
-      // Add this task type
       setSelectedTaskTypes([...selectedTaskTypes, taskType]);
       setTaskTypeTimes({
         ...taskTypeTimes,
@@ -109,67 +109,59 @@ export default function TaskTypeSchedulingOverlay() {
     });
   };
 
-  const addAssignment = () => {
-    if (selectedTaskTypes.length === 0) {
-      alert("Selecteer eerst minimaal één taak type");
-      return;
-    }
-
-    const newAssignment = {
-      id: Date.now(),
-      box: "",
-      dentist: "",
-      assistant: "",
-    };
-    setAssignments([...assignments, newAssignment]);
-  };
-
-  const updateAssignment = (id, field, value) => {
-    setAssignments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, [field]: value } : a))
-    );
-  };
-
-  const deleteAssignment = (id) => {
-    setAssignments((prev) => prev.filter((a) => a.id !== id));
-  };
-
   const isDentistRequired = () => {
-    // Dentist is only required if Ochtend or Avond is selected
     return selectedTaskTypes.includes("ochtend") || selectedTaskTypes.includes("avond");
   };
 
-  const isAssignmentValid = (assignment) => {
-    const dentistRequired = isDentistRequired();
+  const selectBox = (boxName) => {
+    // Check if this box is already assigned
+    const existingIndex = assignments.findIndex(a => a.box === boxName);
 
-    return (
-      assignment.box &&
-      assignment.assistant &&
-      (!dentistRequired || assignment.dentist) // Dentist only required for Ochtend/Avond
-    );
+    if (existingIndex >= 0) {
+      // Remove the assignment (deselect)
+      setAssignments(assignments.filter((_, i) => i !== existingIndex));
+    } else {
+      // Add new assignment with current dentist
+      if (isDentistRequired() && !selectedDentist) {
+        alert("Selecteer eerst een tandarts");
+        return;
+      }
+      setAssignments([...assignments, { dentist: selectedDentist || null, box: boxName }]);
+    }
+  };
+
+  const removeAssignment = (index) => {
+    setAssignments(assignments.filter((_, i) => i !== index));
+  };
+
+  const isBoxAssigned = (boxName) => {
+    return assignments.some(a => a.box === boxName);
+  };
+
+  const getBoxDentist = (boxName) => {
+    const assignment = assignments.find(a => a.box === boxName);
+    return assignment?.dentist || null;
   };
 
   const canConfirm =
+    selectedDates.length > 0 &&
     selectedTaskTypes.length > 0 &&
-    assignments.length > 0 &&
-    assignments.every(isAssignmentValid);
-
+    selectedAssistant &&
+    assignments.length > 0;
 
   const handleConfirm = async () => {
-    // Prepare data for backend
     const shifts = [];
 
     selectedDates.forEach((date) => {
       assignments.forEach((assignment) => {
-        // Create ONE shift per assignment with ALL selected task types
         shifts.push({
           date: date,
-          dentist: assignment.dentist || null,
+          dentist: assignment.dentist,
           box: assignment.box,
-          assistant: assignment.assistant,
+          assistant: selectedAssistant,
           start: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].start : "08:00",
           end: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].end : "17:00",
-          groups: selectedTaskTypes, // All selected task types
+          groups: selectedTaskTypes,
         });
       });
     });
@@ -177,7 +169,8 @@ export default function TaskTypeSchedulingOverlay() {
     console.log("CONFIRMED SCHEDULE:", {
       selectedDates,
       selectedTaskTypes,
-      taskTypeTimes,
+      selectedAssistant,
+      assignments,
       shifts,
       totalShifts: shifts.length,
     });
@@ -203,13 +196,14 @@ export default function TaskTypeSchedulingOverlay() {
         `The assignments will now appear in the agenda.`
       );
 
-      // Dispatch custom event to trigger calendar refresh
       window.dispatchEvent(new Event("calendarUpdated"));
 
       // Reset form
-      setSelectedDates([new Date().toISOString().slice(0, 10)]);
+      setSelectedDates([]);
       setSelectedTaskTypes([]);
       setTaskTypeTimes({});
+      setSelectedAssistant("");
+      setSelectedDentist("");
       setAssignments([]);
     } catch (error) {
       console.error("Error creating assignments:", error);
@@ -229,7 +223,6 @@ export default function TaskTypeSchedulingOverlay() {
 
         {/* Task Types */}
         <div className="space-y-2">
-
           <div>
             <h3 className="font-semibold text-sm mb-2">Selecteer Taak Types:</h3>
             <div className="grid grid-cols-2 gap-2">
@@ -293,144 +286,137 @@ export default function TaskTypeSchedulingOverlay() {
         </div>
       )}
 
-      {/* Step 3: Assign Boxes -> Dentist -> Assistant */}
+      {/* Step 3: Select Assistant */}
       {selectedTaskTypes.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <h3 className="font-semibold text-sm">
-              Toewijzingen:
-              <span className="ml-2 text-xs text-gray-500 font-normal">
-                ({assignments.length})
-              </span>
-            </h3>
+        <div className="space-y-2 pb-3 border-b">
+          <h3 className="font-semibold text-sm">Selecteer Assistent:</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {assistants.map((assistant) => (
+              <button
+                key={assistant}
+                onClick={() => setSelectedAssistant(assistant)}
+                className={`p-2 rounded border text-center transition text-sm ${
+                  selectedAssistant === assistant
+                    ? "bg-[#582F5B] text-white border-[#582F5B]"
+                    : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                }`}
+              >
+                {assistant}
+              </button>
+            ))}
           </div>
+        </div>
+      )}
 
-          {assignments.length === 0 ? (
-            <div className="text-center py-4 text-gray-500 text-xs border border-dashed rounded">
-              Klik hieronder op "Voeg toe"
+      {/* Step 4: Add Tandarts + Boxes */}
+      {selectedAssistant && (
+        <div className="space-y-3 pb-3 border-b">
+          <h3 className="font-semibold text-sm">Tandarts & Boxen voor {selectedAssistant}:</h3>
+
+          {/* Select Tandarts (if required) */}
+          {isDentistRequired() && (
+            <div>
+              <label className="text-xs font-medium mb-1 block">
+                1. Selecteer Tandarts {selectedDentist && <span className="text-green-600">(geselecteerd: {selectedDentist})</span>}:
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {dentists.map((dentist) => (
+                  <button
+                    key={dentist}
+                    onClick={() => setSelectedDentist(dentist)}
+                    className={`p-2 rounded border text-center transition text-sm ${
+                      selectedDentist === dentist
+                        ? "bg-[#582F5B] text-white border-[#582F5B]"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                    }`}
+                  >
+                    {dentist.replace("Dr. ", "")}
+                  </button>
+                ))}
+              </div>
             </div>
-          ) : (
-            <div className="space-y-2">
-              {assignments.map((assignment) => (
-                <div
-                  key={assignment.id}
-                  className={`border rounded p-3 transition ${
-                    !isAssignmentValid(assignment)
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-[#582F5B]"
-                  }`}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-1 text-xs">
-                      {selectedTaskTypes.map((taskType) => (
-                        <span
-                          key={taskType}
-                          className={`px-1.5 py-0.5 rounded text-xs ${TASK_TYPES[taskType].color}`}
-                        >
-                          {TASK_TYPES[taskType].label.charAt(0)}
-                        </span>
-                      ))}
-                    </div>
+          )}
+
+          {/* Select Boxes */}
+          {(!isDentistRequired() || selectedDentist) && (
+            <div>
+              <label className="text-xs font-medium mb-1 block">
+                {isDentistRequired() ? "2. " : ""}Klik op box(en) om toe te wijzen:
+              </label>
+              <div className="grid grid-cols-7 md:grid-cols-14 gap-1">
+                {boxes.map((box) => {
+                  const assigned = isBoxAssigned(box.name);
+                  const boxDentist = getBoxDentist(box.name);
+                  return (
                     <button
-                      onClick={() => deleteAssignment(assignment.id)}
+                      key={box.box_id}
+                      onClick={() => selectBox(box.name)}
+                      title={assigned && boxDentist ? `${boxDentist}` : ""}
+                      className={`p-1.5 rounded border text-center transition text-xs font-medium ${
+                        assigned
+                          ? "bg-[#582F5B] text-white border-[#582F5B]"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                      }`}
+                    >
+                      {box.name.replace("Box ", "")}
+                    </button>
+                  );
+                })}
+              </div>
+              {isDentistRequired() && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Tip: Selecteer eerst een tandarts, klik dan op boxen. Wissel van tandarts om andere boxen toe te wijzen.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Added assignments list */}
+          {assignments.length > 0 && (
+            <div className="space-y-2 mt-3">
+              <label className="text-xs font-medium text-gray-500">Toegevoegde toewijzingen ({assignments.length}):</label>
+              <div className="flex flex-wrap gap-2">
+                {assignments.map((assignment, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-2 py-1 bg-gray-100 border rounded text-sm"
+                  >
+                    <span>
+                      {assignment.box.replace("Box ", "Box ")}
+                      {assignment.dentist && <span className="text-gray-500 ml-1">({assignment.dentist.replace("Dr. ", "")})</span>}
+                    </span>
+                    <button
+                      onClick={() => removeAssignment(index)}
                       className="text-red-500 hover:text-red-700"
-                      title="Verwijder"
                     >
                       <Trash2 size={14} />
                     </button>
                   </div>
-
-                  <div className="space-y-2">
-                    {/* Box Selection - Buttons */}
-                    <div>
-                      <label className="text-xs font-medium mb-1 block">Box *</label>
-                      <div className="grid grid-cols-7 md:grid-cols-14 gap-1">
-                        {boxes.map((box) => (
-                          <button
-                            key={box.box_id}
-                            onClick={() => updateAssignment(assignment.id, "box", box.name)}
-                            className={`p-1.5 rounded border text-center transition text-xs font-medium ${
-                              assignment.box === box.name
-                                ? "bg-[#582F5B] text-white border-[#582F5B]"
-                                : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                            }`}
-                          >
-                            {box.name.replace("Box ", "")}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Dentist Selection - Buttons (only show if Ochtend or Avond selected) */}
-                    {isDentistRequired() && (
-                      <div>
-                        <label className="text-xs font-medium mb-1 block">Tandarts *</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
-                          {dentists.map((dentist) => (
-                            <button
-                              key={dentist}
-                              onClick={() => updateAssignment(assignment.id, "dentist", dentist)}
-                              className={`p-1.5 rounded border text-center transition text-xs ${
-                                assignment.dentist === dentist
-                                  ? "bg-[#582F5B] text-white border-[#582F5B]"
-                                  : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                              }`}
-                            >
-                              {dentist.replace("Dr. ", "")}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Assistant Selection - Buttons */}
-                    <div>
-                      <label className="text-xs font-medium mb-1 block">Assistent *</label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
-                        {assistants.map((assistant) => (
-                          <button
-                            key={assistant}
-                            onClick={() => updateAssignment(assignment.id, "assistant", assistant)}
-                            className={`p-1.5 rounded border text-center transition text-xs ${
-                              assignment.assistant === assistant
-                                ? "bg-[#582F5B] text-white border-[#582F5B]"
-                                : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                            }`}
-                          >
-                            {assistant}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
-
-          {/* Add Assignment Button at Bottom */}
-          <div className="flex justify-center pt-2">
-            <button
-              onClick={addAssignment}
-              className="bg-[#582F5B] text-white px-4 py-2 rounded flex items-center gap-1 hover:bg-[#4a254c] text-sm font-medium"
-            >
-              <Plus size={16} /> Voeg toe
-            </button>
-          </div>
         </div>
       )}
 
       {/* Confirm Button */}
       <div className="flex justify-between items-center pt-3 border-t">
         <div className="text-xs text-gray-600">
-          {assignments.length > 0 && selectedTaskTypes.length > 0 && (
+          {assignments.length > 0 && selectedDates.length > 0 ? (
             <>
-              <strong>{selectedDates.length * assignments.length * selectedTaskTypes.length}</strong> shift
-              {selectedDates.length * assignments.length * selectedTaskTypes.length !== 1 ? "s" : ""}
+              <strong>{selectedDates.length * assignments.length}</strong> shift
+              {selectedDates.length * assignments.length !== 1 ? "s" : ""}
               <span className="ml-1">
-                ({selectedDates.length} datum{selectedDates.length !== 1 ? "s" : ""} × {assignments.length} × {selectedTaskTypes.length})
+                ({selectedDates.length} datum{selectedDates.length !== 1 ? "s" : ""} × {assignments.length} toewijzing{assignments.length !== 1 ? "en" : ""})
               </span>
             </>
+          ) : (
+            <span className="text-red-500">
+              {selectedDates.length === 0 && "Selecteer datum(s) • "}
+              {selectedTaskTypes.length === 0 && "Selecteer taak type(s) • "}
+              {!selectedAssistant && "Selecteer assistent • "}
+              {assignments.length === 0 && selectedAssistant && "Klik op box(en)"}
+            </span>
           )}
         </div>
         <button
@@ -449,7 +435,7 @@ export default function TaskTypeSchedulingOverlay() {
       {/* Helper Text */}
       {selectedTaskTypes.length === 0 && (
         <div className="text-center text-gray-500 text-xs py-3">
-          👆 Selecteer eerst taak types
+          Selecteer eerst taak types
         </div>
       )}
     </div>

@@ -12,6 +12,14 @@ function getMonday(date) {
   return d;
 }
 
+// Format date as YYYY-MM-DD without timezone issues
+function formatDateLocal(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function generateWeekDays(weekStart) {
   const dayNames = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag"];
   const days = [];
@@ -20,7 +28,7 @@ function generateWeekDays(weekStart) {
     d.setDate(weekStart.getDate() + i);
     days.push({
       dagNaam: dayNames[i],
-      datumISO: d.toISOString().slice(0, 10),
+      datumISO: formatDateLocal(d),
       datumLabel: d.toLocaleDateString("nl-BE", { day: "2-digit", month: "2-digit" }),
     });
   }
@@ -59,7 +67,7 @@ function VerantwoordelijkeDashboard() {
   async function fetchWeekData() {
     try {
       const res = await fetch(
-        `http://localhost:5001/api/calendar?weekStart=${weekStart.toISOString().slice(0, 10)}`
+        `http://localhost:5001/api/calendar?weekStart=${formatDateLocal(weekStart)}`
       );
       if (!res.ok) {
         console.error("GET /api/calendar failed", await res.text());

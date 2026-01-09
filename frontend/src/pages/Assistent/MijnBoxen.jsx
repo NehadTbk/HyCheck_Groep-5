@@ -3,6 +3,9 @@ import PageLayout from "../../components/layout/PageLayout";
 import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import BoxList from "../../components/Assistent/BoxList";
 import TaskModal from "../../components/Assistent/TaskModal";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -57,15 +60,18 @@ function MijnBoxen() {
     }
   };
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
       <section className="bg-white rounded-xl p-6 shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Alle Boxen</h1>
-        <BoxList
-          boxes={boxes}
-          onBoxCheck={(id) => setBoxes(prev => prev.map(box => box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box))}
-          onBoxClick={(box) => setSelectedBox(box)}
+        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">{t("assistentBoxen.allBoxes")}</h1>
+        <BoxList 
+          boxes={boxes} 
+          onBoxCheck={(id) => setBoxes(prev => prev.map(box => box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box))} 
+          onBoxClick={(box) => setSelectedBox(box)} 
         />
       </section>
 
