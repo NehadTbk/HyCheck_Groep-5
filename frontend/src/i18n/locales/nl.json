@@ -195,5 +195,12 @@
         "title": "Periodieke reinigingen",
         "weekly": "Wekelijks:",
         "monthly": "Maandelijks:"
+    },
+    "dateCalendar": {
+        "previousMonth": "Vorige maand",
+        "nextMonth": "Volgende maand",
+        "today": "Vandaag",
+        "date": "datum",
+        "selected": "geselecteerd"
     }
 }

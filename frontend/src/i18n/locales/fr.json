@@ -187,5 +187,12 @@
         "title": "Nettoyage périodique",
         "weekly": "Hebdomadaire: ",
         "monthly": "Mensuel: "
+    },
+    "dateCalendar": {
+        "previousMonth": "Mois précédent",
+        "nextMonth": "Mois suivant",
+        "today": "Aujourd'hui",
+        "date": "date",
+        "selected": "sélectionné(e)s"
     }
 }
