@@ -99,5 +99,13 @@
         "openstaand": "En attente",
         "pendingSubtitle": "Box en attente",
         "assignedBoxes": "Mes box assignées"
+    },
+    "taskModal": {
+        "reasonOptions": "Raisons standard :",
+        "customReason": "Raison personnalisée (écrase la sélection) :",
+        "cancel": "ANNULER",
+        "confirmReason": "CONFIRMER LA RAISON",
+        "addReason": "Ajouter une raison",
+        "saveAndClose": "Enregistrer & Fermer"
     }
 }

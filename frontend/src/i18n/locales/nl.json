@@ -104,5 +104,13 @@
         "openstaand": "Openstaand",
         "pendingSubtitle": "Boxen nog te doen",
         "assignedBoxes": "Mijn toegewezen boxen"
+    },
+    "taskModal": {
+        "reasonOptions": "Standaard redenen:",
+        "customReason": "Eigen reden (overschrijft keuze):",
+        "cancel": "ANNULEREN",
+        "addReason": "Reden toevoegen",
+        "confirmReason": "REDEN BEVESTIGEN",
+        "saveAndClose": "Opslaan & Sluiten"
     }
 }
