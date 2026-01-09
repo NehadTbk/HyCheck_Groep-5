@@ -7,10 +7,6 @@ import ProgressCard from "../../components/cards/ProgressCard";
 import PeriodicCard from "../../components/cards/PeriodicCard";
 import CreateAccountCard from "../../components/cards/CreateAccountCard";
 
-import { useLanguage } from "../../i18n/useLanguage";
-import { useTranslation } from "../../i18n/useTranslation";
-import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
-
 const MONTHS_NL = [
   "Januari", "Februari", "Maart", "April", "Mei", "Juni",
   "Juli", "Augustus", "September", "Oktober", "November", "December",

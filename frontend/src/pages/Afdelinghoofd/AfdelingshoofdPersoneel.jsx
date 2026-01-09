@@ -5,6 +5,9 @@ import PageLayout from "../../components/layout/PageLayout";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import Personeelsregister from '../../components/personeel/PersoneelsRegister';
 import PersoneelToevoegenModal from '../../components/personeel/PersoneelToevoegenModal';
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function AfdelingshoofdPersoneel() {
   const location = useLocation();
@@ -21,6 +24,9 @@ function AfdelingshoofdPersoneel() {
     setRefreshKey((k) => k + 1); // triggers refetch in register
   };
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <PageLayout>
       <AfdelingshoofdNavBar />
@@ -28,14 +34,14 @@ function AfdelingshoofdPersoneel() {
       <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px]">
         <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
           <h1 className="text-3xl font-bold text-gray-800">
-            Personeelsbeheer (Afdelingshoofd)
+            {t("afdelingshoofdPersoneel.title")}
           </h1>
           {canCreateUser && (
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-[#5C2D5F] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#4A2144] transition-colors"
             >
-              + Personeel toevoegen
+              {t("afdelingshoofdPersoneel.addPersonnelButton")}
             </button>
           )}
         </div>

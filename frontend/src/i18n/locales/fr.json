@@ -134,5 +134,55 @@
         "status": "Statut",
         "actions": "Actions",
         "details": "Détails"
+    },
+    "afdelingshoofdPersoneel": {
+        "title": "Gestion du personnel",
+        "addPersonnelButton": "+ Ajouter du personnel"
+    },
+    "personeelsRegister": {
+        "title": "Registre du personnel",
+        "loading": "Chargement du personnel…"
+    },
+    "personeelTable": {
+        "id": "ID",
+        "lastName": "Nom",
+        "firstName": "Prénom",
+        "role": "Fonction",
+        "email": "E-mail",
+        "actions": "Actions",
+        "noResults": "Aucun membre du personnel trouvé."
+    },
+    "personeelToevoegenModal": {
+        "title": "Ajouter du personnel",
+        "firstName": "Prénom:",
+        "lastName": "Nom:",
+        "email": "Adresse e-mail:",
+        "function": "Fonction:",
+        "selectFunction": "Choisir une fonction",
+        "note": "Un mot de passe temporaire sera généré automatiquement.",
+        "cancel": "Annuler",
+        "add": "Ajouter",
+        "loading": "Ajout en cours...",
+        "firstNamePlaceholder": "ex. Jan",
+        "lastNamePlaceholder": "ex. Janssen",
+        "emailPlaceholder": "ex. jan@dentiste.be",
+        "roles": {
+            "admin": "Chef de service",
+            "responsible": "Responsable",
+            "dentist": "Dentiste",
+            "assistant": "Assistant dentaire"
+        },
+        "roleDescriptions": {
+            "admin": "En tant que chef de service, vous pouvez ajouter des responsables, des dentistes et des assistants",
+            "responsible": "En tant que responsable, vous pouvez ajouter des dentistes et des assistants"
+        }
+    },
+    "createAccountCard": {
+        "title": "Créer un compte"
+    },
+    "periodicCard": {
+        "title": "Nettoyage périodique",
+        "weekly": "Hebdomadaire: ",
+        "monthly": "Mensuel: "
     }
 }
