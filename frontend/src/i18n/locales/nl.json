@@ -70,7 +70,8 @@
     "navbar": {
         "dashboard": "Dashboard",
         "mijnPersoneel": "Mijn Personeel",
-        "maandoverzicht": "Maandoverzicht"
+        "maandoverzicht": "Maandoverzicht",
+        "instructions": "Instructies"
     },
     "notifications": {
         "title": "Meldingen",
@@ -80,5 +81,63 @@
         "minutesAgo": "minuten geleden",
         "hoursAgo": "uur geleden",
         "daysAgo": "dagen geleden"
+    },
+    "boxCard": {
+        "completed": "Voltooid",
+        "partiallyCompleted": "Gedeeltelijk voltooid",
+        "notCompleted": "Niet voltooid",
+        "dentist": "Tandarts",
+        "taskCount": "Aantal taken"
+    },
+    "historyModal": {
+        "title": "Details",
+        "tasks": "Uitgevoerde taken",
+        "close": "Sluiten"
+    },
+    "periodicStatsCard": {
+        "title": "Periodieke reiniging",
+        "weekly": "Wekelijks:",
+        "monthly": "Maandelijks:"
+    },
+    "assistentDashboard": {
+        "todayCompleted": "Vandaag voltooid",
+        "completedSubtitle": "Boxen schoongemaakt",
+        "openstaand": "Openstaand",
+        "pendingSubtitle": "Boxen nog te doen",
+        "assignedBoxes": "Mijn toegewezen boxen"
+    },
+    "taskModal": {
+        "reasonOptions": "Standaard redenen:",
+        "customReason": "Eigen reden (overschrijft keuze):",
+        "cancel": "ANNULEREN",
+        "addReason": "Reden toevoegen",
+        "confirmReason": "REDEN BEVESTIGEN",
+        "saveAndClose": "Opslaan & Sluiten"
+    },
+    "assistentNav": {
+        "dashboard": "Dashboard",
+        "boxes": "Mijn Boxen",
+        "history": "Historiek"
+    },
+    "topbar": {
+        "appName": "HyCheck",
+        "guest": "Gast",
+        "logout": "Uitloggen",
+        "roles": {
+            "assistant": "Assistent",
+            "responsible": "Verantwoordelijke",
+            "admin": "Afdelingshoofd"
+        }
+    },
+    "assistentBoxen": {
+        "allBoxes": "Alle Boxen"
+    },
+    "historyAll": {
+        "title": "Details",
+        "search": "Zoeken op datum of box...",
+        "date": "Datum",
+        "status": "Status",
+        "actions": "Acties",
+        "details": "Details"
     }
 }

@@ -21,7 +21,7 @@ function BoxCard({ box, onCheck, onClick }) {
   const cardStyles = isVoltooid 
     ? "border-green-400 bg-green-50" 
     : isGedeeltelijk 
-      ? "border-orange-400 bg-orange-50" // Feller oranje
+      ? "border-orange-400 bg-orange-50"
       : "border-red-300 bg-red-50";
 
   return (
@@ -36,7 +36,7 @@ function BoxCard({ box, onCheck, onClick }) {
           <div className="flex items-center gap-2">
             {isVoltooid && (
               <span className="text-[11px] px-2 py-0.5 rounded-full font-normal bg-green-100 text-green-700 border border-green-200">
-                {t("assistent.completed")}
+                {t("boxCard.completed")}
               </span>
             )}
             
@@ -59,8 +59,8 @@ function BoxCard({ box, onCheck, onClick }) {
             </button>
           </div>
         </div>
-        <p className="text-[14px] text-gray-700 font-medium">{t("assistent.dentist")}: {box.dentist}</p>
-        <p className="text-[14px] text-gray-700">{t("assistent.taskCount")}: {box.tasksCount}</p>
+        <p className="text-[14px] text-gray-700 font-medium">{t("boxCard.dentist")}: {box.dentist}</p>
+        <p className="text-[14px] text-gray-700">{t("boxCard.taskCount")}: {box.tasksCount}</p>
       </div>
 
       <div className="mt-2 flex gap-2 overflow-x-hidden">

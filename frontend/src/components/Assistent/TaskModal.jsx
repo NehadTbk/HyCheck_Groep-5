@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { X, Circle, CheckCircle2 } from "lucide-react";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const typeColors = {
   Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
@@ -41,10 +44,13 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
 
   if (!box) return null;
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-gray-200">
-        
+
         {/* Header */}
         <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
           <h2 className="text-3xl font-bold text-gray-900">{box.name}</h2>
@@ -52,7 +58,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
             <X size={24} />
           </button>
         </div>
-        
+
         {/* Taken Lijst */}
         <div className="overflow-y-auto p-6 space-y-8">
           {box.types.map((type) => (
@@ -63,14 +69,14 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
                   {type}
                 </span>
               </div>
-              
+
               <div className="space-y-6">
                 {taskData[type]?.map((task) => {
                   const isDone = tasksState[box.id]?.[task.id];
                   return (
-                    <div 
-                      key={task.id} 
-                      className="flex gap-4 cursor-pointer group" 
+                    <div
+                      key={task.id}
+                      className="flex gap-4 cursor-pointer group"
                       onClick={() => onToggleTask(box.id, task.id)}
                     >
                       <div className={`transition-colors ${isDone ? "text-green-500" : "text-gray-300 group-hover:text-gray-400"}`}>
@@ -89,20 +95,19 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
             </div>
           ))}
         </div>
-        
+
         {/* Reden Sectie */}
         <div className="p-6 border-t bg-white">
           {showReasonInput ? (
             <div className="space-y-4 mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Standaard redenen:</label>
-              
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t("taskModal.reasonOptions")}</label>
+
               <div className="grid grid-cols-1 gap-2">
                 {standardOptions.map((opt) => (
-                  <label 
-                    key={opt.option_id} 
-                    className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${
-                      selectedOptionId === opt.option_id ? "bg-[#5C2D5F]/5 border-[#5C2D5F]" : "bg-white border-gray-200 hover:border-gray-300"
-                    }`}
+                  <label
+                    key={opt.option_id}
+                    className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${selectedOptionId === opt.option_id ? "bg-[#5C2D5F]/5 border-[#5C2D5F]" : "bg-white border-gray-200 hover:border-gray-300"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -120,7 +125,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
               </div>
 
               <div className="pt-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-2">Eigen reden (overschrijft keuze):</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-2">{t("taskModal.customReason")}</label>
                 <textarea
                   value={reason}
                   onChange={(e) => {
@@ -142,13 +147,13 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
                   }}
                   className="text-gray-500 text-xs font-bold px-4 py-2 hover:text-gray-700"
                 >
-                  ANNULEREN
+                  {t("taskModal.cancel")}
                 </button>
                 <button
                   onClick={() => setShowReasonInput(false)}
                   className="bg-[#5C2D5F] text-white px-6 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-[#4a244d]"
                 >
-                  REDEN BEVESTIGEN
+                  {t("taskModal.confirmReason")}
                 </button>
               </div>
             </div>
@@ -157,7 +162,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
               className="text-[#5C2D5F] font-bold hover:underline mb-4 flex items-center gap-2"
               onClick={() => setShowReasonInput(true)}
             >
-              <span className="text-xl">+</span> Reden toevoegen
+              <span className="text-xl">+</span> {t("taskModal.addReason")}
             </button>
           )}
 
@@ -166,7 +171,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
               className="bg-[#5C2D5F] hover:bg-[#4a244d] text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 text-lg"
               onClick={() => onSave(box.id, selectedOptionId, reason)}
             >
-              Opslaan & Sluiten
+              {t("taskModal.saveAndClose")}
             </button>
           </div>
         </div>
