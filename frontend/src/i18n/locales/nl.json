@@ -87,5 +87,10 @@
         "notCompleted": "Niet voltooid",
         "dentist": "Tandarts",
         "taskCount": "Aantal taken"
+    },
+    "historyModal": {
+        "title": "Details",
+        "tasks": "Uitgevoerde taken",
+        "close": "Sluiten"
     }
 }

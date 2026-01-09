@@ -82,5 +82,10 @@
         "notCompleted": "Non complété",
         "dentist": "Dentiste",
         "taskCount": "Nombre de tâches"
+    },
+    "historyModal": {
+        "title": "Détails",
+        "tasks": "Tâches effectuées",
+        "close": "Fermer"
     }
 }
