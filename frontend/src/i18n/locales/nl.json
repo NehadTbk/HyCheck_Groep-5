@@ -202,5 +202,15 @@
         "today": "Vandaag",
         "date": "datum",
         "selected": "geselecteerd"
+    },
+    "rapporten": {
+        "date": "Datum",
+        "box": "Box",
+        "assistant": "Assistent",
+        "amountTasks": "Aantal taken",
+        "sortTasks": "Soort taken",
+        "status": "Status",
+        "reason": "Reden",
+        "noResults": "Geen resultaten gevonden voor deze filters."
     }
 }

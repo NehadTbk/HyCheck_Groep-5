@@ -194,5 +194,15 @@
         "today": "Aujourd'hui",
         "date": "date",
         "selected": "sélectionné(e)s"
+    },
+    "rapporten": {
+        "date": "Date",
+        "box": "Box",
+        "assistant": "Assistant",
+        "amountTasks": "Nombre de tâches",
+        "sortTasks": "Type de tâches",
+        "status": "Statut",
+        "reason": "Raison",
+        "noResults": "Aucun résultat trouvé pour ces filtres."
     }
 }
