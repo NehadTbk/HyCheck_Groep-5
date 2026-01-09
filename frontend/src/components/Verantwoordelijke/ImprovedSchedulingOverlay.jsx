@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Copy, Plus, Trash2, Save, Calendar, CheckSquare } from "lucide-react";
+import { apiFetch } from "../../utils/api";
 
 const TASK_GROUPS = {
   ochtend: { label: "Ochtend", color: "bg-blue-100 text-blue-700" },
@@ -30,7 +31,7 @@ export default function ImprovedSchedulingOverlay() {
 
   const fetchMasterData = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const res = await apiFetch(":5001/api/scheduling-data");
       const data = await res.json();
       setDentists(data.dentists || []);
       setBoxes(data.boxes || []);
@@ -220,7 +221,7 @@ export default function ImprovedSchedulingOverlay() {
 
       console.log("Saving assignments:", payload);
 
-      // const res = await fetch("http://localhost:5001/api/shift-assignments", {
+      // const res = await apiFetch(":5001/api/shift-assignments", {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(payload),

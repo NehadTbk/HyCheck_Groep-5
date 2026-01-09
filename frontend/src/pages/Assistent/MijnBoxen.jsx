@@ -37,7 +37,7 @@ function MijnBoxen() {
     };
 
     try {
-      const response = await fetch("http://localhost:5001/api/tasks/update", {
+      const response = await apiFetch(":5001/api/tasks/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

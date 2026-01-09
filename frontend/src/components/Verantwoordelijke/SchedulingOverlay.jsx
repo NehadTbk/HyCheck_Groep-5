@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Clock } from "lucide-react";
+import { apiFetch } from "../../utils/api";
+
 
 const typeColors = {
   ochtend: "bg-blue-100 text-blue-700 border-blue-300",
@@ -57,7 +59,7 @@ export default function SchedulingOverlay() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const res = await apiFetch(":5001/api/scheduling-data");
       const data = await res.json();
       setDentists(data.dentists);
       setBoxes(data.boxes);
@@ -165,7 +167,7 @@ export default function SchedulingOverlay() {
     };
 
     try {
-      const res = await fetch("http://localhost:5001/api/assignments", {
+      const res = await apiFetch(":5001/api/assignments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

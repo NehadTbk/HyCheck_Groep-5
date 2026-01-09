@@ -8,6 +8,8 @@ import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNa
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { apiFetch } from "../../utils/api";
+
 
 
 
@@ -25,7 +27,7 @@ function VerantwoordelijkeRapport() {
     useEffect(() => {
     const fetchRapporten = async () => {
         try {
-            const response = await fetch("http://localhost:5001/api/reports");
+            const response = await apiFetch(":5001/api/reports");
             const data = await response.json();
 
             if (Array.isArray(data)) {

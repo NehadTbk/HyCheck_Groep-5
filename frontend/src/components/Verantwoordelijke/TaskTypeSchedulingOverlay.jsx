@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Clock, CheckCircle2 } from "lucide-react";
 import DateCalendar from "./DateCalendar";
+import { apiFetch } from "../../utils/api";
+
 
 const TASK_TYPES = {
   ochtend: {
@@ -54,7 +56,7 @@ export default function TaskTypeSchedulingOverlay() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const res = await apiFetch(":5001/api/scheduling-data");
       const data = await res.json();
       setDentists(data.dentists || []);
 
@@ -183,7 +185,7 @@ export default function TaskTypeSchedulingOverlay() {
     });
 
     try {
-      const response = await fetch("http://localhost:5001/api/assignments", {
+      const response = await apiFetch(":5001/api/assignments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

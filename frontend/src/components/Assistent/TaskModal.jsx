@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Circle, CheckCircle2 } from "lucide-react";
+import { apiFetch } from "../../utils/api";
 
 const typeColors = {
   Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
@@ -33,7 +34,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
 
   // Haal de common options op uit de database zodra de modal opent
   useEffect(() => {
-    fetch("http://localhost:5001/api/tasks/options")
+    apiFetch(":5001/api/tasks/options")
       .then((res) => res.json())
       .then((data) => setStandardOptions(data))
       .catch((err) => console.error("Fout bij ophalen opties:", err));
