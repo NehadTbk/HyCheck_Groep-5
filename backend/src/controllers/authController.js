@@ -13,6 +13,22 @@ const rolePermissions = {
     assistant: ["USER_VIEW"]
 };
 
+const validatePassword = (password) => {
+    if (!password || password.length < 8) {
+        return { valid: false, message: "Wachtwoord moet minimaal 8 tekens zijn" };
+    }
+    if (!/[A-Z]/.test(password)) {
+        return { valid: false, message: "Wachtwoord moet minimaal 1 hoofdletter bevatten" };
+    }
+    if (!/[a-z]/.test(password)) {
+        return { valid: false, message: "Wachtwoord moet minimaal 1 kleine letter bevatten" };
+    }
+    if (!/[0-9]/.test(password)) {
+        return { valid: false, message: "Wachtwoord moet minimaal 1 cijfer bevatten" };
+    }
+    return { valid: true };
+};
+
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -116,7 +132,7 @@ export const register = async (req, res) => {
                 message: "Gebruiker bestaat al"
             });
         }
-        const tempPassword = Math.random().toString(36).slice(-8) + "A1!";
+        const tempPassword = crypto.randomBytes(6).toString('hex') + 'A1!';
 
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
@@ -163,10 +179,17 @@ export const logout = async (req, res) => {
         const token = req.headers.authorization?.split(' ')[1];
 
         if (token) {
-            console.log('User logged out');
+            // Decode token to get expiration time
+            const decoded = jwt.decode(token);
+            const expiresAt = decoded?.exp ? new Date(decoded.exp * 1000) : new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+            // Add token to blacklist
+            await pool.query(
+                "INSERT INTO token_blacklist (token, expires_at) VALUES (?, ?)",
+                [token, expiresAt]
+            );
         }
         res.json({ success: true, message: "Uitgelogd" });
-
 
     } catch (err) {
         console.error('Logout error:', err);
@@ -181,6 +204,12 @@ export const changePassword = async (req, res) => {
     const { oldPassword, newPassword, email } = req.body;
 
     try {
+        // Validate password strength
+        const passwordCheck = validatePassword(newPassword);
+        if (!passwordCheck.valid) {
+            return res.status(400).json({ success: false, message: passwordCheck.message });
+        }
+
         const userEmail = email;
         const userToUpdate = await findUserByEmail(userEmail);
         if (!userToUpdate) {
@@ -268,6 +297,12 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
     try {
+        // Validate password strength
+        const passwordCheck = validatePassword(newPassword);
+        if (!passwordCheck.valid) {
+            return res.status(400).json({ success: false, message: passwordCheck.message });
+        }
+
         const hashedToken = crypto
             .createHash("sha256")
             .update(token)

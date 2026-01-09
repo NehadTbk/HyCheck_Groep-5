@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import pool from "../config/db.js";
 
-export const authMiddleware = (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if(!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -9,6 +10,15 @@ export const authMiddleware = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
 
     try {
+        // Check if token is blacklisted
+        const [blacklisted] = await pool.query(
+            "SELECT 1 FROM token_blacklist WHERE token = ? LIMIT 1",
+            [token]
+        );
+        if (blacklisted.length > 0) {
+            return res.status(401).json({ message: "Token is invalidated" });
+        }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = {
             id: decoded.id,
