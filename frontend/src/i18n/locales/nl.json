@@ -147,5 +147,14 @@
     "personeelsRegister": {
         "title": "Personeelsregister",
         "loading": "Personeel laden…"
+    },
+    "personeelTable": {
+        "id": "ID",
+        "lastName": "Achternaam",
+        "firstName": "Voornaam",
+        "role": "Functie",
+        "email": "E-mail",
+        "actions": "Acties",
+        "noResults": "Geen personeelsleden gevonden."
     }
 }

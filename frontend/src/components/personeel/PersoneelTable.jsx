@@ -1,5 +1,8 @@
 import React from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function PersoneelTable({ rows, onDelete }) {
   let currentUser = null;
@@ -11,16 +14,19 @@ function PersoneelTable({ rows, onDelete }) {
 
   const canDelete = !!currentUser?.permissions?.includes("USER_DELETE");
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <div className="mt-4">
       {/* Header row */}
       <div className="grid grid-cols-[120px_2fr_2fr_2fr_3fr_80px] bg-gray-50 rounded-xl px-6 py-3 text-sm font-semibold text-gray-600">
-        <span>ID</span>
-        <span>Naam</span>
-        <span>Voornaam</span>
-        <span>Functie</span>
-        <span>E-mail</span>
-        <span className="text-right">Acties</span>
+        <span>{t("personeelTable.id")}</span>
+        <span>{t("personeelTable.lastName")}</span>
+        <span>{t("personeelTable.firstName")}</span>
+        <span>{t("personeelTable.role")}</span>
+        <span>{t("personeelTable.email")}</span>
+        <span className="text-right">{t("personeelTable.actions")}</span>
       </div>
 
       {/* Rows */}
@@ -62,7 +68,7 @@ function PersoneelTable({ rows, onDelete }) {
 
         {rows.length === 0 && (
           <div className="px-6 py-6 text-sm text-gray-500">
-            Geen personeelsleden gevonden.
+            {t("personeelTable.noResults")}
           </div>
         )}
       </div>

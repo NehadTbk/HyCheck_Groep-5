@@ -142,5 +142,14 @@
     "personeelsRegister": {
         "title": "Registre du personnel",
         "loading": "Chargement du personnel…"
+    },
+    "personeelTable": {
+        "id": "ID",
+        "lastName": "Nom",
+        "firstName": "Prénom",
+        "role": "Fonction",
+        "email": "E-mail",
+        "actions": "Actions",
+        "noResults": "Aucun membre du personnel trouvé."
     }
 }
