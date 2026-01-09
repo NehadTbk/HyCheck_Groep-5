@@ -143,5 +143,9 @@
     "afdelingshoofdPersoneel": {
         "title": "Personeelsbeheer",
         "addPersonnelButton": "+ Personeel toevoegen"
+    },
+    "personeelsRegister": {
+        "title": "Personeelsregister",
+        "loading": "Personeel laden…"
     }
 }

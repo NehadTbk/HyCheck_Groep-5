@@ -138,5 +138,9 @@
     "afdelingshoofdPersoneel": {
         "title": "Gestion du personnel",
         "addPersonnelButton": "+ Ajouter du personnel"
+    },
+    "personeelsRegister": {
+        "title": "Registre du personnel",
+        "loading": "Chargement du personnel…"
     }
 }
