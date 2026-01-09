@@ -7,7 +7,7 @@ import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
-window.__SAVE_DEBUG__ = "IK BESTA";
+
 function MijnBoxen() {
   const [boxes, setBoxes] = useState([
     { id: 1, name: "Box 1", dentist: "Saige Fuentes", tasksCount: 2, status: "voltooid", types: ["Ochtend"] },
