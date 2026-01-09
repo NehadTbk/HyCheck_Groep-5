@@ -168,10 +168,15 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
 
           <div className="flex justify-end">
             <button
-              className="bg-[#5C2D5F] hover:bg-[#4a244d] text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 text-lg"
-              onClick={() => onSave(box.id, selectedOptionId, reason)}
-            >
-              {t("taskModal.saveAndClose")}
+              type="button"
+              className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-xl text-lg"
+              onClick={() => {
+                console.log("Klik geregistreerd, roep nu handleSaveTasks aan...");
+                console.log("onSave is:", onSave);
+                onSave?.(box.id, selectedOptionId, reason);
+              }}
+              >
+              Opslaan & Sluiten
             </button>
           </div>
         </div>

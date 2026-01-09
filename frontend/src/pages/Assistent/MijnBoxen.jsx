@@ -7,6 +7,7 @@ import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
+window.__SAVE_DEBUG__ = "IK BESTA";
 function MijnBoxen() {
   const [boxes, setBoxes] = useState([
     { id: 1, name: "Box 1", dentist: "Saige Fuentes", tasksCount: 2, status: "voltooid", types: ["Ochtend"] },
@@ -30,31 +31,35 @@ function MijnBoxen() {
   };
 
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
-    // We bouwen de payload op voor de backend
+  console.log("Ontvangen parameters:", { boxId, selectedOptionId, customText });
+
+  try {
     const payload = {
-      session_id: boxId,
-      task_type_id: 999, // Jouw nieuwe Algemene Schoonmaak taak ID
-      selected_option_id: selectedOptionId || null, 
-      custom_text: customText && customText.trim() !== "" ? customText : null,
-      completed: 0 
+      session_id: Number(boxId),
+      task_type_id: 999, // Pas dit aan naar je werkelijke type indien nodig
+      selected_option_id: selectedOptionId || null,
+      custom_text: customText || null,
+      completed: 0
     };
 
-    try {
-      const response = await fetch("http://localhost:5001/api/tasks/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+    const response = await fetch("http://localhost:5001/api/tasks/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-      if (response.ok) {
-        setSelectedBox(null);
-        // Zet status lokaal op openstaand in de lijst
-        setBoxes(prev => prev.map(b => b.id === boxId ? { ...b, status: "openstaand" } : b));
-      }
-    } catch (error) {
-      console.error("Opslaan mislukt:", error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Server fout");
     }
-  };
+
+    
+    setSelectedBox(null); // Sluit de modal na succes
+  } catch (err) {
+    console.error("ER IS EEN FOUT GEBEURD:", err.message);
+    alert("Fout: " + err.message);
+  }
+};
 
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
