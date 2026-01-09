@@ -75,7 +75,7 @@ function AssistentDashboard() {
 
         <section className="bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">
-            {t("assistentDashboard.assignedBoxes")} - {new Date().toLocaleDateString()}
+            {t("assistentDashboard.assignedBoxes")} — {new Date().toLocaleDateString("nl-NL")}
           </h2>
           <BoxList 
             boxes={boxes} 
