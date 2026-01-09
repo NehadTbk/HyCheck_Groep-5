@@ -92,5 +92,12 @@
         "title": "Nettoyage périodique",
         "weekly": "Hebdomadaire :",
         "monthly": "Mensuel :"
+    },
+    "assistentDashboard": {
+        "todayCompleted": "Terminé aujourd'hui",
+        "completedSubtitle": "Box nettoyées",
+        "openstaand": "En attente",
+        "pendingSubtitle": "Box en attente",
+        "assignedBoxes": "Mes box assignées"
     }
 }

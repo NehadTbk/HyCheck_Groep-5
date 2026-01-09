@@ -97,5 +97,12 @@
         "title": "Periodieke reiniging",
         "weekly": "Wekelijks:",
         "monthly": "Maandelijks:"
+    },
+    "assistentDashboard": {
+        "todayCompleted": "Vandaag voltooid",
+        "completedSubtitle": "Boxen schoongemaakt",
+        "openstaand": "Openstaand",
+        "pendingSubtitle": "Boxen nog te doen",
+        "assignedBoxes": "Mijn toegewezen boxen"
     }
 }

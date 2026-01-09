@@ -5,6 +5,9 @@ import StatsCard from "../../components/Assistent/StatsCard";
 import PeriodicStatsCard from "../../components/Assistent/PeriodicStatsCard";
 import BoxList from "../../components/Assistent/BoxList";
 import TaskModal from "../../components/Assistent/TaskModal";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function AssistentDashboard() {
   const [boxes, setBoxes] = useState([
@@ -58,19 +61,21 @@ function AssistentDashboard() {
 };
 
   const todayCompleted = boxes.filter(b => b.status === "voltooid").length;
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatsCard title="Vandaag voltooid" value={`${todayCompleted}/${boxes.length}`} subtitle="Boxen schoongemaakt" icon="check-circle" />
-          <StatsCard title="Openstaand" value={boxes.length - todayCompleted} subtitle="Boxen nog te doen" icon="clock" />
+          <StatsCard title={t("assistentDashboard.todayCompleted")} value={`${todayCompleted}/${boxes.length}`} subtitle={t("assistentDashboard.completedSubtitle")} icon="check-circle" />
+          <StatsCard title={t("assistentDashboard.openstaand")} value={boxes.length - todayCompleted} subtitle={t("assistentDashboard.pendingSubtitle")} icon="clock" />
           <PeriodicStatsCard weeklyDate="Vrijdag 28/11" monthlyDate="Maandag 17/11" icon="calendar" />
         </section>
 
         <section className="bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">
-            Mijn toegewezen boxen - 20/11
+            {t("assistentDashboard.assignedBoxes")} - {new Date().toLocaleDateString()}
           </h2>
           <BoxList 
             boxes={boxes} 
