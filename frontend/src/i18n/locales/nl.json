@@ -128,5 +128,8 @@
             "responsible": "Verantwoordelijke",
             "admin": "Afdelingshoofd"
         }
+    },
+    "assistentBoxen": {
+        "allBoxes": "Alle Boxen"
     }
 }

@@ -123,5 +123,8 @@
             "responsible": "Responsable",
             "admin": "Chef de service"
         }
+    },
+    "assistentBoxen": {
+        "allBoxes": "Toutes les boîtes"
     }
 }
