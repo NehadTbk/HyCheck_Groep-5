@@ -204,5 +204,16 @@
         "status": "Statut",
         "reason": "Raison",
         "noResults": "Aucun résultat trouvé pour ces filtres."
+    },
+    "rapportFilter": {
+        "period": "Période",
+        "accomodated": "Personnalisé",
+        "daily": "Quotidien",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel",
+        "fromDate": "Du",
+        "toDate": "Au",
+        "assistant": "Assistant",
+        "searchAssistant": "Rechercher un assistant..."
     }
 }

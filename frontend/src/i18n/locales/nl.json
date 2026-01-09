@@ -211,6 +211,17 @@
         "sortTasks": "Soort taken",
         "status": "Status",
         "reason": "Reden",
-        "noResults": "Geen resultaten gevonden voor deze filters."
+        "noResults": "Geen resultaten gevond,en voor deze filters."
+    },
+    "rapportFilter": {
+        "period": "Periode",
+        "aangepast": "Aangepast",
+        "dagelijks": "Dagelijks",
+        "wekelijks": "Wekelijks",
+        "maandelijks": "Maandelijks",
+        "fromDate": "Van de",
+        "toDate": "Tot de",
+        "assistant": "Assistent",
+        "searchAssistant": "Zoek assistent..."
     }
 }
