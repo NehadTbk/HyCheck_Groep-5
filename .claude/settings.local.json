@@ -8,7 +8,8 @@
       "Bash(mysql:*)",
       "Bash(npm install:*)",
       "Bash(npm start)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(dir /s /b)"
     ]
   }
 }
