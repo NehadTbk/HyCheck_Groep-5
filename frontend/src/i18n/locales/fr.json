@@ -66,7 +66,10 @@
         "dashboard": "Tableau de bord",
         "mijnPersoneel": "Mon Personnel",
         "maandoverzicht": "Aperçu mensuel",
-        "instructions": "Instructions"
+        "instructions": "Instructions",
+        "boxen": "Mes Boxes",
+        "rapporten": "Rapports",
+        "personeel": "Mon Personnel"
     },
     "notifications": {
         "title": "Notifications",

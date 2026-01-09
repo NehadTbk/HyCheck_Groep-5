@@ -71,7 +71,10 @@
         "dashboard": "Dashboard",
         "mijnPersoneel": "Mijn Personeel",
         "maandoverzicht": "Maandoverzicht",
-        "instructions": "Instructies"
+        "instructions": "Instructies",
+        "boxen": "Mijn Boxen",
+        "rapporten": "Rapporten",
+        "personeel": "Mijn Personeel"
     },
     "notifications": {
         "title": "Meldingen",
