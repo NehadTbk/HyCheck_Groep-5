@@ -19,10 +19,15 @@ const roleDescriptions = {
   responsible: "Als verantwoordelijke kun je tandartsen en assistenten toevoegen",
 };
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(
+  /\/$/,
+  ""
+);
+
 const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
   const { user } = useContext(UserContext);
   const userRole = user?.role || "none";
-  const getFunctieOpties = () => roleOptionsMap[userRole] || [];
+  const functieOpties = roleOptionsMap[userRole] || [];
 
   const [formData, setFormData] = useState({
     voornaam: "",
@@ -36,7 +41,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
   const [success, setSuccess] = useState("");
 
   const closeModal = () => {
-    onClose();
+    onClose?.();
     setFormData({ voornaam: "", achternaam: "", email: "", functie: "" });
     setError("");
     setSuccess("");
@@ -44,23 +49,20 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    setLoading(true);
 
     if (!formData.voornaam || !formData.achternaam || !formData.email || !formData.functie) {
       setError("Alle velden zijn verplicht");
-      setLoading(false);
       return;
     }
+
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -72,19 +74,17 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
 
       const role = functieToRoleMap[formData.functie];
 
-      const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001");
-
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           firstName: formData.voornaam,
           lastName: formData.achternaam,
           email: formData.email,
-          role: role,
+          role,
           sendEmail: true,
         }),
       });
@@ -98,20 +98,16 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
       }
 
       setSuccess(
-        `Persoonslid ${formData.voornaam} ${formData.achternaam} toegevoegd als ${formData.functie}!`
+        `Personeelslid ${formData.voornaam} ${formData.achternaam} toegevoegd als ${formData.functie}!`
       );
 
-      setFormData({
-        voornaam: "",
-        achternaam: "",
-        email: "",
-        functie: "",
-      });
+      // ✅ Call refresh immediately (so list refreshes right away)
+      if (typeof onCreated === "function") onCreated();
 
+      // ✅ Close modal quickly (no need 3 seconds)
       setTimeout(() => {
         closeModal();
-        if (onCreated) onCreated();
-      }, 3000);
+      }, 400);
     } catch (err) {
       console.error("Add staff error:", err);
       setError("Kan geen verbinding maken met de server");
@@ -122,16 +118,16 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
 
   if (!isOpen) return null;
 
-  const functieOpties = getFunctieOpties();
-
-
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-bold">Nieuw Personeelslid</h2>
-          <button onClick={closeModal} className="text-gray-600 hover:text-gray-900" disabled={loading}>
+          <button
+            onClick={closeModal}
+            className="text-gray-600 hover:text-gray-900"
+            disabled={loading}
+          >
             <IoMdClose size={24} />
           </button>
         </div>
@@ -151,28 +147,31 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex space-x-4">
             <div className="flex-1">
-              <label htmlFor="voornaam" className="block text-sm font-medium text-gray-700 mb-1">Voornaam: </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Voornaam:
+              </label>
               <input
                 type="text"
-                id="voornaam"
                 name="voornaam"
                 value={formData.voornaam}
                 onChange={handleChange}
-                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
+                className="w-full border border-gray-300 p-2 rounded-lg"
                 placeholder="bv. Jan"
                 required
                 disabled={loading}
               />
             </div>
+
             <div className="flex-1">
-              <label htmlFor="achternaam" className="block text-sm font-medium text-gray-700 mb-1">Achternaam: </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Achternaam:
+              </label>
               <input
                 type="text"
-                id="achternaam"
                 name="achternaam"
                 value={formData.achternaam}
                 onChange={handleChange}
-                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
+                className="w-full border border-gray-300 p-2 rounded-lg"
                 placeholder="bv. Janssen"
                 required
                 disabled={loading}
@@ -181,14 +180,15 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-mailadres: </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              E-mailadres:
+            </label>
             <input
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
+              className="w-full border border-gray-300 p-2 rounded-lg"
               placeholder="bv. jan@tandarts.be"
               required
               disabled={loading}
@@ -196,21 +196,25 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
           </div>
 
           <div>
-            <label htmlFor="functie" className="block text-sm font-medium text-gray-700 mb-1">Functie: </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Functie:
+            </label>
             <select
-              id="functie"
               name="functie"
               value={formData.functie}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA] bg-white"
+              className="w-full border border-gray-300 p-2 rounded-lg bg-white"
               required
               disabled={loading}
             >
               <option value="">Kies een functie</option>
-              {functieOpties.map(optie => (
-                <option key={optie} value={optie}>{optie}</option>
+              {functieOpties.map((optie) => (
+                <option key={optie} value={optie}>
+                  {optie}
+                </option>
               ))}
             </select>
+
             <p className="text-xs text-gray-500 mt-1">
               {roleDescriptions[userRole] || ""}
             </p>
