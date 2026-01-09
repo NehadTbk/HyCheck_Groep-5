@@ -382,8 +382,9 @@ export default function TaskTypeSchedulingOverlay() {
                     className="flex items-center gap-2 px-2 py-1 bg-gray-100 border rounded text-sm"
                   >
                     <span>
-                      {assignment.box.replace("Box ", "Box ")}
-                      {assignment.dentist && <span className="text-gray-500 ml-1">({assignment.dentist.replace("Dr. ", "")})</span>}
+                      <span className="font-medium">{assignment.box}</span>
+                      <span className="mx-1">{selectedAssistant}</span>
+                      {assignment.dentist && <span>→{assignment.dentist.replace("Dr. ", "")}</span>}
                     </span>
                     <button
                       onClick={() => removeAssignment(index)}
