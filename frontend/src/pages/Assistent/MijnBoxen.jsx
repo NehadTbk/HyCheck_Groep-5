@@ -23,16 +23,26 @@ function MijnBoxen() {
     }));
   };
 
-  useEffect(()=> {
-    const  fetchBoxes = async () => {
+  useEffect(() => {
+    const fetchBoxes = async () => {
       try {
         const params = new URLSearchParams({
           date: new Date().toISOString().split("T")[0],
         });
-        const
+        const res = await fetch(`${API_BASE_URL}/api/assistant/dashboard?${params.toString()}`);
+        if (!res.ok) throw new Error("Failed to fetch boxes");
+        const data = await res.json();
+        setBoxes(data);
+      } catch (err) {
+        console.error("Error fetching boxes: ", err);
+      } finally {
+        setLoading(false);
       }
-    }
-  })
+    };
+    fetchBoxes();
+
+  }, []);
+
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
     // We bouwen de payload op voor de backend
     const payload = {
@@ -44,7 +54,7 @@ function MijnBoxen() {
     };
 
     try {
-      const response = await fetch("http://localhost:5001/api/tasks/update", {
+      const response = await fetch(`${API_BASE_URL}/api/tasks/update`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -63,15 +73,26 @@ function MijnBoxen() {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
 
+
+  if (loading) {
+    return (
+      <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
+        <AssistentNavBar />
+        <p>Loading boxes...</p>
+      </PageLayout>
+    );
+  }
+
+
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
       <section className="bg-white rounded-xl p-6 shadow-lg">
         <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">{t("assistentBoxen.allBoxes")}</h1>
-        <BoxList 
-          boxes={boxes} 
-          onBoxCheck={(id) => setBoxes(prev => prev.map(box => box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box))} 
-          onBoxClick={(box) => setSelectedBox(box)} 
+        <BoxList
+          boxes={boxes}
+          onBoxCheck={(id) => setBoxes(prev => prev.map(box => box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box))}
+          onBoxClick={(box) => setSelectedBox(box)}
         />
       </section>
 
