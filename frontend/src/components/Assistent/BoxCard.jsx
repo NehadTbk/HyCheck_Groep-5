@@ -1,5 +1,8 @@
 import React from "react";
 import { CheckCircle, AlertCircle } from "lucide-react";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const typeColors = {
   Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
@@ -11,6 +14,8 @@ const typeColors = {
 function BoxCard({ box, onCheck, onClick }) {
   const isVoltooid = box.status === "voltooid";
   const isGedeeltelijk = box.status === "gedeeltelijk";
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   // Kleuren aangepast voor beter contrast
   const cardStyles = isVoltooid 
@@ -31,7 +36,7 @@ function BoxCard({ box, onCheck, onClick }) {
           <div className="flex items-center gap-2">
             {isVoltooid && (
               <span className="text-[11px] px-2 py-0.5 rounded-full font-normal bg-green-100 text-green-700 border border-green-200">
-                Voltooid
+                {t("assistent.completed")}
               </span>
             )}
             
@@ -54,8 +59,8 @@ function BoxCard({ box, onCheck, onClick }) {
             </button>
           </div>
         </div>
-        <p className="text-[14px] text-gray-700 font-medium">Tandarts: {box.dentist}</p>
-        <p className="text-[14px] text-gray-700">Aantal taken: {box.tasksCount}</p>
+        <p className="text-[14px] text-gray-700 font-medium">{t("assistent.dentist")}: {box.dentist}</p>
+        <p className="text-[14px] text-gray-700">{t("assistent.taskCount")}: {box.tasksCount}</p>
       </div>
 
       <div className="mt-2 flex gap-2 overflow-x-hidden">
