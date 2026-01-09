@@ -1,9 +1,14 @@
 // src/components/cards/CreateAccountCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function CreateAccountCard() {
   const navigate = useNavigate();
+  const { language, letLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   const handleClick = () => {
     navigate("/afdelingshoofd/mijn-personeel", {
@@ -29,7 +34,7 @@ function CreateAccountCard() {
       }}
     >
       <span className="text-base font-medium">
-        Account Aanmaken
+        {t("createAccountCard.title")}
       </span>
     </article>
   );

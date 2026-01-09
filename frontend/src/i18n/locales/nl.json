@@ -184,5 +184,8 @@
     },
     "personeelSearch": {
         "placeholder": "Zoek Personeel"
+    },
+    "createAccountCard": {
+        "title": "Account Aanmaken"
     }
 }

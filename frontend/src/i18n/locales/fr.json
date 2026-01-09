@@ -177,7 +177,7 @@
             "responsible": "En tant que responsable, vous pouvez ajouter des dentistes et des assistants"
         }
     },
-    "personeelSearch": {
-        "placeholder": "Rechercher du personnel"
+    "createAccountCard": {
+        "title": "Créer un compte"
     }
 }
