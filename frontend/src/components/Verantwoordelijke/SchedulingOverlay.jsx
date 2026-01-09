@@ -1,355 +1,444 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, Clock } from "lucide-react";
+import { Plus, Trash2, Clock, CheckCircle2 } from "lucide-react";
+import DateCalendar from "./DateCalendar";
 
-const typeColors = {
-  ochtend: "bg-blue-100 text-blue-700 border-blue-300",
-  avond: "bg-purple-100 text-purple-700 border-purple-300",
-  wekelijks: "bg-orange-100 text-orange-700 border-orange-300",
-  maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
-};
-
-const baseStyle =
-  "border rounded-lg px-3 py-2 text-sm font-medium cursor-pointer transition w-full text-center";
-
-const TASK_GROUPS = {
+const TASK_TYPES = {
   ochtend: {
     label: "Ochtend",
-    tasks: ["Filters", "Waterleidingen – Lange spoeling"],
+    color: "bg-blue-100 text-blue-700 border-blue-300",
+    defaultStart: "08:00",
+    defaultEnd: "12:00",
+    useTime: true,
   },
   avond: {
     label: "Avond",
-    tasks: [
-      "Oppervlakken",
-      "Afzuigsysteem – Reiniging van de afzuigslangen",
-      "Speekselopvangbak (Crachot)",
-    ],
+    color: "bg-purple-100 text-purple-700 border-purple-300",
+    defaultStart: "13:00",
+    defaultEnd: "17:00",
+    useTime: true,
   },
   wekelijks: {
     label: "Wekelijks",
-    tasks: ["MD555 cleaner – Wekelijkse reiniging"],
+    color: "bg-orange-100 text-orange-700 border-orange-300",
+    defaultStart: new Date().toISOString().slice(0, 10),
+    defaultEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    useTime: false,
   },
   maandelijks: {
     label: "Maandelijks",
-    tasks: [
-      "Afzuigsysteem en waterleidingen",
-      "Filters extensief",
-    ],
+    color: "bg-yellow-100 text-yellow-700 border-yellow-300",
+    defaultStart: new Date().toISOString().slice(0, 10),
+    defaultEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    useTime: false,
   },
 };
 
-export default function SchedulingOverlay() {
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+export default function TaskTypeSchedulingOverlay() {
+  const [selectedDates, setSelectedDates] = useState([]);
   const [dentists, setDentists] = useState([]);
   const [boxes, setBoxes] = useState([]);
   const [assistants, setAssistants] = useState([]);
-  const [timeSlots, setTimeSlots] = useState([]);
-  const [shifts, setShifts] = useState([]);
-  const [selectedTasks, setSelectedTasks] = useState([]);
+
+  // Step 1: Select task types
+  const [selectedTaskTypes, setSelectedTaskTypes] = useState([]);
+
+  // Step 2: Set times for selected task types
+  const [taskTypeTimes, setTaskTypeTimes] = useState({});
+
+  // Step 3: Select ONE assistant
+  const [selectedAssistant, setSelectedAssistant] = useState("");
+
+  // Step 4: Add dentist-box pairs (select tandarts, then box, repeat)
+  const [selectedDentist, setSelectedDentist] = useState("");
+  const [assignments, setAssignments] = useState([]); // Array of { dentist, box }
 
   useEffect(() => {
-    const slots = [];
-    for (let h = 8; h <= 18; h++) {
-      slots.push(`${String(h).padStart(2, "0")}:00`);
-      if (h !== 18) slots.push(`${String(h).padStart(2, "0")}:30`);
-    }
-    setTimeSlots(slots);
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("http://localhost:5001/api/scheduling-data");
-      const data = await res.json();
-      setDentists(data.dentists);
-      setBoxes(data.boxes);
-      setAssistants(data.assistants);
-    }
     fetchData();
   }, []);
 
-  const addShift = () => {
-    setShifts((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        dentist: null,
-        box: null,
-        assistant: null,
-        start: "08:00",
-        end: "17:00",
-        groups: [],
-        tasks: [],
+  const fetchData = async () => {
+    try {
+      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const data = await res.json();
+      setDentists(data.dentists || []);
+
+      // Sort boxes: 1-11 (numbers), then A, B, C (letters)
+      const sortedBoxes = (data.boxes || []).sort((a, b) => {
+        const getBoxValue = (name) => {
+          const num = name.replace("Box ", "");
+          if (!isNaN(num)) return parseInt(num);
+          return 1000 + num.charCodeAt(0);
+        };
+        return getBoxValue(a.name) - getBoxValue(b.name);
+      });
+
+      setBoxes(sortedBoxes);
+      setAssistants(data.assistants || []);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  };
+
+  const toggleTaskType = (taskType) => {
+    const isSelected = selectedTaskTypes.includes(taskType);
+
+    if (isSelected) {
+      const newTypes = selectedTaskTypes.filter((t) => t !== taskType);
+      const { [taskType]: removed, ...rest } = taskTypeTimes;
+      setSelectedTaskTypes(newTypes);
+      setTaskTypeTimes(rest);
+    } else {
+      setSelectedTaskTypes([...selectedTaskTypes, taskType]);
+      setTaskTypeTimes({
+        ...taskTypeTimes,
+        [taskType]: {
+          start: TASK_TYPES[taskType].defaultStart,
+          end: TASK_TYPES[taskType].defaultEnd,
+        },
+      });
+    }
+  };
+
+  const updateTaskTypeTime = (taskType, field, value) => {
+    setTaskTypeTimes({
+      ...taskTypeTimes,
+      [taskType]: {
+        ...taskTypeTimes[taskType],
+        [field]: value,
       },
-    ]);
+    });
   };
 
-  const updateShift = (id, field, value) => {
-    setShifts((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, [field]: value } : s))
-    );
+  const isDentistRequired = () => {
+    return selectedTaskTypes.includes("ochtend") || selectedTaskTypes.includes("avond");
   };
 
-  const removeShift = (id) =>
-    setShifts((prev) => prev.filter((s) => s.id !== id));
+  const selectBox = (boxName) => {
+    // Check if this box is already assigned
+    const existingIndex = assignments.findIndex(a => a.box === boxName);
 
-  const toggleGroup = (shiftId, key) => {
-    setShifts((prev) =>
-      prev.map((s) => {
-        if (s.id !== shiftId) return s;
-
-        const active = s.groups.includes(key);
-        let groups = active
-          ? s.groups.filter((g) => g !== key)
-          : [...s.groups, key];
-
-        let tasks = [...s.tasks];
-
-        if (active) {
-          tasks = tasks.filter(
-            (t) => !TASK_GROUPS[key].tasks.includes(t)
-          );
-        } else {
-          TASK_GROUPS[key].tasks.forEach((t) => {
-            if (!tasks.includes(t)) tasks.push(t);
-          });
-        }
-
-        return { ...s, groups, tasks };
-      })
-    );
+    if (existingIndex >= 0) {
+      // Remove the assignment (deselect)
+      setAssignments(assignments.filter((_, i) => i !== existingIndex));
+    } else {
+      // Add new assignment with current dentist
+      if (isDentistRequired() && !selectedDentist) {
+        alert("Selecteer eerst een tandarts");
+        return;
+      }
+      setAssignments([...assignments, { dentist: selectedDentist || null, box: boxName }]);
+    }
   };
 
-  const toggleTask = (shiftId, task) => {
-    setShifts((prev) =>
-      prev.map((s) =>
-        s.id === shiftId
-          ? {
-            ...s,
-            tasks: s.tasks.includes(task)
-              ? s.tasks.filter((t) => t !== task)
-              : [...s.tasks, task],
-          }
-          : s
-      )
-    );
+  const removeAssignment = (index) => {
+    setAssignments(assignments.filter((_, i) => i !== index));
   };
 
-  const isShiftValid = (shift) => {
-    return (
-      shift.dentist &&
-      shift.box &&
-      shift.assistant &&
-      shift.start &&
-      shift.end &&
-      shift.start < shift.end &&
-      shift.tasks.length > 0
-    );
+  const isBoxAssigned = (boxName) => {
+    return assignments.some(a => a.box === boxName);
+  };
+
+  const getBoxDentist = (boxName) => {
+    const assignment = assignments.find(a => a.box === boxName);
+    return assignment?.dentist || null;
   };
 
   const canConfirm =
-    shifts.length > 0 && shifts.every(isShiftValid);
+    selectedDates.length > 0 &&
+    selectedTaskTypes.length > 0 &&
+    selectedAssistant &&
+    assignments.length > 0;
 
-  // Confirm: stuur shifts naar backend createAssignments endpoint
-  const confirmSchedule = async () => {
-    if (!canConfirm) return;
+  const handleConfirm = async () => {
+    const shifts = [];
 
-    const payload = {
-      shifts: shifts.map((s) => ({
-        date,
-        box: s.box, // overlay stores box as name
-        dentist: s.dentist || null,
-        assistant: s.assistant || null,
-        start: s.start,
-        end: s.end,
-        groups: s.groups || [],
-      })),
-    };
+    selectedDates.forEach((date) => {
+      assignments.forEach((assignment) => {
+        shifts.push({
+          date: date,
+          dentist: assignment.dentist,
+          box: assignment.box,
+          assistant: selectedAssistant,
+          start: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].start : "08:00",
+          end: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].end : "17:00",
+          groups: selectedTaskTypes,
+        });
+      });
+    });
+
+    console.log("CONFIRMED SCHEDULE:", {
+      selectedDates,
+      selectedTaskTypes,
+      selectedAssistant,
+      assignments,
+      shifts,
+      totalShifts: shifts.length,
+    });
 
     try {
-      const res = await fetch("http://localhost:5001/api/assignments", {
+      const response = await fetch("http://localhost:5001/api/assignments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ shifts }),
       });
 
-      const text = await res.text(); // read response for logging
-      let json;
-      try { json = JSON.parse(text); } catch(e) { json = text; }
-
-      if (!res.ok) {
-        console.error("POST /api/assignments failed", json);
-        return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create assignments");
       }
 
-      // notify other parts (dashboard) to refresh
-      window.dispatchEvent(new CustomEvent("calendarUpdated", { detail: { date } }));
+      const result = await response.json();
 
-      // optional: clear shifts after success
-      setShifts([]);
-      console.log("Shifts saved response:", json);
-    } catch (err) {
-      console.error("Kon schema niet verzenden", err);
+      alert(
+        `✅ Successfully created ${result.assignments.length} assignment(s)!\n\n` +
+        `The assignments will now appear in the agenda.`
+      );
+
+      window.dispatchEvent(new Event("calendarUpdated"));
+
+      // Reset form
+      setSelectedDates([]);
+      setSelectedTaskTypes([]);
+      setTaskTypeTimes({});
+      setSelectedAssistant("");
+      setSelectedDentist("");
+      setAssignments([]);
+    } catch (error) {
+      console.error("Error creating assignments:", error);
+      alert(`❌ Error: ${error.message}\n\nPlease check the console for more details.`);
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <label className="font-semibold">Datum</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="border rounded p-2"
-          />
+    <div className="max-w-7xl mx-auto bg-white p-4 rounded-lg shadow-lg space-y-3">
+      {/* Step 1: Date & Task Type Selection */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-3 border-b">
+        {/* Calendar */}
+        <div>
+          <label className="font-semibold text-sm block mb-2">Selecteer Datums:</label>
+          <DateCalendar selectedDates={selectedDates} setSelectedDates={setSelectedDates} />
         </div>
 
+        {/* Task Types */}
+        <div className="space-y-2">
+          <div>
+            <h3 className="font-semibold text-sm mb-2">Selecteer Taak Types:</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.entries(TASK_TYPES).map(([key, { label, color }]) => (
+                <button
+                  key={key}
+                  onClick={() => toggleTaskType(key)}
+                  className={`p-2 rounded border-2 text-center transition font-medium text-sm ${
+                    selectedTaskTypes.includes(key)
+                      ? color + " scale-105 shadow-sm"
+                      : "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
+                  }`}
+                >
+                  {selectedTaskTypes.includes(key) && (
+                    <CheckCircle2 className="inline mr-1" size={14} />
+                  )}
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Step 2: Time/Date Settings for Selected Task Types */}
+      {selectedTaskTypes.length > 0 && (
+        <div className="space-y-2 pb-3 border-b">
+          <h3 className="font-semibold text-sm flex items-center gap-1">
+            <Clock size={14} />
+            Tijden/Periodes:
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {selectedTaskTypes.map((taskType) => (
+              <div
+                key={taskType}
+                className={`p-2 rounded border ${TASK_TYPES[taskType].color}`}
+              >
+                <div className="font-medium mb-1 text-xs">{TASK_TYPES[taskType].label}</div>
+                <div className="flex items-center gap-1 text-xs">
+                  <input
+                    type={TASK_TYPES[taskType].useTime ? "time" : "date"}
+                    value={taskTypeTimes[taskType]?.start || ""}
+                    onChange={(e) =>
+                      updateTaskTypeTime(taskType, "start", e.target.value)
+                    }
+                    className="border rounded px-1 py-0.5 bg-white w-20 text-xs"
+                  />
+                  <span>–</span>
+                  <input
+                    type={TASK_TYPES[taskType].useTime ? "time" : "date"}
+                    value={taskTypeTimes[taskType]?.end || ""}
+                    onChange={(e) =>
+                      updateTaskTypeTime(taskType, "end", e.target.value)
+                    }
+                    className="border rounded px-1 py-0.5 bg-white w-20 text-xs"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Select Assistant */}
+      {selectedTaskTypes.length > 0 && (
+        <div className="space-y-2 pb-3 border-b">
+          <h3 className="font-semibold text-sm">Selecteer Assistent:</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {assistants.map((assistant) => (
+              <button
+                key={assistant}
+                onClick={() => setSelectedAssistant(assistant)}
+                className={`p-2 rounded border text-center transition text-sm ${
+                  selectedAssistant === assistant
+                    ? "bg-[#582F5B] text-white border-[#582F5B]"
+                    : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                }`}
+              >
+                {assistant}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 4: Add Tandarts + Boxes */}
+      {selectedAssistant && (
+        <div className="space-y-3 pb-3 border-b">
+          <h3 className="font-semibold text-sm">Tandarts & Boxen voor {selectedAssistant}:</h3>
+
+          {/* Select Tandarts (if required) */}
+          {isDentistRequired() && (
+            <div>
+              <label className="text-xs font-medium mb-1 block">
+                1. Selecteer Tandarts {selectedDentist && <span className="text-green-600">(geselecteerd: {selectedDentist})</span>}:
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {dentists.map((dentist) => (
+                  <button
+                    key={dentist}
+                    onClick={() => setSelectedDentist(dentist)}
+                    className={`p-2 rounded border text-center transition text-sm ${
+                      selectedDentist === dentist
+                        ? "bg-[#582F5B] text-white border-[#582F5B]"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                    }`}
+                  >
+                    {dentist.replace("Dr. ", "")}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Select Boxes */}
+          {(!isDentistRequired() || selectedDentist) && (
+            <div>
+              <label className="text-xs font-medium mb-1 block">
+                {isDentistRequired() ? "2. " : ""}Klik op box(en) om toe te wijzen:
+              </label>
+              <div className="grid grid-cols-7 md:grid-cols-14 gap-1">
+                {boxes.map((box) => {
+                  const assigned = isBoxAssigned(box.name);
+                  const boxDentist = getBoxDentist(box.name);
+                  return (
+                    <button
+                      key={box.box_id}
+                      onClick={() => selectBox(box.name)}
+                      title={assigned && boxDentist ? `${boxDentist}` : ""}
+                      className={`p-1.5 rounded border text-center transition text-xs font-medium ${
+                        assigned
+                          ? "bg-[#582F5B] text-white border-[#582F5B]"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                      }`}
+                    >
+                      {box.name.replace("Box ", "")}
+                    </button>
+                  );
+                })}
+              </div>
+              {isDentistRequired() && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Tip: Selecteer eerst een tandarts, klik dan op boxen. Wissel van tandarts om andere boxen toe te wijzen.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Added assignments list */}
+          {assignments.length > 0 && (
+            <div className="space-y-2 mt-3">
+              <label className="text-xs font-medium text-gray-500">Toegevoegde toewijzingen ({assignments.length}):</label>
+              <div className="flex flex-wrap gap-2">
+                {assignments.map((assignment, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-2 py-1 bg-gray-100 border rounded text-sm"
+                  >
+                    <span>
+                      <span className="font-medium">{assignment.box}</span>
+                      <span className="mx-1">{selectedAssistant}</span>
+                      {assignment.dentist && <span>→{assignment.dentist.replace("Dr. ", "")}</span>}
+                    </span>
+                    <button
+                      onClick={() => removeAssignment(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Confirm Button */}
+      <div className="flex justify-between items-center pt-3 border-t">
+        <div className="text-xs text-gray-600">
+          {assignments.length > 0 && selectedDates.length > 0 ? (
+            <>
+              <strong>{selectedDates.length * assignments.length}</strong> shift
+              {selectedDates.length * assignments.length !== 1 ? "s" : ""}
+              <span className="ml-1">
+                ({selectedDates.length} datum{selectedDates.length !== 1 ? "s" : ""} × {assignments.length} toewijzing{assignments.length !== 1 ? "en" : ""})
+              </span>
+            </>
+          ) : (
+            <span className="text-red-500">
+              {selectedDates.length === 0 && "Selecteer datum(s) • "}
+              {selectedTaskTypes.length === 0 && "Selecteer taak type(s) • "}
+              {!selectedAssistant && "Selecteer assistent • "}
+              {assignments.length === 0 && selectedAssistant && "Klik op box(en)"}
+            </span>
+          )}
+        </div>
         <button
-          onClick={addShift}
-          className="bg-[#582F5B] text-white px-4 py-2 rounded flex items-center gap-2"
+          disabled={!canConfirm}
+          onClick={handleConfirm}
+          className={`px-6 py-2 rounded font-semibold text-sm transition ${
+            canConfirm
+              ? "bg-[#582F5B] text-white hover:bg-[#4a254c]"
+              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          }`}
         >
-          <Plus size={16} /> Add shift
+          Bevestigen
         </button>
       </div>
 
-      {shifts.map((shift) => (
-        <div key={shift.id} className="border rounded-lg p-4 space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="font-semibold text-[#582F5B]">Shift</h3>
-            <button onClick={() => removeShift(shift.id)}>
-              <Trash2 size={18} className="text-red-500" />
-            </button>
-          </div>
-
-          <Section title="Tandarts">
-            {dentists.map((d) => (
-              <Toggle
-                key={d}
-                active={shift.dentist === d}
-                onClick={() => updateShift(shift.id, "dentist", d)}
-                label={d}
-              />
-            ))}
-          </Section>
-
-          <Section title="Behandelbox">
-            {boxes.map((b) => (
-              <Toggle
-                key={b.box_id}            // changed: use box_id
-                active={shift.box === b.name}
-                onClick={() => updateShift(shift.id, "box", b.name)}
-                label={b.name}
-              />
-            ))}
-          </Section>
-
-          <Section title="Assistent">
-            {assistants.map((a) => (
-              <Toggle
-                key={a}
-                active={shift.assistant === a}
-                onClick={() => updateShift(shift.id, "assistant", a)}
-                label={a}
-              />
-            ))}
-          </Section>
-
-          <div className="flex items-center gap-3">
-            <Clock size={16} />
-            <select
-              value={shift.start}
-              onChange={(e) => updateShift(shift.id, "start", e.target.value)}
-              className="border rounded p-2"
-            >
-              {timeSlots.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-            –
-            <select
-              value={shift.end}
-              onChange={(e) => updateShift(shift.id, "end", e.target.value)}
-              className="border rounded p-2"
-            >
-              {timeSlots.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-
-          <Section title="Taken">
-            {Object.entries(TASK_GROUPS).map(([key, g]) => (
-              <Toggle
-                key={key}
-                label={g.label}
-                active={shift.groups.includes(key)}
-                onClick={() => toggleGroup(shift.id, key)}
-                colorClass={typeColors[key]}
-              />
-            ))}
-          </Section>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {shift.tasks.map((task) => {
-              const groupKey = Object.keys(TASK_GROUPS).find((key) =>
-                TASK_GROUPS[key].tasks.includes(task)
-              );
-
-              return (
-                <Toggle
-                  key={task}
-                  label={task}
-                  active
-                  onClick={() => toggleTask(shift.id, task)}
-                  colorClass={typeColors[groupKey]}
-                />
-              );
-            })}
-          </div>
-          <div className="flex justify-end pt-6 border-t mt-6">
-            <button
-              disabled={!canConfirm}
-              onClick={confirmSchedule}
-              className={`px-6 py-3 rounded-lg font-semibold transition ${canConfirm
-                ? "bg-[#582F5B] text-white hover:bg-[#4a254c]"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
-            >
-              Bevestigen
-            </button>
-          </div>
+      {/* Helper Text */}
+      {selectedTaskTypes.length === 0 && (
+        <div className="text-center text-gray-500 text-xs py-3">
+          Selecteer eerst taak types
         </div>
-      ))}
+      )}
     </div>
   );
 }
-
-function Section({ title, children }) {
-  return (
-    <div>
-      <h4 className="font-medium mb-2">{title}</h4>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function Toggle({ label, active, onClick, colorClass }) {
-  const activeClass = colorClass
-    ? colorClass
-    : "bg-[#582F5B] text-white border-[#582F5B]";
-
-  return (
-    <button
-      onClick={onClick}
-      className={`p-2 rounded border text-center transition w-full ${active
-        ? activeClass
-        : "bg-white border-gray-300 text-gray-600"
-        }`}
-    >
-      {label}
-    </button>
-  );
-}
-
