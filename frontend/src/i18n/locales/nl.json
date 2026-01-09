@@ -92,5 +92,10 @@
         "title": "Details",
         "tasks": "Uitgevoerde taken",
         "close": "Sluiten"
+    },
+    "periodicStatsCard": {
+        "title": "Periodieke reiniging",
+        "weekly": "Wekelijks:",
+        "monthly": "Maandelijks:"
     }
 }
