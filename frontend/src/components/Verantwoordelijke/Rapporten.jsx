@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function Rapporten({ data = [] }) {
+    const { language, letLanguage } = useLanguage();
+    const { t } = useTranslation();
+
     return(
         <div className="overflow-x-auto mt-4">
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="bg-[#F8F9FA]">
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Datum</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Box</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Assistent</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Aantal taken</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Soort taken</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Reden</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.date")}</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.box")}</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.assistant")}</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.amountTasks")}</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.sortTasks")}</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.status")}</th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">{t("rapporten.reason")}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,7 +39,7 @@ function Rapporten({ data = [] }) {
                     ))}
                     {data.length === 0 && (
                         <tr>
-                            <td colSpan="7" className="text-center py-10 text-gray-400 italic">Geen resultaten gevonden voor deze filters.</td>
+                            <td colSpan="7" className="text-center py-10 text-gray-400 italic">{t("rapporten.noResults")}</td>
                         </tr>
                     )}
                 </tbody>

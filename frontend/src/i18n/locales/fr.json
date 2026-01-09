@@ -66,7 +66,10 @@
         "dashboard": "Tableau de bord",
         "mijnPersoneel": "Mon Personnel",
         "maandoverzicht": "Aperçu mensuel",
-        "instructions": "Instructions"
+        "instructions": "Instructions",
+        "boxen": "Mes Boxes",
+        "rapporten": "Rapports",
+        "personeel": "Mon Personnel"
     },
     "notifications": {
         "title": "Notifications",
@@ -184,5 +187,72 @@
         "title": "Nettoyage périodique",
         "weekly": "Hebdomadaire: ",
         "monthly": "Mensuel: "
+    },
+    "dateCalendar": {
+        "previousMonth": "Mois précédent",
+        "nextMonth": "Mois suivant",
+        "today": "Aujourd'hui",
+        "date": "date",
+        "selected": "sélectionné(e)s"
+    },
+    "rapporten": {
+        "date": "Date",
+        "box": "Box",
+        "assistant": "Assistant",
+        "amountTasks": "Nombre de tâches",
+        "sortTasks": "Type de tâches",
+        "status": "Statut",
+        "reason": "Raison",
+        "noResults": "Aucun résultat trouvé pour ces filtres."
+    },
+    "rapportFilter": {
+        "period": "Période",
+        "accomodated": "Personnalisé",
+        "daily": "Quotidien",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel",
+        "fromDate": "Du",
+        "toDate": "Au",
+        "assistant": "Assistant",
+        "searchAssistant": "Rechercher un assistant..."
+    },
+    "schedulingOverlay": {
+        "selectDate": "Sélectionner la/les date(s)",
+        "selectTaskTypes": "Sélectionner le(s) type(s) de tâche",
+        "setTimeDateForTasks": "Définir l'heure et la date pour les tâches",
+        "selectAssistant": "Sélectionner un assistant",
+        "selectDentist": "Sélectionner un dentiste",
+        "selectBoxes": "Sélectionner des boxes",
+        "clickBoxToAssign": "Cliquez sur la/les box(es) pour les assigner",
+        "addedAssignments": "Affectations ajoutés :",
+        "shifts": "Shifts",
+        "dates": "Dates",
+        "assignments": "Affectations",
+        "selectAssistantAndBox": "Sélectionnez un assistant et cliquez sur la/les box(es)",
+        "confirmAssignments": "Confirmer les affectations",
+        "selectTaskTypesToProceed": "Sélectionnez d'abord les types de tâches"
+    },
+    "verantwoordelijkeBoxen": {
+        "title": "Mes Boxes"
+    },
+    "verantwoordelijkeDashboard": {
+        "title": "Agenda",
+        "date": "Date :",
+        "taskTypes": "Types de tâche(s) :",
+        "secondTitle": "Box",
+        "deadline": "Date limite :",
+        "noAssignments": "Aucune shift",
+        "detailTitle": "Box",
+        "assistant": "Assistant(e)",
+        "dentist": "Dentiste",
+        "close": "Fermer",
+        "delete": "Supprimer",
+        "deleting": "Suppression..."
+    },
+    "taskTypes": {
+        "ochtend": "Matin",
+        "avond": "Soir",
+        "wekelijks": "Hebdomadaire",
+        "maandelijks": "Mensuel"
     }
 }

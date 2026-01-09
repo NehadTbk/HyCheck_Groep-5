@@ -71,7 +71,10 @@
         "dashboard": "Dashboard",
         "mijnPersoneel": "Mijn Personeel",
         "maandoverzicht": "Maandoverzicht",
-        "instructions": "Instructies"
+        "instructions": "Instructies",
+        "boxen": "Mijn Boxen",
+        "rapporten": "Rapporten",
+        "personeel": "Mijn Personeel"
     },
     "notifications": {
         "title": "Meldingen",
@@ -192,5 +195,72 @@
         "title": "Periodieke reinigingen",
         "weekly": "Wekelijks:",
         "monthly": "Maandelijks:"
+    },
+    "dateCalendar": {
+        "previousMonth": "Vorige maand",
+        "nextMonth": "Volgende maand",
+        "today": "Vandaag",
+        "date": "datum",
+        "selected": "geselecteerd"
+    },
+    "rapporten": {
+        "date": "Datum",
+        "box": "Box",
+        "assistant": "Assistent",
+        "amountTasks": "Aantal taken",
+        "sortTasks": "Soort taken",
+        "status": "Status",
+        "reason": "Reden",
+        "noResults": "Geen resultaten gevond,en voor deze filters."
+    },
+    "rapportFilter": {
+        "period": "Periode",
+        "aangepast": "Aangepast",
+        "dagelijks": "Dagelijks",
+        "wekelijks": "Wekelijks",
+        "maandelijks": "Maandelijks",
+        "fromDate": "Van de",
+        "toDate": "Tot de",
+        "assistant": "Assistent",
+        "searchAssistant": "Zoek assistent..."
+    },
+    "schedulingOverlay": {
+        "selectDate": "Selecteer datum(s)",
+        "selectTaskTypes": "Selecteer taak type(s)",
+        "setTimeDateForTasks": "Stel tijd en datum in voor taken",
+        "selectAssistant": "Selecteer Assistent",
+        "selectDentist": "Selecteer Tandarts",
+        "selectBoxes": "Selecteer Boxen",
+        "clickBoxToAssign": "Klik op box(en) om toe te wijzen",
+        "addedAssignments": "Toegevoegde toewijzingen:",
+        "shifts": "Shifts",
+        "dates": "Datums",
+        "assignments": "Toewijzingen",
+        "selectAssistantAndBox": "Selecteer assistent en klik op box(en)",
+        "confirmAssignments": "Bevestig Toewijzingen",
+        "selectTaskTypesToProceed": "Selecteer eerst taak types"
+    },
+    "verantwoordelijkeBoxen": {
+        "title": "Mijn Boxen"
+    },
+    "verantwoordelijkeDashboard": {
+        "title": "Agenda",
+        "secondTitle": "Box",
+        "deadline": "Deadline:",
+        "date": "Datum",
+        "taskTypes": "Taak Types",
+        "detailTitle": "Box",
+        "noAssignments": "Geen shifts",
+        "assistant": "Assistent",
+        "dentist": "Tandarts",
+        "close": "Sluiten",
+        "delete": "Verwijderen",
+        "deleting": "Verwijderen..."
+    },
+    "taskTypes": {
+        "ochtend": "Ochtend",
+        "avond": "Avond",
+        "wekelijks": "Wekelijks",
+        "maandelijks": "Maandelijks"
     }
 }

@@ -1,32 +1,37 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import BaseNavBar from '../layout/BaseNavBar';
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function VerantwoordelijkeNavBar() {
   const location = useLocation();
+  const { language, letLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   const items = [
     {
       key: 'dashboard',
-      label: 'Dashboard',
+      label: t('navbar.dashboard'),
       href: '/verantwoordelijke/dashboard',
       active: location.pathname === '/verantwoordelijke/dashboard'
     },
     {
       key: 'boxen',
-      label: 'Mijn Boxen',
+      label: t('navbar.boxen'),
       href: '/verantwoordelijke/boxen',
       active: location.pathname === '/verantwoordelijke/boxen'
     },
     {
       key: 'rapporten',
-      label: 'Rapporten',
+      label: t('navbar.rapporten'),
       href: '/verantwoordelijke/rapporten',
       active: location.pathname === '/verantwoordelijke/rapporten'
     },
     {
       key: 'personeel',
-      label: 'Mijn Personeel',
+      label: t('navbar.personeel'),
       href: '/verantwoordelijke/personeel',
       active: location.pathname === '/verantwoordelijke/personeel'
     }
