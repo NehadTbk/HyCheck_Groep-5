@@ -223,5 +223,21 @@
         "toDate": "Tot de",
         "assistant": "Assistent",
         "searchAssistant": "Zoek assistent..."
+    },
+    "schedulingOverlay": {
+        "selectDate": "Selecteer datum(s)",
+        "selectTaskTypes": "Selecteer taak type(s)",
+        "setTimeDateForTasks": "Stel tijd en datum in voor taken",
+        "selectAssistant": "Selecteer Assistent",
+        "selectDentist": "Selecteer Tandarts",
+        "selectBoxes": "Selecteer Boxen",
+        "clickBoxToAssign": "Klik op box(en) om toe te wijzen",
+        "addedAssignments": "Toegevoegde toewijzingen:",
+        "shifts": "Shifts",
+        "dates": "Datums",
+        "assignments": "Toewijzingen",
+        "selectAssistantAndBox": "Selecteer assistent en klik op box(en)",
+        "confirmAssignments": "Bevestig Toewijzingen",
+        "selectTaskTypesToProceed": "Selecteer eerst taak types"
     }
 }

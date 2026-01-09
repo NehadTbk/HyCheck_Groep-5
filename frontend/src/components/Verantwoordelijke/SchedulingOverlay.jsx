@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Trash2, Clock, CheckCircle2, X, Check } from "lucide-react";
 import DateCalendar from "./DateCalendar";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const TASK_TYPES = {
   ochtend: {
@@ -241,6 +244,9 @@ export default function SchedulingOverlay() {
     }
   };
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <div className="max-w-7xl mx-auto bg-white p-4 rounded-lg shadow-lg space-y-3">
       {/* Notification */}
@@ -264,14 +270,14 @@ export default function SchedulingOverlay() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-3 border-b">
         {/* Calendar */}
         <div>
-          <label className="font-semibold text-sm block mb-2">Selecteer Datums:</label>
+          <label className="font-semibold text-sm block mb-2">{t("schedulingOverlay.selectDate")}</label>
           <DateCalendar selectedDates={selectedDates} setSelectedDates={setSelectedDates} />
         </div>
 
         {/* Task Types */}
         <div className="space-y-2">
           <div>
-            <h3 className="font-semibold text-sm mb-2">Selecteer Taak Types:</h3>
+            <h3 className="font-semibold text-sm mb-2">{t("schedulingOverlay.selectTaskTypes")}</h3>
             <div className="grid grid-cols-2 gap-2">
               {Object.entries(TASK_TYPES).map(([key, { label, color }]) => (
                 <button
@@ -299,7 +305,7 @@ export default function SchedulingOverlay() {
         <div className="space-y-2 pb-3 border-b">
           <h3 className="font-semibold text-sm flex items-center gap-1">
             <Clock size={14} />
-            Tijden/Periodes:
+            {t("schedulingOverlay.setTimeDateForTasks")}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {selectedTaskTypes.map((taskType) => (
@@ -338,7 +344,7 @@ export default function SchedulingOverlay() {
         <div className="space-y-3 pb-3 border-b">
           {/* Select Assistant */}
           <div>
-            <label className="text-xs font-medium mb-1 block">Selecteer Assistent:</label>
+            <label className="text-xs font-medium mb-1 block">{t("schedulingOverlay.selectAssistant")}</label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {assistants.map((assistant) => (
                 <button
@@ -359,7 +365,7 @@ export default function SchedulingOverlay() {
           {/* Select Tandarts (if required) */}
           {isDentistRequired() && (
             <div>
-              <label className="text-xs font-medium mb-1 block">Selecteer Tandarts:</label>
+              <label className="text-xs font-medium mb-1 block">{t("schedulingOverlay.selectDentist")}</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {dentists.map((dentist) => (
                   <button
@@ -381,7 +387,7 @@ export default function SchedulingOverlay() {
           {/* Select Boxes */}
           <div>
             <label className="text-xs font-medium mb-1 block">
-              {isDentistRequired() ? "2. " : ""}Klik op box(en) om toe te wijzen:
+              {isDentistRequired() ? "2. " : ""}{t("schedulingOverlay.selectBoxes")}
             </label>
             <div className="grid grid-cols-7 md:grid-cols-14 gap-1">
               {boxes.map((box) => {
@@ -404,14 +410,14 @@ export default function SchedulingOverlay() {
               })}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Tip: Selecteer assistent & tandarts, klik dan op boxen. Wissel om andere combinaties toe te wijzen.
+              {t("schedulingOverlay.clickBoxToAssign")}
             </p>
           </div>
 
           {/* Added assignments list */}
           {assignments.length > 0 && (
             <div className="space-y-2 mt-3">
-              <label className="text-xs font-medium text-gray-500">Toegevoegde toewijzingen ({assignments.length}):</label>
+              <label className="text-xs font-medium text-gray-500">{t("schedulingOverlay.addedAssignments")} ({assignments.length}):</label>
               <div className="flex flex-wrap gap-2">
                 {assignments.map((assignment, index) => (
                   <div
@@ -442,17 +448,17 @@ export default function SchedulingOverlay() {
         <div className="text-xs text-gray-600">
           {assignments.length > 0 && selectedDates.length > 0 ? (
             <>
-              <strong>{selectedDates.length * assignments.length}</strong> shift
+              <strong>{selectedDates.length * assignments.length}</strong> {t("schedulingOverlay.shifts")}
               {selectedDates.length * assignments.length !== 1 ? "s" : ""}
               <span className="ml-1">
-                ({selectedDates.length} datum{selectedDates.length !== 1 ? "s" : ""} × {assignments.length} toewijzing{assignments.length !== 1 ? "en" : ""})
+                ({selectedDates.length} {t("schedulingOverlay.dates")} × {assignments.length} {t("schedulingOverlay.assignments")}{assignments.length !== 1 ? "en" : ""})
               </span>
             </>
           ) : (
             <span className="text-red-500">
-              {selectedDates.length === 0 && "Selecteer datum(s) • "}
-              {selectedTaskTypes.length === 0 && "Selecteer taak type(s) • "}
-              {assignments.length === 0 && selectedTaskTypes.length > 0 && "Selecteer tandarts/assistent en klik op box(en)"}
+              {selectedDates.length === 0 && t("schedulingOverlay.selectDate")}
+              {selectedTaskTypes.length === 0 && t("schedulingOverlay.selectTaskTypes")}
+              {assignments.length === 0 && selectedTaskTypes.length > 0 && t("schedulingOverlay.selectAssistantAndBox")}
             </span>
           )}
         </div>
@@ -465,14 +471,14 @@ export default function SchedulingOverlay() {
               : "bg-gray-200 text-gray-400 cursor-not-allowed"
           }`}
         >
-          Bevestigen
+          {t("schedulingOverlay.confirmAssignments")}
         </button>
       </div>
 
       {/* Helper Text */}
       {selectedTaskTypes.length === 0 && (
         <div className="text-center text-gray-500 text-xs py-3">
-          Selecteer eerst taak types
+          {t("schedulingOverlay.selectTaskTypesToProceed")}
         </div>
       )}
     </div>

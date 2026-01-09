@@ -215,5 +215,21 @@
         "toDate": "Au",
         "assistant": "Assistant",
         "searchAssistant": "Rechercher un assistant..."
+    },
+    "schedulingOverlay": {
+        "selectDate": "Sélectionner la/les date(s)",
+        "selectTaskTypes": "Sélectionner le(s) type(s) de tâche",
+        "setTimeDateForTasks": "Définir l'heure et la date pour les tâches",
+        "selectAssistant": "Sélectionner un assistant",
+        "selectDentist": "Sélectionner un dentiste",
+        "selectBoxes": "Sélectionner des boxes",
+        "clickBoxToAssign": "Cliquez sur la/les box(es) pour les assigner",
+        "addedAssignments": "Affectations ajoutés :",
+        "shifts": "Shifts",
+        "dates": "Dates",
+        "assignments": "Affectations",
+        "selectAssistantAndBox": "Sélectionnez un assistant et cliquez sur la/les box(es)",
+        "confirmAssignments": "Confirmer les affectations",
+        "selectTaskTypesToProceed": "Sélectionnez d'abord les types de tâches"
     }
 }
