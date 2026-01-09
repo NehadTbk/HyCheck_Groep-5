@@ -126,5 +126,13 @@
     },
     "assistentBoxen": {
         "allBoxes": "Toutes les boîtes"
+    },
+    "historyModal": {
+        "title": "Détails",
+        "search": "Chercher par date ou boîte...",
+        "date": "Date",
+        "status": "Statut",
+        "actions": "Actions",
+        "details": "Détails"
     }
 }

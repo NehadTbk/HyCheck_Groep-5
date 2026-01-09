@@ -3,6 +3,9 @@ import PageLayout from "../../components/layout/PageLayout";
 import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import HistoryModal from "../../components/Assistent/HistoryModal";
 import { Search, Eye } from "lucide-react";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function Historiek() {
   const [selectedHistory, setSelectedHistory] = useState(null);
@@ -32,18 +35,21 @@ function Historiek() {
     }
   };
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
 
         <section className="bg-white rounded-xl p-6 shadow-lg">
           <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
-            <h1 className="text-3xl font-bold text-gray-800">Historiek</h1>
+            <h1 className="text-3xl font-bold text-gray-800">{t("historyModal.title")}</h1>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input 
                 type="text" 
-                placeholder="Zoek op datum of box..." 
+                placeholder={t("historyModal.search") || "Zoeken..."} 
                 className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#5C2D5F]/20"
               />
             </div>
@@ -53,10 +59,10 @@ function Historiek() {
             <table className="w-full text-left border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-gray-500 text-sm uppercase tracking-wider">
-                  <th className="px-6 py-2 font-semibold">Box</th>
-                  <th className="px-6 py-2 font-semibold">Datum</th>
-                  <th className="px-6 py-2 font-semibold">Status</th>
-                  <th className="px-6 py-2 font-semibold text-right">Actie</th>
+                  <th className="px-6 py-2 font-semibold">{t("historyModal.title")}</th>
+                  <th className="px-6 py-2 font-semibold">{t("historyModal.date")}</th>
+                  <th className="px-6 py-2 font-semibold">{t("historyModal.status")}</th>
+                  <th className="px-6 py-2 font-semibold text-right">{t("historyModal.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,7 +80,7 @@ function Historiek() {
                         onClick={() => setSelectedHistory(item)}
                         className="inline-flex items-center gap-2 bg-white border border-gray-200 text-[#5C2D5F] px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#5C2D5F] hover:text-white transition-all shadow-sm"
                       >
-                        <Eye size={16} /> Details
+                        <Eye size={16} /> {t("historyModal.details")}
                       </button>
                     </td>
                   </tr>

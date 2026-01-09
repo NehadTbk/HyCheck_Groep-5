@@ -131,5 +131,13 @@
     },
     "assistentBoxen": {
         "allBoxes": "Alle Boxen"
+    },
+    "historyModal": {
+        "title": "Details",
+        "search": "Zoeken op datum of box...",
+        "date": "Datum",
+        "status": "Status",
+        "actions": "Acties",
+        "details": "Details"
     }
 }
