@@ -127,7 +127,7 @@
     "assistentBoxen": {
         "allBoxes": "Toutes les boîtes"
     },
-    "historyModal": {
+    "historyAll": {
         "title": "Détails",
         "search": "Chercher par date ou boîte...",
         "date": "Date",
