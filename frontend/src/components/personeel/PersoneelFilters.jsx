@@ -1,16 +1,37 @@
-// src/components/Afdelingshoofd/PersoneelFilters.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { ROLE_OPTIONS } from "../Afdelingshoofd/constants";
 
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user"));
+  } catch {
+    return null;
+  }
+};
+
 function PersoneelFilters({ selectedRoles, onChange }) {
+  const currentUser = getLocalUser();
+
+  // ✅ Hide "verantwoordelijke" for responsible users
+  const visibleRoleOptions =
+    currentUser?.role === "responsible"
+      ? ROLE_OPTIONS.filter((r) => r.key !== "verantwoordelijke")
+      : ROLE_OPTIONS;
+
+  // ✅ Safety: if responsible already has verantwoordelijke selected somehow, remove it
+  useEffect(() => {
+    if (currentUser?.role === "responsible" && selectedRoles.includes("verantwoordelijke")) {
+      onChange(selectedRoles.filter((k) => k !== "verantwoordelijke"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.role]);
+
   const handleClick = (key) => {
     let next;
 
     if (selectedRoles.includes(key)) {
-      // remove if already selected
       next = selectedRoles.filter((k) => k !== key);
     } else {
-      // add if not selected yet
       next = [...selectedRoles, key];
     }
 
@@ -19,7 +40,7 @@ function PersoneelFilters({ selectedRoles, onChange }) {
 
   return (
     <div className="flex gap-2">
-      {ROLE_OPTIONS.map((role) => {
+      {visibleRoleOptions.map((role) => {
         const isActive = selectedRoles.includes(role.key);
         return (
           <button

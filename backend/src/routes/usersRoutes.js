@@ -38,8 +38,7 @@ router.delete("/users/:id", authMiddleware, async (req, res) => {
     });
   }
 
-  // ✅ Verantwoordelijke mag GEEN andere verantwoordelijken (of admins) verwijderen
-  // (en ook niet zichzelf)
+  // ✅ responsible cannot delete self and cannot delete responsible/admin
   const targetId = Number(req.params.id);
   if (Number.isNaN(targetId)) {
     return res.status(400).json({ message: "Ongeldig user id" });
