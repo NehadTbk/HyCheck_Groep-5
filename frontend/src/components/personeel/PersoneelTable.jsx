@@ -2,6 +2,15 @@ import React from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 function PersoneelTable({ rows, onDelete }) {
+  let currentUser = null;
+  try {
+    currentUser = JSON.parse(localStorage.getItem("user"));
+  } catch {
+    currentUser = null;
+  }
+
+  const canDelete = !!currentUser?.permissions?.includes("USER_DELETE");
+
   return (
     <div className="mt-4">
       {/* Header row */}
@@ -33,13 +42,21 @@ function PersoneelTable({ rows, onDelete }) {
 
             <span>{row.email}</span>
 
-            <button
-              onClick={() => onDelete(row.id)}
-              className="ml-auto text-gray-400 hover:text-red-500 transition"
-              title="Verwijderen"
-            >
-              <FaRegTrashAlt />
-            </button>
+            {canDelete &&
+            !(
+              currentUser?.role === "responsible" &&
+              (row.roleKey === "verantwoordelijke" || row.roleKey === "admin")
+            ) ? (
+              <button
+                onClick={() => onDelete(row.id)}
+                className="ml-auto text-gray-400 hover:text-red-500 transition"
+                title="Verwijderen"
+              >
+                <FaRegTrashAlt />
+              </button>
+            ) : (
+              <span className="ml-auto" />
+            )}
           </div>
         ))}
 
