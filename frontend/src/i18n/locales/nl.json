@@ -242,5 +242,25 @@
     },
     "verantwoordelijkeBoxen": {
         "title": "Mijn Boxen"
+    },
+    "verantwoordelijkeDashboard": {
+        "title": "Agenda",
+        "secondTitle": "Box",
+        "deadline": "Deadline:",
+        "date": "Datum",
+        "taskTypes": "Taak Types",
+        "detailTitle": "Box",
+        "noAssignments": "Geen shifts",
+        "assistant": "Assistent",
+        "dentist": "Tandarts",
+        "close": "Sluiten",
+        "delete": "Verwijderen",
+        "deleting": "Verwijderen..."
+    },
+    "taskTypes": {
+        "ochtend": "Ochtend",
+        "avond": "Avond",
+        "wekelijks": "Wekelijks",
+        "maandelijks": "Maandelijks"
     }
 }

@@ -234,5 +234,25 @@
     },
     "verantwoordelijkeBoxen": {
         "title": "Mes Boxes"
+    },
+    "verantwoordelijkeDashboard": {
+        "title": "Agenda",
+        "date": "Date :",
+        "taskTypes": "Types de tâche(s) :",
+        "secondTitle": "Box",
+        "deadline": "Date limite :",
+        "noAssignments": "Aucune shift",
+        "detailTitle": "Box",
+        "assistant": "Assistant(e)",
+        "dentist": "Dentiste",
+        "close": "Fermer",
+        "delete": "Supprimer",
+        "deleting": "Suppression..."
+    },
+    "taskTypes": {
+        "ochtend": "Matin",
+        "avond": "Soir",
+        "wekelijks": "Hebdomadaire",
+        "maandelijks": "Mensuel"
     }
 }

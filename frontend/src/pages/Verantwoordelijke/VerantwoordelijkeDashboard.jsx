@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { X, Trash2 } from "lucide-react";
 import PageLayout from "../../components/layout/PageLayout";
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function getMonday(date) {
   const d = new Date(date);
@@ -20,27 +23,25 @@ function formatDateLocal(date) {
   return `${year}-${month}-${day}`;
 }
 
-function generateWeekDays(weekStart) {
-  const dayNames = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag"];
-  const days = [];
-  for (let i = 0; i < 5; i++) {
+function generateWeekDays(weekStart, language) {
+  const locale = language === "nl" ? "nl-BE" : "fr-BE";
+
+  return Array.from({ length: 5 }).map((_, i) => {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
-    days.push({
-      dagNaam: dayNames[i],
-      datumISO: formatDateLocal(d),
-      datumLabel: d.toLocaleDateString("nl-BE", { day: "2-digit", month: "2-digit" }),
-    });
-  }
-  return days;
-}
 
-const TASK_TYPE_LABELS = {
-  ochtend: "Ochtend",
-  avond: "Avond",
-  wekelijks: "Wekelijks",
-  maandelijks: "Maandelijks",
-};
+    const weekday = d.toLocaleDateString(locale, { weekday: "long" });
+
+    return {
+      datumISO: formatDateLocal(d),
+      dagNaam: weekday.charAt(0).toUpperCase() + weekday.slice(1),
+      datumLabel: d.toLocaleDateString(locale, {
+        day: "2-digit",
+        month: "2-digit",
+      }),
+    };
+  });
+}
 
 const typeColors = {
   Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
@@ -54,6 +55,9 @@ const typeColors = {
 };
 
 function VerantwoordelijkeDashboard() {
+  const { language, letLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   const [weekStart, setWeekStart] = useState(getMonday(new Date()));
   const [dagen, setDagen] = useState([]);
   const [planning, setPlanning] = useState({});
@@ -61,8 +65,8 @@ function VerantwoordelijkeDashboard() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    setDagen(generateWeekDays(weekStart));
-  }, [weekStart]);
+    setDagen(generateWeekDays(weekStart, language));
+  }, [weekStart, language]);
 
   async function fetchWeekData() {
     try {
@@ -155,7 +159,7 @@ function VerantwoordelijkeDashboard() {
     <PageLayout>
       <VerantwoordelijkeNavBar />
       <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px] overflow-x-auto">
-        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">Agenda</h1>
+        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">{t("verantwoordelijkeDashboard.title")}</h1>
 
         <div className="flex space-x-6 text-2xl mb-4">
           <button onClick={() => changeWeek(-1)} className="text-gray-600 hover:text-[#582F5B]">&lt;</button>
@@ -183,8 +187,8 @@ function VerantwoordelijkeDashboard() {
                       const groups = Array.isArray(raw)
                         ? raw
                         : raw
-                        ? String(raw).split(",")
-                        : [];
+                          ? String(raw).split(",")
+                          : [];
 
                       if (groups.length === 0) return "O";
 
@@ -210,8 +214,8 @@ function VerantwoordelijkeDashboard() {
                     const taskGroups = Array.isArray(assignment.task_groups)
                       ? assignment.task_groups
                       : assignment.task_groups
-                      ? String(assignment.task_groups).split(",")
-                      : [];
+                        ? String(assignment.task_groups).split(",")
+                        : [];
 
                     // Check task types to determine how to display time/period
                     const hasTimeTasks = taskGroups.some(g => g.trim() === "ochtend" || g.trim() === "avond");
@@ -236,18 +240,19 @@ function VerantwoordelijkeDashboard() {
                         className="p-3 rounded-md border border-gray-300 bg-gray-100 flex flex-col justify-between min-h-[85px] cursor-pointer hover:shadow-md hover:bg-gray-200 transition-all"
                       >
                         <div>
-                          <div className="font-bold text-sm text-gray-800">Box {assignment.box_id}</div>
+                          <div className="font-bold text-sm text-gray-800">{t("verantwoordelijkeDashboard.secondTitle")} {assignment.box_id}</div>
                           {hasTimeTasks && (
                             <div className="text-xs text-gray-600">{formatTime(assignment.start_time)}</div>
                           )}
                           {hasDateTasks && !hasTimeTasks && (
-                            <div className="text-xs text-gray-600">Deadline: {calculateDeadline()}</div>
+                            <div className="text-xs text-gray-600">{t("verantwoordelijkeDashboard.deadline")} {calculateDeadline()}</div>
                           )}
                           <div className="text-xs text-gray-700 mt-0.5">{assignment.assistant_name}</div>
                         </div>
                         <div className="flex gap-1 flex-wrap mt-1">
                           {taskGroups.map((group) => {
-                            const groupLabel = TASK_TYPE_LABELS[group.trim()] || group;
+                            const key = group.trim();
+                            const groupLabel = t(`taskTypes.${key}`);
                             const groupColor = typeColors[group.trim()] || "bg-gray-100 text-gray-700 border-gray-300";
                             return (
                               <span
@@ -264,7 +269,7 @@ function VerantwoordelijkeDashboard() {
                   })
                 ) : (
                   <div className="p-3 border rounded-md text-gray-500 text-center">
-                    Geen shifts
+                    {t("verantwoordelijkeDashboard.noAssignments")}
                   </div>
                 )}
               </div>
@@ -280,7 +285,7 @@ function VerantwoordelijkeDashboard() {
             {/* Header */}
             <div className="p-4 rounded-t-lg bg-[#582F5B] text-white flex justify-between items-center">
               <h2 className="text-xl font-bold">
-                Box {selectedAssignment.box_id}
+                {t("verantwoordelijkeDashboard.detailTitle")} {selectedAssignment.box_id}
               </h2>
               <button
                 onClick={() => setSelectedAssignment(null)}
@@ -308,19 +313,19 @@ function VerantwoordelijkeDashboard() {
                 return (
                   <div className="space-y-3">
                     <div>
-                      <span className="text-gray-500 text-sm">Datum</span>
+                      <span className="text-gray-500 text-sm">{t("verantwoordelijkeDashboard.date")}</span>
                       <p className="font-medium">
                         {selectedAssignment.dagNaam}, {new Date(selectedAssignment.date).toLocaleDateString("nl-BE")}
                       </p>
                     </div>
 
                     <div>
-                      <span className="text-gray-500 text-sm">Taak Types</span>
+                      <span className="text-gray-500 text-sm">{t("verantwoordelijkeDashboard.taskTypes")}</span>
                       <div className="space-y-2 mt-2">
                         {hasOchtend && (
                           <div className="flex justify-between items-center">
                             <span className={`text-[11px] px-2 py-0.5 rounded-full border font-bold ${typeColors.ochtend}`}>
-                              Ochtend
+                              {t("taskTypes.ochtend")}
                             </span>
                             <span className="font-medium text-sm">08:00 - 12:00</span>
                           </div>
@@ -328,7 +333,7 @@ function VerantwoordelijkeDashboard() {
                         {hasAvond && (
                           <div className="flex justify-between items-center">
                             <span className={`text-[11px] px-2 py-0.5 rounded-full border font-bold ${typeColors.avond}`}>
-                              Avond
+                              {t("taskTypes.avond")}
                             </span>
                             <span className="font-medium text-sm">13:00 - 17:00</span>
                           </div>
@@ -336,7 +341,7 @@ function VerantwoordelijkeDashboard() {
                         {hasWekelijks && (
                           <div className="flex justify-between items-center">
                             <span className={`text-[11px] px-2 py-0.5 rounded-full border font-bold ${typeColors.wekelijks}`}>
-                              Wekelijks
+                              {t("taskTypes.wekelijks")}
                             </span>
                             <span className="font-medium text-sm">{calculateDeadline(3)}</span>
                           </div>
@@ -344,7 +349,7 @@ function VerantwoordelijkeDashboard() {
                         {hasMaandelijks && (
                           <div className="flex justify-between items-center">
                             <span className={`text-[11px] px-2 py-0.5 rounded-full border font-bold ${typeColors.maandelijks}`}>
-                              Maandelijks
+                              {t("taskTypes.maandelijks")}
                             </span>
                             <span className="font-medium text-sm">{calculateDeadline(7)}</span>
                           </div>
@@ -357,14 +362,14 @@ function VerantwoordelijkeDashboard() {
 
               {selectedAssignment.assistant_name && (
                 <div>
-                  <span className="text-gray-500 text-sm">Assistent</span>
+                  <span className="text-gray-500 text-sm">{t("verantwoordelijkeDashboard.assistant")}</span>
                   <p className="font-medium">{selectedAssignment.assistant_name}</p>
                 </div>
               )}
 
               {selectedAssignment.dentist_name && (
                 <div>
-                  <span className="text-gray-500 text-sm">Tandarts</span>
+                  <span className="text-gray-500 text-sm">{t("verantwoordelijkeDashboard.dentist")}</span>
                   <p className="font-medium">{selectedAssignment.dentist_name}</p>
                 </div>
               )}
@@ -376,7 +381,7 @@ function VerantwoordelijkeDashboard() {
                 onClick={() => setSelectedAssignment(null)}
                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
               >
-                Sluiten
+                {t("verantwoordelijkeDashboard.close")}
               </button>
               <button
                 onClick={handleDeleteAssignment}
@@ -384,7 +389,7 @@ function VerantwoordelijkeDashboard() {
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-2 disabled:opacity-50"
               >
                 <Trash2 size={16} />
-                {isDeleting ? "Verwijderen..." : "Verwijderen"}
+                {isDeleting ? t("verantwoordelijkeDashboard.deleting") : t("verantwoordelijkeDashboard.delete")}
               </button>
             </div>
           </div>
