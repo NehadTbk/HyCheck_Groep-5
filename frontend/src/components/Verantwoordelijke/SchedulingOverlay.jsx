@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, Clock, CheckCircle2 } from "lucide-react";
+import { Trash2, Clock, CheckCircle2, X, Check } from "lucide-react";
 import DateCalendar from "./DateCalendar";
 
 const TASK_TYPES = {
@@ -33,11 +33,12 @@ const TASK_TYPES = {
   },
 };
 
-export default function TaskTypeSchedulingOverlay() {
+export default function SchedulingOverlay() {
   const [selectedDates, setSelectedDates] = useState([]);
   const [dentists, setDentists] = useState([]);
   const [boxes, setBoxes] = useState([]);
   const [assistants, setAssistants] = useState([]);
+  const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
 
   // Step 1: Select task types
   const [selectedTaskTypes, setSelectedTaskTypes] = useState([]);
@@ -45,12 +46,10 @@ export default function TaskTypeSchedulingOverlay() {
   // Step 2: Set times for selected task types
   const [taskTypeTimes, setTaskTypeTimes] = useState({});
 
-  // Step 3: Select ONE assistant
-  const [selectedAssistant, setSelectedAssistant] = useState("");
-
-  // Step 4: Add dentist-box pairs (select tandarts, then box, repeat)
+  // Step 3: Select tandarts and assistant, then assign to boxes
   const [selectedDentist, setSelectedDentist] = useState("");
-  const [assignments, setAssignments] = useState([]); // Array of { dentist, box }
+  const [selectedAssistant, setSelectedAssistant] = useState("");
+  const [assignments, setAssignments] = useState([]); // Array of { dentist, assistant, box }
 
   useEffect(() => {
     fetchData();
@@ -121,12 +120,22 @@ export default function TaskTypeSchedulingOverlay() {
       // Remove the assignment (deselect)
       setAssignments(assignments.filter((_, i) => i !== existingIndex));
     } else {
-      // Add new assignment with current dentist
+      // Validate selections
       if (isDentistRequired() && !selectedDentist) {
-        alert("Selecteer eerst een tandarts");
+        setNotification({ type: 'error', message: 'Selecteer eerst een tandarts' });
+        setTimeout(() => setNotification(null), 3000);
         return;
       }
-      setAssignments([...assignments, { dentist: selectedDentist || null, box: boxName }]);
+      if (!selectedAssistant) {
+        setNotification({ type: 'error', message: 'Selecteer eerst een assistent' });
+        setTimeout(() => setNotification(null), 3000);
+        return;
+      }
+      setAssignments([...assignments, {
+        dentist: selectedDentist || null,
+        assistant: selectedAssistant,
+        box: boxName
+      }]);
     }
   };
 
@@ -146,11 +155,23 @@ export default function TaskTypeSchedulingOverlay() {
   const canConfirm =
     selectedDates.length > 0 &&
     selectedTaskTypes.length > 0 &&
-    selectedAssistant &&
     assignments.length > 0;
 
   const handleConfirm = async () => {
     const shifts = [];
+
+    // Calculate time range from all selected time-based task types
+    const timeBasedTypes = selectedTaskTypes.filter(t => TASK_TYPES[t].useTime);
+    let startTime = "08:00";
+    let endTime = "17:00";
+
+    if (timeBasedTypes.length > 0) {
+      // Get earliest start and latest end from all time-based types
+      const starts = timeBasedTypes.map(t => taskTypeTimes[t]?.start || TASK_TYPES[t].defaultStart);
+      const ends = timeBasedTypes.map(t => taskTypeTimes[t]?.end || TASK_TYPES[t].defaultEnd);
+      startTime = starts.sort()[0];
+      endTime = ends.sort().reverse()[0];
+    }
 
     selectedDates.forEach((date) => {
       assignments.forEach((assignment) => {
@@ -158,9 +179,9 @@ export default function TaskTypeSchedulingOverlay() {
           date: date,
           dentist: assignment.dentist,
           box: assignment.box,
-          assistant: selectedAssistant,
-          start: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].start : "08:00",
-          end: selectedTaskTypes[0] ? taskTypeTimes[selectedTaskTypes[0]].end : "17:00",
+          assistant: assignment.assistant,
+          start: startTime,
+          end: endTime,
           groups: selectedTaskTypes,
         });
       });
@@ -191,10 +212,10 @@ export default function TaskTypeSchedulingOverlay() {
 
       const result = await response.json();
 
-      alert(
-        `✅ Successfully created ${result.assignments.length} assignment(s)!\n\n` +
-        `The assignments will now appear in the agenda.`
-      );
+      setNotification({
+        type: 'success',
+        message: `${result.assignments.length} toewijzing(en) aangemaakt!`
+      });
 
       window.dispatchEvent(new Event("calendarUpdated"));
 
@@ -205,14 +226,40 @@ export default function TaskTypeSchedulingOverlay() {
       setSelectedAssistant("");
       setSelectedDentist("");
       setAssignments([]);
+
+      // Auto-hide notification after 4 seconds
+      setTimeout(() => setNotification(null), 4000);
     } catch (error) {
       console.error("Error creating assignments:", error);
-      alert(`❌ Error: ${error.message}\n\nPlease check the console for more details.`);
+      setNotification({
+        type: 'error',
+        message: `Fout: ${error.message}`
+      });
+
+      // Auto-hide error after 6 seconds
+      setTimeout(() => setNotification(null), 6000);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto bg-white p-4 rounded-lg shadow-lg space-y-3">
+      {/* Notification */}
+      {notification && (
+        <div className={`flex items-center justify-between p-3 rounded-lg ${
+          notification.type === 'success'
+            ? 'bg-green-100 text-green-800 border border-green-300'
+            : 'bg-red-100 text-red-800 border border-red-300'
+        }`}>
+          <div className="flex items-center gap-2">
+            {notification.type === 'success' ? <Check size={18} /> : <X size={18} />}
+            <span className="font-medium">{notification.message}</span>
+          </div>
+          <button onClick={() => setNotification(null)} className="hover:opacity-70">
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       {/* Step 1: Date & Task Type Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-3 border-b">
         {/* Calendar */}
@@ -286,39 +333,33 @@ export default function TaskTypeSchedulingOverlay() {
         </div>
       )}
 
-      {/* Step 3: Select Assistant */}
+      {/* Step 3: Select Assistant, Tandarts & Boxes */}
       {selectedTaskTypes.length > 0 && (
-        <div className="space-y-2 pb-3 border-b">
-          <h3 className="font-semibold text-sm">Selecteer Assistent:</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {assistants.map((assistant) => (
-              <button
-                key={assistant}
-                onClick={() => setSelectedAssistant(assistant)}
-                className={`p-2 rounded border text-center transition text-sm ${
-                  selectedAssistant === assistant
-                    ? "bg-[#582F5B] text-white border-[#582F5B]"
-                    : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                }`}
-              >
-                {assistant}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Step 4: Add Tandarts + Boxes */}
-      {selectedAssistant && (
         <div className="space-y-3 pb-3 border-b">
-          <h3 className="font-semibold text-sm">Tandarts & Boxen voor {selectedAssistant}:</h3>
+          {/* Select Assistant */}
+          <div>
+            <label className="text-xs font-medium mb-1 block">Selecteer Assistent:</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {assistants.map((assistant) => (
+                <button
+                  key={assistant}
+                  onClick={() => setSelectedAssistant(assistant)}
+                  className={`p-2 rounded border text-center transition text-sm ${
+                    selectedAssistant === assistant
+                      ? "bg-[#582F5B] text-white border-[#582F5B]"
+                      : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                  }`}
+                >
+                  {assistant}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Select Tandarts (if required) */}
           {isDentistRequired() && (
             <div>
-              <label className="text-xs font-medium mb-1 block">
-                1. Selecteer Tandarts {selectedDentist && <span className="text-green-600">(geselecteerd: {selectedDentist})</span>}:
-              </label>
+              <label className="text-xs font-medium mb-1 block">Selecteer Tandarts:</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {dentists.map((dentist) => (
                   <button
@@ -338,38 +379,34 @@ export default function TaskTypeSchedulingOverlay() {
           )}
 
           {/* Select Boxes */}
-          {(!isDentistRequired() || selectedDentist) && (
-            <div>
-              <label className="text-xs font-medium mb-1 block">
-                {isDentistRequired() ? "2. " : ""}Klik op box(en) om toe te wijzen:
-              </label>
-              <div className="grid grid-cols-7 md:grid-cols-14 gap-1">
-                {boxes.map((box) => {
-                  const assigned = isBoxAssigned(box.name);
-                  const boxDentist = getBoxDentist(box.name);
-                  return (
-                    <button
-                      key={box.box_id}
-                      onClick={() => selectBox(box.name)}
-                      title={assigned && boxDentist ? `${boxDentist}` : ""}
-                      className={`p-1.5 rounded border text-center transition text-xs font-medium ${
-                        assigned
-                          ? "bg-[#582F5B] text-white border-[#582F5B]"
-                          : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                      }`}
-                    >
-                      {box.name.replace("Box ", "")}
-                    </button>
-                  );
-                })}
-              </div>
-              {isDentistRequired() && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Tip: Selecteer eerst een tandarts, klik dan op boxen. Wissel van tandarts om andere boxen toe te wijzen.
-                </p>
-              )}
+          <div>
+            <label className="text-xs font-medium mb-1 block">
+              {isDentistRequired() ? "2. " : ""}Klik op box(en) om toe te wijzen:
+            </label>
+            <div className="grid grid-cols-7 md:grid-cols-14 gap-1">
+              {boxes.map((box) => {
+                const assigned = isBoxAssigned(box.name);
+                const boxDentist = getBoxDentist(box.name);
+                return (
+                  <button
+                    key={box.box_id}
+                    onClick={() => selectBox(box.name)}
+                    title={assigned && boxDentist ? `${boxDentist}` : ""}
+                    className={`p-1.5 rounded border text-center transition text-xs font-medium ${
+                      assigned
+                        ? "bg-[#582F5B] text-white border-[#582F5B]"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
+                    }`}
+                  >
+                    {box.name.replace("Box ", "")}
+                  </button>
+                );
+              })}
             </div>
-          )}
+            <p className="text-xs text-gray-500 mt-1">
+              Tip: Selecteer assistent & tandarts, klik dan op boxen. Wissel om andere combinaties toe te wijzen.
+            </p>
+          </div>
 
           {/* Added assignments list */}
           {assignments.length > 0 && (
@@ -383,7 +420,7 @@ export default function TaskTypeSchedulingOverlay() {
                   >
                     <span>
                       <span className="font-medium">{assignment.box}</span>
-                      <span className="mx-1">{selectedAssistant}</span>
+                      <span className="mx-1">{assignment.assistant}</span>
                       {assignment.dentist && <span>→{assignment.dentist.replace("Dr. ", "")}</span>}
                     </span>
                     <button
@@ -415,8 +452,7 @@ export default function TaskTypeSchedulingOverlay() {
             <span className="text-red-500">
               {selectedDates.length === 0 && "Selecteer datum(s) • "}
               {selectedTaskTypes.length === 0 && "Selecteer taak type(s) • "}
-              {!selectedAssistant && "Selecteer assistent • "}
-              {assignments.length === 0 && selectedAssistant && "Klik op box(en)"}
+              {assignments.length === 0 && selectedTaskTypes.length > 0 && "Selecteer tandarts/assistent en klik op box(en)"}
             </span>
           )}
         </div>
