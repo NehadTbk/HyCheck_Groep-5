@@ -1,48 +1,138 @@
 {
-  "login": {
-    "title": "Connexion",
-    "email": "Adresse mail",
-    "password": "Mot de passe",
-    "loginButton": "Se connecter",
-    "loading": "Chargement...",
-    "forgotPassword": "Mot de passe oublié?"
-  },
-  "changePassword": {
-    "title": "Modifier votre mot de passe",
-    "subtitleMustChange": "Pour des raisons de sécurité, vous devez d'abord changer votre mot de passe.",
-    "oldPassword": "Ancien mot de passe",
-    "newPassword": "Nouveau mot de passe",
-    "confirmNewPassword": "Confirmer le nouveau mot de passe",
-    "submit": "Changer le mot de passe",
-    "loading": "Chargement...",
-    "back": "Retour",
-    "success": "Mot de passe modifié avec succès !",
+    "login": {
+        "title": "Connexion",
+        "email": "Adresse mail",
+        "password": "Mot de passe",
+        "loginButton": "Se connecter",
+        "loading": "Chargement...",
+        "forgotPassword": "Mot de passe oublié?"
+    },
+    "changePassword": {
+        "title": "Modifier votre mot de passe",
+        "subtitleMustChange": "Pour des raisons de sécurité, vous devez d'abord changer votre mot de passe.",
+        "oldPassword": "Ancien mot de passe",
+        "newPassword": "Nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe",
+        "submit": "Changer le mot de passe",
+        "loading": "Chargement...",
+        "back": "Retour",
+        "success": "Mot de passe modifié avec succès !",
+        "errors": {
+            "fillBothFields": "Veuillez remplir les deux champs",
+            "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+            "generic": "Erreur lors du changement de mot de passe",
+            "server": "Erreur serveur"
+        }
+    },
+    "forgotPassword": {
+        "title": "Mot de passe oublié",
+        "subtitle": "Indiquez votre adresse e-mail. Si ce compte existe, nous enverrons un lien de réinitialisation.",
+        "email": "Adresse mail",
+        "submit": "Envoyer le lien",
+        "loading": "Chargement...",
+        "backToLogin": "Retour à la connexion",
+        "success": "Si cette adresse e-mail existe, nous avons envoyé un lien de réinitialisation.",
+        "errors": {
+            "generic": "Impossible d'envoyer le lien",
+            "server": "Erreur serveur"
+        }
+    },
+    "resetPassword": {
+        "title": "Définir un nouveau mot de passe",
+        "subtitle": "Choisissez un nouveau mot de passe pour votre compte.",
+        "noTokenHint": "Aucun token trouvé. Ouvrez le lien reçu par e-mail.",
+        "newPassword": "Nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe",
+        "submit": "Réinitialiser le mot de passe",
+        "loading": "Chargement...",
+        "backToLogin": "Retour à la connexion",
+        "success": "Mot de passe réinitialisé avec succès !",
+        "errors": {
+            "missingToken": "Token de réinitialisation manquant.",
+            "fillBothFields": "Veuillez remplir les deux champs",
+            "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+            "generic": "Erreur lors de la réinitialisation",
+            "server": "Erreur serveur"
+        }
+    },
     "errors": {
-      "fillBothFields": "Veuillez remplir les deux champs",
-      "passwordsDontMatch": "Les mots de passe ne correspondent pas",
-      "generic": "Erreur lors du changement de mot de passe",
-      "server": "Erreur serveur"
+        "loginFailed": "Echec de connexion, veuillez réesayer.",
+        "serverError": "Une erreur est survenue, veuillez réesayer plus tard...",
+        "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard...",
+        "serverUnavailable": "Connexion au serveur échoué... Veuillez réesayer plus tard",
+        "offline": "Vous etes hors ligne. Vérifier votre connexion internet"
+    },
+    "navbar": {
+        "dashboard": "Tableau de bord",
+        "mijnPersoneel": "Mon Personnel",
+        "maandoverzicht": "Aperçu mensuel",
+        "instructions": "Instructions"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "noAlerts": "Aucune nouvelle notification",
+        "new": "Nouveau",
+        "older": "Anciennes",
+        "minutesAgo": "minutes",
+        "hoursAgo": "heures",
+        "daysAgo": "jours"
+    },
+    "boxCard": {
+        "completed": "Complété",
+        "partiallyCompleted": "Partiellement complété",
+        "notCompleted": "Non complété",
+        "dentist": "Dentiste",
+        "taskCount": "Nombre de tâches"
+    },
+    "historyModal": {
+        "title": "Détails",
+        "tasks": "Tâches effectuées",
+        "close": "Fermer"
+    },
+    "periodicStatsCard": {
+        "title": "Nettoyage périodique",
+        "weekly": "Hebdomadaire :",
+        "monthly": "Mensuel :"
+    },
+    "assistentDashboard": {
+        "todayCompleted": "Terminé aujourd'hui",
+        "completedSubtitle": "Box nettoyées",
+        "openstaand": "En attente",
+        "pendingSubtitle": "Box en attente",
+        "assignedBoxes": "Mes box assignées"
+    },
+    "taskModal": {
+        "reasonOptions": "Raisons standard :",
+        "customReason": "Raison personnalisée (écrase la sélection) :",
+        "cancel": "ANNULER",
+        "confirmReason": "CONFIRMER LA RAISON",
+        "addReason": "Ajouter une raison",
+        "saveAndClose": "Enregistrer & Fermer"
+    },
+    "assistentNav": {
+        "dashboard": "Tableau de bord",
+        "boxes": "Mes boîtes",
+        "history": "Historique"
+    },
+    "topbar": {
+        "appName": "HyCheck",
+        "guest": "Invité",
+        "logout": "Se déconnecter",
+        "roles": {
+            "assistant": "Assistant",
+            "responsible": "Responsable",
+            "admin": "Chef de service"
+        }
+    },
+    "assistentBoxen": {
+        "allBoxes": "Toutes les boîtes"
+    },
+    "historyAll": {
+        "title": "Détails",
+        "search": "Chercher par date ou boîte...",
+        "date": "Date",
+        "status": "Statut",
+        "actions": "Actions",
+        "details": "Détails"
     }
-  },
-  "errors": {
-    "loginFailed": "Echec de connexion, veuillez réesayer.",
-    "serverError": "Une erreur est survenue, veuillez réesayer plus tard...",
-    "too_many_requests": "Trop de tentatives de connexion fautives. Veuillez réesyer plus tard...",
-    "serverUnavailable": "Connexion au serveur échoué... Veuillez réesayer plus tard",
-    "offline": "Vous etes hors ligne. Vérifier votre connexion internet"
-  },
-  "navbar": {
-    "dashboard": "Tableau de bord",
-    "mijnPersoneel": "Mon Personnel",
-    "maandoverzicht": "Aperçu mensuel"
-  },
-  "notifications": {
-    "title": "Notifications",
-    "noAlerts": "Aucune nouvelle notification",
-    "new": "Nouveau",
-    "older": "Anciennes",
-    "minutesAgo": "minutes",
-    "hoursAgo": "heures",
-    "daysAgo": "jours"
-  }
 }

@@ -1,53 +1,143 @@
 {
-  "app": {
-    "name": "HyCheck",
-    "description": "Tandarts hygiënisch schoonmaaksysteem",
-    "welcome": "Welkom bij HyCheck! "
-  },
-  "login": {
-    "title": "Inloggen",
-    "email": "E-mail",
-    "password": "Wachtwoord",
-    "loginButton": "Inloggen",
-    "loading": "Bezig...",
-    "forgotPassword": "Wachtwoord vergeten?"
-  },
-  "changePassword": {
-    "title": "Wijzig je wachtwoord",
-    "subtitleMustChange": "Om veiligheidsredenen moet je eerst je wachtwoord wijzigen.",
-    "oldPassword": "Oud wachtwoord",
-    "newPassword": "Nieuw wachtwoord",
-    "confirmNewPassword": "Bevestig nieuw wachtwoord",
-    "submit": "Wijzig wachtwoord",
-    "loading": "Bezig...",
-    "back": "Terug",
-    "success": "Wachtwoord succesvol gewijzigd!",
+    "app": {
+        "name": "HyCheck",
+        "description": "Tandarts hygiënisch schoonmaaksysteem",
+        "welcome": "Welkom bij HyCheck! "
+    },
+    "login": {
+        "title": "Inloggen",
+        "email": "E-mail",
+        "password": "Wachtwoord",
+        "loginButton": "Inloggen",
+        "loading": "Bezig...",
+        "forgotPassword": "Wachtwoord vergeten?"
+    },
+    "changePassword": {
+        "title": "Wijzig je wachtwoord",
+        "subtitleMustChange": "Om veiligheidsredenen moet je eerst je wachtwoord wijzigen.",
+        "oldPassword": "Oud wachtwoord",
+        "newPassword": "Nieuw wachtwoord",
+        "confirmNewPassword": "Bevestig nieuw wachtwoord",
+        "submit": "Wijzig wachtwoord",
+        "loading": "Bezig...",
+        "back": "Terug",
+        "success": "Wachtwoord succesvol gewijzigd!",
+        "errors": {
+            "fillBothFields": "Vul beide velden in",
+            "passwordsDontMatch": "Wachtwoorden komen niet overeen",
+            "generic": "Fout bij wijzigen wachtwoord",
+            "server": "Serverfout"
+        }
+    },
+    "forgotPassword": {
+        "title": "Wachtwoord vergeten",
+        "subtitle": "Vul je e-mail in. Als dit account bestaat, sturen we een resetlink.",
+        "email": "E-mail",
+        "submit": "Resetlink sturen",
+        "loading": "Bezig...",
+        "backToLogin": "Terug naar inloggen",
+        "success": "Als dit e-mailadres bestaat, sturen we je een resetlink.",
+        "errors": {
+            "generic": "Kon resetlink niet versturen",
+            "server": "Serverfout"
+        }
+    },
+    "resetPassword": {
+        "title": "Nieuw wachtwoord instellen",
+        "subtitle": "Kies een nieuw wachtwoord voor je account.",
+        "noTokenHint": "Geen token gevonden. Open de link uit je e-mail.",
+        "newPassword": "Nieuw wachtwoord",
+        "confirmNewPassword": "Bevestig nieuw wachtwoord",
+        "submit": "Wachtwoord resetten",
+        "loading": "Bezig...",
+        "backToLogin": "Terug naar inloggen",
+        "success": "Wachtwoord succesvol gereset!",
+        "errors": {
+            "missingToken": "Reset token ontbreekt.",
+            "fillBothFields": "Vul beide velden in",
+            "passwordsDontMatch": "Wachtwoorden komen niet overeen",
+            "generic": "Fout bij resetten van wachtwoord",
+            "server": "Serverfout"
+        }
+    },
     "errors": {
-      "fillBothFields": "Vul beide velden in",
-      "passwordsDontMatch": "Wachtwoorden komen niet overeen",
-      "generic": "Fout bij wijzigen wachtwoord",
-      "server": "Serverfout"
+        "loginFailed": "Login mislukt, probeer opnieuw.",
+        "serverError": "Er ging iets mis, probeer later opnieuw.",
+        "too_many_requests": "Te veel verkeerde loginpogingen. Probeer later opnieuw...",
+        "serverUnavailable": "Kan geen verbinding maken met de server. Probeer later opnieuw.",
+        "offline": "Je bent offline. Controleer je internetverbinding."
+    },
+    "navbar": {
+        "dashboard": "Dashboard",
+        "mijnPersoneel": "Mijn Personeel",
+        "maandoverzicht": "Maandoverzicht",
+        "instructions": "Instructies"
+    },
+    "notifications": {
+        "title": "Meldingen",
+        "noAlerts": "Geen nieuwe meldingen",
+        "new": "Nieuw",
+        "older": "Eerder",
+        "minutesAgo": "minuten geleden",
+        "hoursAgo": "uur geleden",
+        "daysAgo": "dagen geleden"
+    },
+    "boxCard": {
+        "completed": "Voltooid",
+        "partiallyCompleted": "Gedeeltelijk voltooid",
+        "notCompleted": "Niet voltooid",
+        "dentist": "Tandarts",
+        "taskCount": "Aantal taken"
+    },
+    "historyModal": {
+        "title": "Details",
+        "tasks": "Uitgevoerde taken",
+        "close": "Sluiten"
+    },
+    "periodicStatsCard": {
+        "title": "Periodieke reiniging",
+        "weekly": "Wekelijks:",
+        "monthly": "Maandelijks:"
+    },
+    "assistentDashboard": {
+        "todayCompleted": "Vandaag voltooid",
+        "completedSubtitle": "Boxen schoongemaakt",
+        "openstaand": "Openstaand",
+        "pendingSubtitle": "Boxen nog te doen",
+        "assignedBoxes": "Mijn toegewezen boxen"
+    },
+    "taskModal": {
+        "reasonOptions": "Standaard redenen:",
+        "customReason": "Eigen reden (overschrijft keuze):",
+        "cancel": "ANNULEREN",
+        "addReason": "Reden toevoegen",
+        "confirmReason": "REDEN BEVESTIGEN",
+        "saveAndClose": "Opslaan & Sluiten"
+    },
+    "assistentNav": {
+        "dashboard": "Dashboard",
+        "boxes": "Mijn Boxen",
+        "history": "Historiek"
+    },
+    "topbar": {
+        "appName": "HyCheck",
+        "guest": "Gast",
+        "logout": "Uitloggen",
+        "roles": {
+            "assistant": "Assistent",
+            "responsible": "Verantwoordelijke",
+            "admin": "Afdelingshoofd"
+        }
+    },
+    "assistentBoxen": {
+        "allBoxes": "Alle Boxen"
+    },
+    "historyAll": {
+        "title": "Details",
+        "search": "Zoeken op datum of box...",
+        "date": "Datum",
+        "status": "Status",
+        "actions": "Acties",
+        "details": "Details"
     }
-  },
-  "errors": {
-    "loginFailed": "Login mislukt, probeer opnieuw.",
-    "serverError": "Er ging iets mis, probeer later opnieuw.",
-    "too_many_requests": "Te veel verkeerde loginpogingen. Probeer later opnieuw...",
-    "serverUnavailable": "Kan geen verbinding maken met de server. Probeer later opnieuw.",
-    "offline": "Je bent offline. Controleer je internetverbinding."
-  },
-  "navbar": {
-    "dashboard": "Dashboard",
-    "mijnPersoneel": "Mijn Personeel",
-    "maandoverzicht": "Maandoverzicht"
-  },
-  "notifications": {
-    "title": "Meldingen",
-    "noAlerts": "Geen nieuwe meldingen",
-    "new": "Nieuw",
-    "older": "Eerder",
-    "minutesAgo": "minuten geleden",
-    "hoursAgo": "uur geleden",
-    "daysAgo": "dagen geleden"
-  }
 }

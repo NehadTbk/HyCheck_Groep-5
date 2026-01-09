@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
@@ -143,9 +143,9 @@ function Login() {
 
                         {/* Forgot Password */}
                         <div className="mt-4 text-center">
-                            <a href="#" className="text-sm text-blue-600 hover:underline">
+                            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
                                 {t("login.forgotPassword")}
-                            </a>
+                            </Link>
                         </div>
 
                     </div>

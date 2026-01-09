@@ -92,18 +92,33 @@ export const findDentistByUsername = async (fullName) => {
   }
 };
 
+export const createShift = async (
+  { userId, shiftDate, startTime, endTime },
+  connection = null
+) => {
+  const db = connection || pool;
+
+  const [result] = await db.query(
+    `INSERT INTO shift
+     (user_id, shift_date, start_time, end_time)
+     VALUES (?, ?, ?, ?)`,
+    [userId, shiftDate, startTime, endTime]
+  );
+
+  return result.insertId;
+};
+
 /**
  * Create a single shift assignment
  */
 export const createShiftAssignment = async (assignmentData, connection = null) => {
   const {
+    shiftId,
     boxId,
     userId,
-    dentistName,
     dentistUserId,
-    shiftDate,
-    startTime,
-    endTime,
+    assignmentStart,
+    assignmentEnd,
     createdBy
   } = assignmentData;
 
@@ -112,9 +127,9 @@ export const createShiftAssignment = async (assignmentData, connection = null) =
   try {
     const [result] = await db.query(
       `INSERT INTO shift_assignments
-       (box_id, user_id, dentist_name, dentist_user_id, shift_date, start_time, end_time, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [boxId, userId, dentistName, dentistUserId, shiftDate, startTime, endTime, createdBy]
+      (shift_id, box_id, user_id, dentist_user_id, assignment_start, assignment_end, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [shiftId, boxId, userId, dentistUserId, assignmentStart, assignmentEnd, createdBy]
     );
 
     return result.insertId;
@@ -167,29 +182,30 @@ export const getAllBoxes = async () => {
  * Get shift assignments for a date range
  */
 export const getShiftAssignmentsByDateRange = async (startDate, endDate) => {
-  try { // Voeg het try blok hier weer toe
-    const query = `
-      SELECT
-        sa.assignment_id,
-        sa.box_id,
-        sa.shift_date,
-        sa.assignment_start AS start_time, 
-        sa.assignment_end AS end_time,     
-        sa.dentist_user_id,                
-        b.name as box_name,
-        b.color_code as box_color,
-        CONCAT(u.first_name, ' ', u.last_name) as assistant_name,
-        GROUP_CONCAT(stg.group_type) as task_groups
-      FROM shift_assignments sa
-      JOIN box b ON sa.box_id = b.box_id
-      LEFT JOIN users u ON sa.user_id = u.user_id 
-      LEFT JOIN shift_task_groups stg ON sa.assignment_id = stg.assignment_id
-      WHERE sa.shift_date BETWEEN ? AND ?
-      GROUP BY sa.assignment_id
-      ORDER BY sa.shift_date, sa.assignment_start`; 
-
-    // Gebruik hier pool.query in plaats van db.query
-    const [rows] = await pool.query(query, [startDate, endDate]);
+  try {
+    const [rows] = await pool.query(
+      `SELECT
+      sa.assignment_id,
+      sa.box_id,
+      s.shift_date,
+      sa.assignment_start AS start_time,
+      sa.assignment_end AS end_time,
+      b.name AS box_name,
+      b.color_code AS box_color,
+      CONCAT(a.first_name, ' ', a.last_name) AS assistant_name,
+      CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
+      GROUP_CONCAT(stg.group_type) AS task_groups
+    FROM shift_assignments sa
+    JOIN shift s ON sa.shift_id = s.shift_id
+    JOIN box b ON sa.box_id = b.box_id
+    LEFT JOIN users a ON sa.user_id = a.user_id
+    LEFT JOIN users d ON sa.dentist_user_id = d.user_id
+    LEFT JOIN shift_task_groups stg ON sa.assignment_id = stg.assignment_id
+    WHERE s.shift_date BETWEEN ? AND ?
+    GROUP BY sa.assignment_id
+    ORDER BY s.shift_date, sa.assignment_start`,
+      [startDate, endDate]
+    );
     return rows;
   } catch (error) {
     console.error("Error getting shift assignments by date range:", error.message);

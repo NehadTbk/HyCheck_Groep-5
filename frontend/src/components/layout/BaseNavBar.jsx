@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../../i18n/useLanguage";
 import NotificationsModal from "../notifications/NotificationsModal";
+import { useTranslation } from "../../i18n/useTranslation";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function BaseNavBar({
   items = [],
@@ -17,49 +20,49 @@ function BaseNavBar({
   const { language, setLanguage } = useLanguage();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const { t } = useTranslation();
 
   // Optional: keep reading user from localStorage if you use it elsewhere
-  const user = (() => {
+  const [user] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user"));
     } catch {
       return null;
     }
-  })();
+  });
 
-  const token = localStorage.getItem("token"); // ✅ adjust if needed
+  const [token] = useState(() => localStorage.getItem("token"));
 
-  const fetchNotifications = useCallback(async () => {
-    if (!token) {
-      setNotifications([]);
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/notifications?limit=30", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        console.error("Notifications fetch failed:", res.status);
+  useEffect(() => {
+    const loadNotifications = async () => {
+      if (!token) {
         setNotifications([]);
         return;
       }
 
-      const data = await res.json();
-      setNotifications(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Notifications fetch error:", err);
-      setNotifications([]);
-    }
-  }, [token]);
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/notifications?limit=30`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  useEffect(() => {
-    // load on mount + when token changes
-    fetchNotifications();
-  }, [fetchNotifications]);
+        if (!res.ok) {
+          console.error("Notifications fetch failed:", res.status);
+          setNotifications([]);
+          return;
+        }
+
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Notifications fetch error:", err);
+        setNotifications([]);
+      }
+    };
+
+    loadNotifications();
+  }, [token]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -77,7 +80,7 @@ function BaseNavBar({
     // If opening modal: mark as read + refetch so badge updates
     if (nextOpen && token) {
       try {
-        await fetch("/api/notifications/read-all", {
+        await fetch(`${API_BASE_URL}/api/notifications/read-all`, {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,11 +89,20 @@ function BaseNavBar({
       } catch (err) {
         console.error("Mark read-all error:", err);
       }
-
-      await fetchNotifications();
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/notifications?limit=30`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data : []);
+      } catch {
+        setNotifications([]);
+      }
     }
   };
-
+  if (!token || !user) {
+    return null;
+  }
   return (
     <nav className="bg-white py-3 shadow-sm rounded-3xl mt-4 mb-6">
       <div className="w-full mx-auto px-4 flex items-center justify-between">
@@ -104,9 +116,9 @@ function BaseNavBar({
               style={
                 item.active
                   ? {
-                      backgroundColor: activeColor,
-                      color: activeTextColor,
-                    }
+                    backgroundColor: activeColor,
+                    color: activeTextColor,
+                  }
                   : {}
               }
             >
@@ -122,7 +134,7 @@ function BaseNavBar({
               to={instructiesHref}
               className="text-base text-gray-900 font-medium hover:opacity-80 transition"
             >
-              Instructies
+              {t("navbar.instructions")}
             </Link>
           )}
 

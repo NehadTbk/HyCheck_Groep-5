@@ -1,7 +1,12 @@
 import React from "react";
 import { X, CheckCircle2, Clock, Circle } from "lucide-react";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 function HistoryModal({ data, onClose }) {
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
   if (!data) return null;
 
   return (
@@ -9,7 +14,7 @@ function HistoryModal({ data, onClose }) {
       <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden flex flex-col shadow-2xl">
         <div className="p-6 border-b flex justify-between items-center bg-gray-50">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Details {data.boxNr}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{t("historyModal.title")} {data.boxNr}</h2>
             <p className="text-sm text-gray-500">{data.date}</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
@@ -18,7 +23,7 @@ function HistoryModal({ data, onClose }) {
         </div>
         
         <div className="p-6 space-y-4">
-          <h3 className="font-bold text-gray-700 uppercase text-xs tracking-widest">Uitgevoerde taken</h3>
+          <h3 className="font-bold text-gray-700 uppercase text-xs tracking-widest">{t("historyModal.tasks")}</h3>
           <div className="space-y-3">
             {data.tasks.map((task, index) => (
               <div key={index} className="flex items-center justify-between p-4 border border-gray-100 rounded-2xl bg-white shadow-sm">
@@ -46,7 +51,7 @@ function HistoryModal({ data, onClose }) {
             className="bg-[#5C2D5F] text-white px-8 py-2.5 rounded-xl font-bold"
             onClick={onClose}
           >
-            Sluiten
+            {t("historyModal.close")}
           </button>
         </div>
       </div>

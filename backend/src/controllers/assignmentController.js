@@ -3,10 +3,12 @@ import {
   findBoxByName,
   findAssistantByUsername,
   findDentistByUsername,
+  createShift,
   createShiftAssignment,
   createTaskGroups,
   getAllBoxes,
   getShiftAssignmentsByDateRange,
+  deleteShiftAssignment,
 } from "../models/Assignment.js";
 
 /**
@@ -61,17 +63,28 @@ export const createAssignments = async (req, res) => {
           dentistUserId = dentist.user_id;
         }
 
-        // 4. Create shift assignment
-        const assignmentId = await createShiftAssignment({
-          boxId: box.box_id,
-          userId: assistant.user_id,
-          dentistName: shift.dentist || null,
-          dentistUserId: dentistUserId,
+        const shiftUserId = req.user?.user_id || assistant.user_id;
+
+        console.log(`[DEBUG CREATE] Received date from frontend: ${shift.date}`);
+
+        const shiftId = await createShift({
+          userId: shiftUserId,
           shiftDate: shift.date,
           startTime: shift.start,
-          endTime: shift.end,
-          createdBy: req.user?.user_id || null,
+          endTime: shift.end
         }, connection);
+
+        // 4. Create shift assignment
+        const assignmentId = await createShiftAssignment({
+          shiftId,
+          boxId: box.box_id,
+          userId: assistant.user_id,
+          dentistUserId,
+          assignmentStart: shift.start,
+          assignmentEnd: shift.end,
+          createdBy: req.user?.user_id || null
+        }, connection);
+
 
         // 5. Create task groups for this assignment
         await createTaskGroups(assignmentId, shift.groups, connection);
@@ -126,20 +139,41 @@ export const getCalendarData = async (req, res) => {
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 4); // Monday to Friday
 
+    // Format end date without timezone issues
+    const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+
     // 1. Get all boxes using model
     const boxes = await getAllBoxes();
 
     // 2. Get all shift assignments for this week using model
     const assignments = await getShiftAssignmentsByDateRange(
       weekStart,
-      endDate.toISOString().slice(0, 10)
+      endDateStr
     );
+
+    // Debug: log what we fetched
+    console.log(`[getCalendarData] weekStart=${weekStart} start=${weekStart} end=${endDateStr} assignments=${assignments.length}`);
 
     // 3. Structure the planning data: planning[date][box_id]
     const planning = {};
 
     assignments.forEach((assignment) => {
-      const dateKey = assignment.shift_date.toISOString().slice(0, 10);
+      // Format date as YYYY-MM-DD string
+      const shiftDate = assignment.shift_date;
+      let dateKey;
+
+      if (shiftDate instanceof Date) {
+        // MySQL returns Date object - extract year, month, day in local time
+        const year = shiftDate.getFullYear();
+        const month = String(shiftDate.getMonth() + 1).padStart(2, '0');
+        const day = String(shiftDate.getDate()).padStart(2, '0');
+        dateKey = `${year}-${month}-${day}`;
+      } else {
+        // Already a string
+        dateKey = String(shiftDate).slice(0, 10);
+      }
+
+      console.log(`[DEBUG] shift_date type: ${typeof shiftDate}, value: ${shiftDate}, dateKey: ${dateKey}`);
 
       if (!planning[dateKey]) {
         planning[dateKey] = {};
@@ -148,7 +182,7 @@ export const getCalendarData = async (req, res) => {
       // Create label from task groups and times
       const groups = assignment.task_groups ? assignment.task_groups.split(',') : [];
       const groupLabels = groups.map(g => {
-        switch(g) {
+        switch (g) {
           case 'ochtend': return 'O';
           case 'avond': return 'A';
           case 'wekelijks': return 'W';
@@ -158,6 +192,7 @@ export const getCalendarData = async (req, res) => {
       }).join('+');
 
       planning[dateKey][assignment.box_id] = {
+        assignment_id: assignment.assignment_id,
         label: groupLabels || 'Task',
         color_code: assignment.box_color || '#9e9e9e',
         dentist: assignment.dentist_name,
@@ -165,8 +200,15 @@ export const getCalendarData = async (req, res) => {
         start_time: assignment.start_time,
         end_time: assignment.end_time,
         task_groups: groups,
+        box_name: assignment.box_name,
+        // keep original fields to help frontend debugging
+        shift_date: assignment.shift_date,
+        box_id: assignment.box_id,
       };
     });
+
+    // Debug: log planning summary
+    console.log("[getCalendarData] planning keys:", Object.keys(planning).map(k => `${k}:${Object.keys(planning[k]).length}`).join(", "));
 
     res.status(200).json({
       boxen: boxes,
@@ -176,6 +218,34 @@ export const getCalendarData = async (req, res) => {
     console.error("getCalendarData error:", error);
     res.status(500).json({
       message: "Failed to fetch calendar data",
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Delete a shift assignment
+ * DELETE /api/assignments/:id
+ */
+export const deleteAssignment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Assignment ID is required" });
+    }
+
+    const deleted = await deleteShiftAssignment(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.status(200).json({ message: "Assignment deleted successfully" });
+  } catch (error) {
+    console.error("deleteAssignment error:", error);
+    res.status(500).json({
+      message: "Failed to delete assignment",
       error: error.message
     });
   }

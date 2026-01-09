@@ -44,14 +44,17 @@ const getLocalUser = () => {
   }
 };
 
-function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
+function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
   const [rows, setRows] = useState([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   // ✅ fallback + remove trailing slash
-  const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
+  const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(
+    /\/$/,
+    ""
+  );
 
   // 🔄 Centrale fetch (herbruikbaar)
   const fetchUsers = useCallback(async () => {
@@ -84,11 +87,13 @@ function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
           email: u.email,
         }));
 
-      // Optional: if NOT showAllUsers, a responsible user only sees dentist + assistant
+      // Extra safety: if NOT showAllUsers, responsible sees only dentist + assistant
       if (!showAllUsers) {
         const currentUser = getLocalUser();
         if (currentUser?.role === "responsible") {
-          mapped = mapped.filter((r) => r.roleKey === "tandarts" || r.roleKey === "tandartsassistent");
+          mapped = mapped.filter(
+            (r) => r.roleKey === "tandarts" || r.roleKey === "tandartsassistent"
+          );
         }
       }
 
@@ -134,7 +139,14 @@ function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
 
   // filters + search
   const filteredRows = useMemo(() => {
+    const currentUser = getLocalUser();
+
     return rows.filter((row) => {
+      // ✅ If responsible, never show verantwoordelijke/admin even if filter tries
+      if (currentUser?.role === "responsible") {
+        if (row.roleKey === "verantwoordelijke" || row.roleKey === "admin") return false;
+      }
+
       const usingRoleFilter =
         selectedRoles.length > 0 && selectedRoles.length < ROLE_OPTIONS.length;
 
@@ -168,4 +180,4 @@ function PersoneelRegisterCard({ refreshKey = 0, showAllUsers = false }) {
   );
 }
 
-export default PersoneelRegisterCard;
+export default PersoneelRegister;

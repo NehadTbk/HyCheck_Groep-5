@@ -39,12 +39,8 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
   const toggleDate = (day) => {
     const dateStr = formatDate(day);
     if (isSelected(day)) {
-      // Deselect - but keep at least one date
-      if (selectedDates.length > 1) {
-        setSelectedDates(selectedDates.filter((d) => d !== dateStr));
-      } else {
-        alert("Je moet minimaal één datum selecteren");
-      }
+      // Deselect
+      setSelectedDates(selectedDates.filter((d) => d !== dateStr));
     } else {
       // Select
       setSelectedDates([...selectedDates, dateStr].sort());
@@ -80,12 +76,20 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
       currentMonth.getMonth() === today.getMonth() &&
       currentMonth.getFullYear() === today.getFullYear();
 
+    // Check if this day is a weekend (0 = Sunday, 6 = Saturday)
+    const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+    const dayOfWeek = dayDate.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
     calendarDays.push(
       <button
         key={day}
-        onClick={() => toggleDate(day)}
+        onClick={() => !isWeekend && toggleDate(day)}
+        disabled={isWeekend}
         className={`h-8 w-full rounded text-xs font-medium transition ${
-          selected
+          isWeekend
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : selected
             ? "bg-[#582F5B] text-white"
             : isToday
             ? "bg-blue-100 text-blue-700 border border-blue-300"
