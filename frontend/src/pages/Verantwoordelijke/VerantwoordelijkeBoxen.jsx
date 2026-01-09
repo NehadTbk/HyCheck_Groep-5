@@ -1,7 +1,7 @@
 import React from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
-import TaskTypeSchedulingOverlay from "../../components/Verantwoordelijke/TaskTypeSchedulingOverlay";
+import SchedulingOverlay from "../../components/Verantwoordelijke/SchedulingOverlay";
 
 function VerantwoordelijkeBoxen() {
   return (
@@ -15,7 +15,7 @@ function VerantwoordelijkeBoxen() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="col-span-full">
-            <TaskTypeSchedulingOverlay />
+            <SchedulingOverlay />
           </div>
         </div>
       </div>
