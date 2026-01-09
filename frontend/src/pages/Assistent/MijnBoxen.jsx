@@ -31,12 +31,12 @@ function MijnBoxen() {
   };
 
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
-  console.log("Ontvangen parameters:", { boxId, selectedOptionId, customText });
+  
 
   try {
     const payload = {
       session_id: Number(boxId),
-      task_type_id: 999, // Pas dit aan naar je werkelijke type indien nodig
+      task_type_id: 999, 
       selected_option_id: selectedOptionId || null,
       custom_text: customText || null,
       completed: 0
@@ -54,7 +54,7 @@ function MijnBoxen() {
     }
 
     
-    setSelectedBox(null); // Sluit de modal na succes
+    setSelectedBox(null); 
   } catch (err) {
     console.error("ER IS EEN FOUT GEBEURD:", err.message);
     alert("Fout: " + err.message);
