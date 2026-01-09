@@ -156,5 +156,30 @@
         "email": "E-mail",
         "actions": "Acties",
         "noResults": "Geen personeelsleden gevonden."
+    },
+    "personeelToevoegenModal": {
+        "title": "Personeel toevoegen",
+        "firstName": "Voornaam",
+        "lastName": "Achternaam",
+        "email": "E-mailadres",
+        "function": "Functie",
+        "selectFunction": "Kies een functie",
+        "note": "Er wordt automatisch een tijdelijk wachtwoord gegenereerd.",
+        "cancel": "Annuleren",
+        "add": "Toevoegen",
+        "loading": "Bezig met toevoegen...",
+        "firstNamePlaceholder": "bv. Jan",
+        "lastNamePlaceholder": "bv. Janssen",
+        "emailPlaceholder": "bv. jan@tandarts.be",
+        "roles": {
+            "admin": "Afdelingshoofd",
+            "responsible": "Verantwoordelijke",
+            "dentist": "Tandarts",
+            "assistant": "Tandartsassistent"
+        },
+        "roleDescriptions": {
+            "admin": "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen",
+            "responsible": "Als verantwoordelijke kun je tandartsen en assistenten toevoegen"
+        }
     }
 }
