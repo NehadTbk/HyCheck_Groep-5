@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
 
-export const authMiddleware = (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
     const authHeader = req.headers?.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
