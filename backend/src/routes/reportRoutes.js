@@ -1,8 +1,9 @@
 import express from 'express';
 const router = express.Router();
 import db from '../config/db.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     try {
         const query = `
             SELECT 

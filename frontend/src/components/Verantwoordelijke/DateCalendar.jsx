@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 export default function DateCalendar({ selectedDates, setSelectedDates }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const { language, letLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -17,12 +23,7 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
 
   const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
 
-  const monthNames = [
-    "Januari", "Februari", "Maart", "April", "Mei", "Juni",
-    "Juli", "Augustus", "September", "Oktober", "November", "December"
-  ];
 
-  const dayNames = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
 
   const formatDate = (day) => {
     const year = currentMonth.getFullYear();
@@ -86,15 +87,14 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
         key={day}
         onClick={() => !isWeekend && toggleDate(day)}
         disabled={isWeekend}
-        className={`h-8 w-full rounded text-xs font-medium transition ${
-          isWeekend
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : selected
+        className={`h-8 w-full rounded text-xs font-medium transition ${isWeekend
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : selected
             ? "bg-[#582F5B] text-white"
             : isToday
-            ? "bg-blue-100 text-blue-700 border border-blue-300"
-            : "bg-white hover:bg-gray-100 border border-gray-200"
-        }`}
+              ? "bg-blue-100 text-blue-700 border border-blue-300"
+              : "bg-white hover:bg-gray-100 border border-gray-200"
+          }`}
       >
         {day}
       </button>
@@ -108,27 +108,30 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
         <button
           onClick={previousMonth}
           className="p-1 hover:bg-gray-100 rounded"
-          title="Vorige maand"
+          title={t("dateCalendar.previousMonth")}
         >
           <ChevronLeft size={16} />
         </button>
 
         <div className="flex items-center gap-2">
           <span className="font-semibold text-sm">
-            {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+            {currentMonth.toLocaleDateString(language, {
+              month: "long",
+              year: "numeric",
+            })}
           </span>
           <button
             onClick={goToToday}
             className="text-xs px-2 py-0.5 bg-gray-100 hover:bg-gray-200 rounded"
           >
-            Vandaag
+            {t("dateCalendar.today")}
           </button>
         </div>
 
         <button
           onClick={nextMonth}
           className="p-1 hover:bg-gray-100 rounded"
-          title="Volgende maand"
+          title={t("dateCalendar.nextMonth")}
         >
           <ChevronRight size={16} />
         </button>
@@ -136,11 +139,17 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
 
       {/* Day names */}
       <div className="grid grid-cols-7 gap-1 mb-1">
-        {dayNames.map((name) => (
-          <div key={name} className="text-center text-xs font-medium text-gray-600">
-            {name}
-          </div>
-        ))}
+        {Array.from({ length: 7 }).map((_, i) => {
+          const date = new Date(2021, 7, i + 1); // willekeurige week
+          return (
+            <div
+              key={i}
+              className="text-center text-xs font-medium text-gray-600"
+            >
+              {date.toLocaleDateString(language, { weekday: "short" })}
+            </div>
+          );
+        })}
       </div>
 
       {/* Calendar grid */}
@@ -150,7 +159,7 @@ export default function DateCalendar({ selectedDates, setSelectedDates }) {
 
       {/* Selected dates summary */}
       <div className="mt-3 pt-3 border-t text-xs text-gray-600">
-        <strong>{selectedDates.length}</strong> datum{selectedDates.length !== 1 ? "s" : ""} geselecteerd
+        <strong>{selectedDates.length}</strong>{" "} {t("dateCalendar.date")} {selectedDates.length !== 1 ? "s" : ""} {t("dateCalendar.selected")}
       </div>
     </div>
   );

@@ -1,22 +1,20 @@
 import React, { useContext, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { UserContext } from "../../context/UserContextOnly";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const roleOptionsMap = {
-  admin: ["Afdelingshoofd", "Verantwoordelijke", "Tandarts", "Tandartsassistent"],
-  responsible: ["Tandarts", "Tandartsassistent"],
+  admin: ["admin", "responsible", "dentist", "assistant"],
+  responsible: ["dentist", "assistant"],
 };
 
 const functieToRoleMap = {
-  Afdelingshoofd: "admin",
-  Tandartsassistent: "assistant",
-  Verantwoordelijke: "responsible",
-  Tandarts: "dentist",
-};
-
-const roleDescriptions = {
-  admin: "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen",
-  responsible: "Als verantwoordelijke kun je tandartsen en assistenten toevoegen",
+  admin: "admin",
+  responsible: "responsible",
+  dentist: "dentist",
+  assistant: "assistant",
 };
 
 const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
@@ -124,13 +122,14 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
 
   const functieOpties = getFunctieOpties();
 
-
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
-          <h2 className="text-2xl font-bold">Nieuw Personeelslid</h2>
+          <h2 className="text-2xl font-bold">{t("personeelToevoegenModal.title")}</h2>
           <button onClick={closeModal} className="text-gray-600 hover:text-gray-900" disabled={loading}>
             <IoMdClose size={24} />
           </button>
@@ -151,7 +150,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex space-x-4">
             <div className="flex-1">
-              <label htmlFor="voornaam" className="block text-sm font-medium text-gray-700 mb-1">Voornaam: </label>
+              <label htmlFor="voornaam" className="block text-sm font-medium text-gray-700 mb-1">{t("personeelToevoegenModal.firstName")} </label>
               <input
                 type="text"
                 id="voornaam"
@@ -159,13 +158,13 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
                 value={formData.voornaam}
                 onChange={handleChange}
                 className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
-                placeholder="bv. Jan"
+                placeholder={t("personeelToevoegenModal.firstNamePlaceholder")}
                 required
                 disabled={loading}
               />
             </div>
             <div className="flex-1">
-              <label htmlFor="achternaam" className="block text-sm font-medium text-gray-700 mb-1">Achternaam: </label>
+              <label htmlFor="achternaam" className="block text-sm font-medium text-gray-700 mb-1">{t("personeelToevoegenModal.lastName")} </label>
               <input
                 type="text"
                 id="achternaam"
@@ -173,7 +172,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
                 value={formData.achternaam}
                 onChange={handleChange}
                 className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
-                placeholder="bv. Janssen"
+                placeholder={t("personeelToevoegenModal.lastNamePlaceholder")}
                 required
                 disabled={loading}
               />
@@ -181,7 +180,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-mailadres: </label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t("personeelToevoegenModal.email")} </label>
             <input
               type="email"
               id="email"
@@ -189,14 +188,14 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
               value={formData.email}
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
-              placeholder="bv. jan@tandarts.be"
+              placeholder={t("personeelToevoegenModal.emailPlaceholder")}
               required
               disabled={loading}
             />
           </div>
 
           <div>
-            <label htmlFor="functie" className="block text-sm font-medium text-gray-700 mb-1">Functie: </label>
+            <label htmlFor="functie" className="block text-sm font-medium text-gray-700 mb-1">{t("personeelToevoegenModal.function")} </label>
             <select
               id="functie"
               name="functie"
@@ -206,18 +205,20 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
               required
               disabled={loading}
             >
-              <option value="">Kies een functie</option>
-              {functieOpties.map(optie => (
-                <option key={optie} value={optie}>{optie}</option>
+              <option value="">{t("personeelToevoegenModal.selectFunction")}</option>
+              {functieOpties.map((functieKey) => (
+                <option key={functieKey} value={functieKey}>
+                  {t(`personeelToevoegenModal.roles.${functieKey}`)}
+                </option>
               ))}
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              {roleDescriptions[userRole] || ""}
+              {t(`personeelToevoegenModal.roleDescriptions.${userRole}`)}
             </p>
           </div>
 
           <div className="text-xs text-gray-500 mt-2">
-            Een tijdelijk wachtwoord wordt automatisch gegenereerd.
+            {t("personeelToevoegenModal.note")}
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
@@ -227,7 +228,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
               disabled={loading}
               className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 disabled:opacity-50"
             >
-              Annuleren
+              {t("personeelToevoegenModal.cancel")}
             </button>
 
             <button
@@ -235,7 +236,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
               disabled={loading}
               className="bg-[#4A2144] text-white py-2 px-4 rounded-lg hover:bg-[#8B5CF6] disabled:opacity-50"
             >
-              {loading ? "Bezig met toevoegen..." : "Toevoegen"}
+              {loading ? t("personeelToevoegenModal.loading") : t("personeelToevoegenModal.add")}
             </button>
           </div>
         </form>

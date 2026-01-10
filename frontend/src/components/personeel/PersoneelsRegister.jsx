@@ -3,6 +3,9 @@ import PersoneelFilters from "./PersoneelFilters";
 import PersoneelSearch from "./PersoneelSearch";
 import PersoneelTable from "./PersoneelTable";
 import { ROLE_OPTIONS } from "../Afdelingshoofd/constants";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 // DB role → UI
 const roleToKey = (role) => {
@@ -49,6 +52,8 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   // ✅ fallback + remove trailing slash
   const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(
@@ -163,7 +168,7 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
   return (
     <div className="bg-white rounded-xl shadow-md px-10 py-8">
       <div className="flex items-start justify-between">
-        <h1 className="text-3xl font-semibold">Personeelsregister</h1>
+        <h1 className="text-3xl font-semibold">{t("personeelsRegister.title")}</h1>
 
         <div className="flex items-center gap-4">
           <PersoneelFilters selectedRoles={selectedRoles} onChange={setSelectedRoles} />
@@ -172,7 +177,7 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
       </div>
 
       {loading ? (
-        <p className="mt-6 text-sm text-gray-500">Personeel laden…</p>
+        <p className="mt-6 text-sm text-gray-500">{t("personeelsRegister.loading")}</p>
       ) : (
         <PersoneelTable rows={filteredRows} onDelete={handleDelete} />
       )}

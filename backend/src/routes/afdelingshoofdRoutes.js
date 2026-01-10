@@ -1,5 +1,6 @@
 import express from "express";
 import db from "../config/db.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ function monthKey(year, month) {
 }
 
 // GET /api/afdelingshoofd/monthly-overview?year=2026&box_id=1&category=morning&requiredOnly=1
-router.get("/monthly-overview", async (req, res) => {
+router.get("/monthly-overview", authMiddleware, async (req, res) => {
   try {
     const year = req.query.year ? parseInt(req.query.year, 10) : new Date().getFullYear();
 
