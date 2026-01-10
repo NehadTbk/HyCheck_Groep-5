@@ -4,7 +4,7 @@ import BoxCard from "./BoxCard";
 // Voeg onBoxCheck en onBoxClick toe aan de props
 function BoxList({ boxes, onBoxCheck, onBoxClick }) {
   const [statusFilter, setStatusFilter] = useState("alles");
-  const [typeFilter, setTypeFilter] = useState("alle");
+  const [typeFilter, setTypeFilter] = useState("alle"); 
 
   const statusOptions = [
     { key: "alles", label: "Alles" },

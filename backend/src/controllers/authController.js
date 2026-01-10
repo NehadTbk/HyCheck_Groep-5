@@ -75,10 +75,11 @@ export const login = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 name: `${user.first_name} ${user.last_name}`,
-                permissions
+                permissions,
+                assistant_id: user.user_id || null
             },
             process.env.JWT_SECRET,
-            { expiresIn: "24h" }
+            { expiresIn: "10h" }
         );
 
 

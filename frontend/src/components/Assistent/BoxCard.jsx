@@ -1,6 +1,5 @@
 import React from "react";
 import { CheckCircle, AlertCircle } from "lucide-react";
-import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
@@ -14,13 +13,13 @@ const typeColors = {
 function BoxCard({ box, onCheck, onClick }) {
   const isVoltooid = box.status === "voltooid";
   const isGedeeltelijk = box.status === "gedeeltelijk";
-  const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
+  useLanguage();
 
   // Kleuren aangepast voor beter contrast
-  const cardStyles = isVoltooid 
-    ? "border-green-400 bg-green-50" 
-    : isGedeeltelijk 
+  const cardStyles = isVoltooid
+    ? "border-green-400 bg-green-50"
+    : isGedeeltelijk
       ? "border-orange-400 bg-orange-50"
       : "border-red-300 bg-red-50";
 
@@ -33,13 +32,20 @@ function BoxCard({ box, onCheck, onClick }) {
       <div>
         <div className="flex justify-between items-start mb-1">
           <h3 className="font-semibold text-[16px]">{box.name}</h3>
+
+          {/* Status badges en checkbox/icoon */}
           <div className="flex items-center gap-2">
             {isVoltooid && (
               <span className="text-[11px] px-2 py-0.5 rounded-full font-normal bg-green-100 text-green-700 border border-green-200">
                 {t("boxCard.completed")}
               </span>
             )}
-            
+            {isGedeeltelijk && (
+              <span className="text-[11px] px-2 py-0.5 rounded-full font-normal bg-orange-100 text-orange-700 border border-orange-200">
+                {t("boxCard.partial")}
+              </span>
+            )}
+
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -50,22 +56,32 @@ function BoxCard({ box, onCheck, onClick }) {
               {isGedeeltelijk ? (
                 <AlertCircle size={22} className="text-orange-500" strokeWidth={2.5} />
               ) : (
-                <CheckCircle 
-                  size={22} 
-                  strokeWidth={2.5} 
-                  className={isVoltooid ? "text-green-500" : "text-gray-300 hover:text-green-400"} 
+                <CheckCircle
+                  size={22}
+                  strokeWidth={2.5}
+                  className={isVoltooid ? "text-green-500" : "text-gray-300 hover:text-green-400"}
                 />
               )}
             </button>
           </div>
         </div>
-        <p className="text-[14px] text-gray-700 font-medium">{t("boxCard.dentist")}: {box.dentist}</p>
-        <p className="text-[14px] text-gray-700">{t("boxCard.taskCount")}: {box.tasksCount}</p>
+
+        <p className="text-[14px] text-gray-700 font-medium">
+          {t("boxCard.dentist")}: {box.dentist}
+        </p>
+        <p className="text-[14px] text-gray-700">
+          {t("boxCard.taskCount")}: {box.tasksCount}
+        </p>
       </div>
 
+      {/* Taak tags met kleuren */}
       <div className="mt-2 flex gap-2 overflow-x-hidden">
         {box.types.map((type) => (
-          <span key={type} className={`text-[10px] px-2 py-0.5 rounded-full border font-bold ${typeColors[type] || "bg-gray-100"}`}>
+          <span
+            key={type}
+            className={`text-[10px] px-2 py-0.5 rounded-full border font-bold ${typeColors[type] || "bg-gray-100"
+              }`}
+          >
             {type}
           </span>
         ))}

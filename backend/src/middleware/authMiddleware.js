@@ -2,12 +2,12 @@ import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
 
 export const authMiddleware = async (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers?.authorization;
 
-    if(!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({message: "No token provided"});
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "No token provided" });
     }
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
     try {
         // Check if token is blacklisted
@@ -24,6 +24,7 @@ export const authMiddleware = async (req, res, next) => {
             id: decoded.id,
             email: decoded.email,
             role: decoded.role,
+            assistant_id: decoded.assistant_id || null,
             permissions: decoded.permissions || []
         };
         next();

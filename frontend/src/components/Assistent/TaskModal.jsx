@@ -11,36 +11,54 @@ const typeColors = {
   Maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
 };
 
-const taskData = {
-  Ochtend: [
-    { id: "o1", title: "Filters schoonmaken", desc: "De voorfilters schoonmaken" },
-    { id: "o2", title: "Waterleidingen spoelen", desc: "Plaats alle instrumenten in de spoelstandaard..." },
-  ],
-  Avond: [
-    { id: "a1", title: "Oppervlakken reinigen", desc: "De bekleding schoonmaken met desinfectiemiddel" },
-    { id: "a2", title: "Aspiratiesysteem reinigen", desc: "Volledig reinigen van de slangen..." },
-  ],
-  Wekelijks: [
-    { id: "w1", title: "MD555-oplossing", desc: "1 à 2 liter MD555-oplossing aanzuigen..." },
-  ],
-  Maandelijks: [
-    { id: "m1", title: "Standaards schoonmaken", desc: "De spoelstandaards schoonmaken..." },
-  ],
-};
 
 function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [standardOptions, setStandardOptions] = useState([]);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
+  const [taskByType, setTaskByType] = useState({});
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+  if (!box) return;
+  const token = localStorage.getItem("token");
+  const params = new URLSearchParams({
+    date: new Date().toISOString().split("T")[0]
+  });
+  fetch(`${API_BASE_URL}/api/boxes/${box.id}/tasks?${params}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to fetch tasks");
+      return res.json();
+    })
+    .then((data) => {
+      const grouped = {};
+      data.forEach(task => {
+        const type = task.tag || "Overig"; // fallback
+        if (!grouped[type]) grouped[type] = [];
+        grouped[type].push({
+          id: task.schedule_id,
+          title: task.task_name,
+          desc: task.custom_comment || task.common_comment || "",
+          completed: task.completed
+        });
+      });
+      setTaskByType(grouped);
+    })
+    .catch(err => console.error("Error fetching tasks: ", err));
+}, [box, API_BASE_URL]);
 
   // Haal de common options op uit de database zodra de modal opent
   useEffect(() => {
-    fetch("http://localhost:5001/api/tasks/options")
+    fetch(`${API_BASE_URL}/api/tasks/options`)
       .then((res) => res.json())
       .then((data) => setStandardOptions(data))
       .catch((err) => console.error("Fout bij ophalen opties:", err));
-  }, []);
+  }, [API_BASE_URL]);
 
   if (!box) return null;
 
@@ -71,7 +89,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
               </div>
 
               <div className="space-y-6">
-                {taskData[type]?.map((task) => {
+                {taskByType[type]?.map((task) => {
                   const isDone = tasksState[box.id]?.[task.id];
                   return (
                     <div
@@ -150,7 +168,18 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
                   {t("taskModal.cancel")}
                 </button>
                 <button
-                  onClick={() => setShowReasonInput(false)}
+                  onClick={async () => {
+                    try {
+                      // Trigger onSave met geselecteerde optie of custom reason
+                      await onSave?.(box.id, selectedOptionId, reason);
+
+                      // Sluit modal pas als opslaan gelukt is
+                      setShowReasonInput(false);
+                    } catch (err) {
+                      console.error("Error saving reason: ", err);
+                      alert(err.message); // Of vervang door toast
+                    }
+                  }}
                   className="bg-[#5C2D5F] text-white px-6 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-[#4a244d]"
                 >
                   {t("taskModal.confirmReason")}
@@ -171,16 +200,16 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
               type="button"
               className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-xl text-lg"
               onClick={() => {
-                
+
                 onSave?.(box.id, selectedOptionId, reason);
               }}
-              >
+            >
               Opslaan & Sluiten
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
