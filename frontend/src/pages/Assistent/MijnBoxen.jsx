@@ -3,7 +3,6 @@ import PageLayout from "../../components/layout/PageLayout";
 import AssistentNavBar from "../../components/navbar/AssistentNavBar";
 import BoxList from "../../components/Assistent/BoxList";
 import TaskModal from "../../components/Assistent/TaskModal";
-import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
@@ -14,86 +13,133 @@ function MijnBoxen() {
   const [loading, setLoading] = useState(true);
   const [selectedBox, setSelectedBox] = useState(null);
   const [tasksState, setTasksState] = useState({});
+  const { t } = useTranslation();
+  useLanguage();
 
-  const handleToggleTask = (boxId, taskId) => {
-    setTasksState(prev => ({
-      ...prev,
-      [boxId]: { ...prev[boxId], [taskId]: !prev[boxId]?.[taskId] }
-    }));
-  };
-
-  useEffect(() => {
-    const fetchBoxes = async () => {
-      try {
-        const params = new URLSearchParams({
-          date: new Date().toISOString().split("T")[0],
-        });
-        const res = await fetch(`${API_BASE_URL}/api/assistant/dashboard?${params.toString()}`);
-        if (!res.ok) throw new Error("Failed to fetch boxes");
-        const data = await res.json();
-        setBoxes(data);
-      } catch (err) {
-        console.error("Error fetching boxes: ", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBoxes();
-
-  }, []);
-
-  const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
-    console.log("Ontvangen parameters:", { boxId, selectedOptionId, customText });
-
+  const fetchBoxes = async () => {
+    setLoading(true);
     try {
-      const payload = {
-        session_id: Number(boxId),
-        task_type_id: 999, // Pas dit aan naar je werkelijke type indien nodig
-        selected_option_id: selectedOptionId || null,
-        custom_text: customText?.trim() || null,
-        completed: 0
-      };
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Geen token gevonden, login vereist");
 
-      const response = await fetch(`${API_BASE_URL}/api/tasks/update`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+      const params = new URLSearchParams({
+        date: new Date().toISOString().split("T")[0],
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Server fout");
+      const res = await fetch(`${API_BASE_URL}/api/assistant/all-boxes?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Fout bij ophalen boxen");
       }
 
+      const data = await res.json();
 
-      setSelectedBox(null); // Sluit de modal na succes
+      // ✅ Bereken status correct
+  const formattedBoxes = data
+  .filter(row => row.tasksCount > 0)
+  .map((row) => ({
+    ...row,
+    types: Array.isArray(row.types) ? row.types : row.types?.split(",") || [],
+    status: row.completedCount === row.tasksCount
+      ? "voltooid"
+      : row.completedCount > 0
+        ? "gedeeltelijk"
+        : "openstaand",
+  }));
+
+      console.log("Fetched boxes:", formattedBoxes);
+      setBoxes(formattedBoxes);
     } catch (err) {
-      console.error("ER IS EEN FOUT GEBEURD:", err.message);
-      alert("Fout: " + err.message);
+      console.error("Error fetching boxes: ", err);
+      alert("Fout bij ophalen van boxen: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const { t } = useTranslation();
-  useLanguage();
+  useEffect(() => {
+    fetchBoxes();
+  }, []);
+
+  const handleToggleTask = (boxId, taskId) => {
+    setTasksState((prev) => ({
+      ...prev,
+      [boxId]: { ...prev[boxId], [taskId]: !prev[boxId]?.[taskId] },
+    }));
+  };
+
+  const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
+    try {
+      const token = localStorage.getItem("token");
+      const payload = {
+        session_id: Number(boxId),
+        task_type_id: 999, // pas aan naar echte value
+        selected_option_id: selectedOptionId || null,
+        custom_text: customText?.trim() || null,
+        completed: 0,
+      };
+
+      const res = await fetch(`${API_BASE_URL}/api/tasks/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Kon taken niet opslaan");
+      }
+
+      setSelectedBox(null);
+      fetchBoxes(); // refresh na update
+    } catch (err) {
+      console.error("Error saving tasks:", err);
+      alert("Fout bij opslaan: " + err.message);
+    }
+  };
+
+  const handleBoxCheck = (id) => {
+    setBoxes((prev) =>
+      prev.map((box) => {
+        if (box.id !== id) return box;
+        // toggle alleen voltooid/openstaand, behoud gedeeltelijk
+        const newStatus =
+          box.status === "voltooid"
+            ? "openstaand"
+            : box.status === "openstaand"
+              ? "voltooid"
+              : "gedeeltelijk";
+        return { ...box, status: newStatus };
+      })
+    );
+  };
 
   if (loading) {
     return (
       <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
         <AssistentNavBar />
-        <p>Loading boxes...</p>
+        <p>Loading boxen...</p>
       </PageLayout>
     );
   }
-
 
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
       <section className="bg-white rounded-xl p-6 shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">{t("assistentBoxen.allBoxes")}</h1>
+        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">
+          {t("assistentBoxen.allBoxes")}
+        </h1>
+
         <BoxList
           boxes={boxes}
-          onBoxCheck={(id) => setBoxes(prev => prev.map(box => box.id === id ? { ...box, status: box.status === "voltooid" ? "openstaand" : "voltooid" } : box))}
+          onBoxCheck={handleBoxCheck}
           onBoxClick={(box) => setSelectedBox(box)}
         />
       </section>
@@ -103,12 +149,13 @@ function MijnBoxen() {
           box={selectedBox}
           tasksState={tasksState}
           onToggleTask={handleToggleTask}
-          onSave={handleSaveTasks} // Hier worden boxId, optionId en text doorgegeven
+          onSave={handleSaveTasks}
           onClose={() => setSelectedBox(null)}
         />
       )}
     </PageLayout>
   );
 }
+
 
 export default MijnBoxen;

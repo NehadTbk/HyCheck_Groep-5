@@ -1,5 +1,6 @@
 import express from 'express';
 import db from '../config/db.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -11,6 +12,29 @@ router.get('/options', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+});
+
+// GET voor endpoint box
+
+router.get("/boxes/:boxId/tasks", authMiddleware, async (req, res) => {
+    const { boxId } = req.params;
+    const date = req.query.date;
+try {
+    const [tasks] = await db.query(`
+        SELECT id, title, description AS desc, task_type
+        FROM tasks
+        WHERE box_id = ? AND date = ?
+        `, [boxId, date]);
+        const tasksByType = {};
+        tasks.forEach(t => {
+            if (!tasksByType[t.task_type]) tasksByType[t.task_type] = [];
+            tasksByType[t.task_type].push(t);
+        });
+        res.json(tasksByType);
+} catch (err) {
+    console.error(err);
+    res.status(500).json({message: "Server error"});
+}
 });
 
 // Route om de schoonmaakstatus en reden op te slaan
@@ -31,7 +55,7 @@ router.post('/update', async (req, res) => {
             completed = VALUES(completed)`;
 
         await db.query(query, [session_id, task_type_id, optionValue, commentValue, completed]);
-        
+
         res.status(200).json({ message: "Succesvol opgeslagen!" });
     } catch (error) {
         console.error("Database Error:", error.message);

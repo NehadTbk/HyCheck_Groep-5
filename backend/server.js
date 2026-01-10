@@ -9,8 +9,9 @@ import reportRoutes from "./src/routes/reportRoutes.js";
 import afdelingshoofdRoutes from "./src/routes/afdelingshoofdRoutes.js";
 import notificationsRoutes from "./src/routes/notificationsRoutes.js";
 import assignmentRoutes from "./src/routes/assignmentRoutes.js";
-import taskRoutes from './src/routes/taskRoutes.js';
-
+import taskRoutes from "./src/routes/taskRoutes.js";
+import assistantRoutes from "./src/routes/assistantRoutes.js";
+import allboxesRoutes from "./src/routes/allboxesRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -26,7 +27,9 @@ app.use("/api", schedulingRoutes);
 app.use("/api", assignmentRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationsRoutes);
-app.use('/api/tasks', taskRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/assistant", assistantRoutes);
+app.use("/api/assistant", allboxesRoutes);
 
 
 // ✅ ADD THIS (and make sure it's BEFORE listen)
