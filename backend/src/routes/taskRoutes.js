@@ -14,35 +14,63 @@ router.get('/options', authMiddleware, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-// 2. Haal taken op voor de Modal (Fix: Gebruik de juiste tabellen uit de SQL dump)
+// Map task group names to category names
+const GROUP_TO_CATEGORY = {
+    ochtend: 'morning',
+    avond: 'evening',
+    wekelijks: 'weekly',
+    maandelijks: 'monthly',
+};
+
+// 2. Haal taken op voor de Modal - gebaseerd op assignment task groups
 router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
     const { assignmentId } = req.params;
     const date = req.query.date;
 
     try {
-        // We halen de taken op die horen bij de box van dit assignment, 
-        // inclusief hun huidige status in de cleaning_session
+        // 1. Get the task groups for this assignment
+        const [groupRows] = await db.query(`
+            SELECT GROUP_CONCAT(DISTINCT stg.group_type) AS group_types
+            FROM shift_assignments sa
+            LEFT JOIN shift_task_groups stg ON stg.assignment_id = sa.assignment_id
+            WHERE sa.assignment_id = ?
+        `, [assignmentId]);
+
+        const groupTypes = (groupRows[0]?.group_types || '')
+            .split(',')
+            .map(g => g.trim())
+            .filter(Boolean);
+
+        // 2. Map group types to categories
+        const categories = groupTypes
+            .map(g => GROUP_TO_CATEGORY[g])
+            .filter(Boolean);
+
+        if (categories.length === 0) {
+            return res.json([]);
+        }
+
+        // 3. Get all task_types that match these categories
         const [tasks] = await db.query(`
-            SELECT 
-                tt.task_type_id AS id, 
-                tt.name AS title, 
-                tt.description AS \`desc\`, 
+            SELECT
+                tt.task_type_id AS id,
+                tt.name AS title,
+                tt.description AS \`desc\`,
                 tt.category AS tag,
                 IFNULL(cts.completed, 0) AS completed
-            FROM shift_assignments sa
-            JOIN task_schedules ts ON ts.box_id = sa.box_id
-            JOIN task_type tt ON tt.task_type_id = ts.task_type_id
-            LEFT JOIN cleaning_session cs ON cs.assignment_id = sa.assignment_id AND DATE(cs.started_at) = ?
+            FROM task_type tt
+            LEFT JOIN cleaning_session cs ON cs.assignment_id = ? AND DATE(cs.started_at) = ?
             LEFT JOIN cleaning_task_status cts ON cts.session_id = cs.session_id AND cts.task_type_id = tt.task_type_id
-            WHERE sa.assignment_id = ?
-        `, [date, assignmentId]);
+            WHERE tt.category IN (?) AND tt.is_required = 1
+            ORDER BY tt.category, tt.task_type_id
+        `, [assignmentId, date, categories]);
 
         // Formatteer tags naar Nederlands voor je frontend kleurtjes
         const formattedTasks = tasks.map(t => ({
             ...t,
-            tag: t.tag === 'morning' ? 'Ochtend' : 
-                 t.tag === 'evening' ? 'Avond' : 
-                 t.tag === 'weekly' ? 'Wekelijks' : 
+            tag: t.tag === 'morning' ? 'Ochtend' :
+                 t.tag === 'evening' ? 'Avond' :
+                 t.tag === 'weekly' ? 'Wekelijks' :
                  t.tag === 'monthly' ? 'Maandelijks' : 'Overig'
         }));
 
