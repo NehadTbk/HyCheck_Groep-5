@@ -188,11 +188,11 @@ function AfdelingshoofdMonthlyOverview() {
         )}
         <div className="mb-6 max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Maandoverzicht</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">{t("afdelingshoofdMonthlyOverview.title")}</h1>
 
             <div className="flex items-center gap-3">
               <label className="text-sm text-gray-600" htmlFor="yearSelect">
-                Jaar
+                {t("afdelingshoofdMonthlyOverview.year")}
               </label>
               <select
                 id="yearSelect"
