@@ -277,7 +277,7 @@
     },
     "afdelingshoofdMonthlyOverview": {
         "title": "Maandoverzicht",
-        "selectYear": "Jaar",
+        "year": "Jaar",
         "loading": "Bezig met laden…"
     },
     "reports": {
