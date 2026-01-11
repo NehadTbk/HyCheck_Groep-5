@@ -83,7 +83,12 @@
         "older": "Eerder",
         "minutesAgo": "minuten geleden",
         "hoursAgo": "uur geleden",
-        "daysAgo": "dagen geleden"
+        "daysAgo": "dagen geleden",
+        "selectDentist": "Selecteer eerst een tandarts",
+        "selectAssistant": "Selecteer eerst een assistent",
+        "assignmentsCreated": "{{count}} toewijzing(en) aangemaakt",
+        "tasksSaved": "Taken opgeslagen",
+        "genericError": "Er is een fout opgetreden"
     },
     "boxCard": {
         "completed": "Voltooid",
