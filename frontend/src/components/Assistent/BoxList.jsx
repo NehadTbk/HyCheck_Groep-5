@@ -14,10 +14,11 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
   const [typeFilter, setTypeFilter] = useState("alle");
 
   const statusOptions = [
-  { key: "alles", labelKey: "status.all" },
-  { key: "openstaand", labelKey: "status.open" },
-  { key: "voltooid", labelKey: "status.completed" },
-];
+    { key: "alles", labelKey: "status.all" },
+    { key: "openstaand", labelKey: "status.open" },
+    { key: "gedeeltelijk", labelKey: "status.partial" },
+    { key: "voltooid", labelKey: "status.completed" },
+  ];
 
   const typeOptions = [
     { key: "alle", labelKey: "tags.all" },

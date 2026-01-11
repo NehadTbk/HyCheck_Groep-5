@@ -51,6 +51,8 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
         }
 
         // 3. Get all task_types that match these categories
+        // Create placeholders for IN clause (?, ?, ?)
+        const placeholders = categories.map(() => '?').join(', ');
         const [tasks] = await db.query(`
             SELECT
                 tt.task_type_id AS id,
@@ -61,9 +63,9 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
             FROM task_type tt
             LEFT JOIN cleaning_session cs ON cs.assignment_id = ? AND DATE(cs.started_at) = ?
             LEFT JOIN cleaning_task_status cts ON cts.session_id = cs.session_id AND cts.task_type_id = tt.task_type_id
-            WHERE tt.category IN (?) AND tt.is_required = 1
+            WHERE tt.category IN (${placeholders}) AND tt.is_required = 1
             ORDER BY tt.category, tt.task_type_id
-        `, [assignmentId, date, categories]);
+        `, [assignmentId, date, ...categories]);
 
         // Formatteer tags naar Nederlands voor je frontend kleurtjes
         const formattedTasks = tasks.map(t => ({
@@ -85,6 +87,14 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
 router.post('/update', authMiddleware, async (req, res) => {
     const { assignment_id, date, tasks, selected_option_id, custom_text } = req.body;
 
+    // Validate required fields
+    if (!assignment_id) {
+        return res.status(400).json({ error: "assignment_id is required" });
+    }
+    if (!date) {
+        return res.status(400).json({ error: "date is required" });
+    }
+
     try {
         // 1. Check of er al een sessie is voor dit assignment op deze datum
         let [sessions] = await db.query(
@@ -94,10 +104,9 @@ router.post('/update', authMiddleware, async (req, res) => {
 
         let sessionId;
         if (sessions.length === 0) {
-            // Geen sessie? Maak er een aan
             const [result] = await db.query(
-                "INSERT INTO cleaning_session (assignment_id, started_at, status) VALUES (?, NOW(), 'in_progress')",
-                [assignment_id]
+                "INSERT INTO cleaning_session (assignment_id, started_at, status) VALUES (?, ?, 'in_progress')",
+                [assignment_id, date]
             );
             sessionId = result.insertId;
         } else {
@@ -105,23 +114,36 @@ router.post('/update', authMiddleware, async (req, res) => {
         }
 
         // 2. Loop door de taken en update 'cleaning_task_status'
-        const taskEntries = Object.entries(tasks);
+        const taskEntries = Object.entries(tasks || {});
+
         for (const [taskTypeId, isCompleted] of taskEntries) {
-            await db.query(`
-                INSERT INTO cleaning_task_status (session_id, task_type_id, completed, completed_at)
-                VALUES (?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                    completed = VALUES(completed),
-                    completed_at = IF(VALUES(completed) = 1, NOW(), NULL)
-            `, [sessionId, taskTypeId, isCompleted ? 1 : 0, isCompleted ? new Date() : null]);
+            // First check if record exists
+            const [existing] = await db.query(
+                "SELECT status_id FROM cleaning_task_status WHERE session_id = ? AND task_type_id = ?",
+                [sessionId, taskTypeId]
+            );
+
+            if (existing.length > 0) {
+                // Update existing record
+                await db.query(
+                    `UPDATE cleaning_task_status
+                     SET completed = ?, completed_at = ?
+                     WHERE session_id = ? AND task_type_id = ?`,
+                    [isCompleted ? 1 : 0, isCompleted ? new Date() : null, sessionId, taskTypeId]
+                );
+            } else {
+                // Insert new record
+                await db.query(
+                    `INSERT INTO cleaning_task_status (session_id, task_type_id, completed, completed_at)
+                     VALUES (?, ?, ?, ?)`,
+                    [sessionId, taskTypeId, isCompleted ? 1 : 0, isCompleted ? new Date() : null]
+                );
+            }
         }
-        
-        // 3. Sla de reden op bij de sessie (optioneel, afhankelijk van je DB structuur)
-        // Je kunt hier ook de custom_comment opslaan in cleaning_session als je die kolommen hebt
 
         res.json({ message: "Opgeslagen", session_id: sessionId });
     } catch (error) {
-        console.error(error);
+        console.error("Error updating tasks:", error);
         res.status(500).json({ error: error.message });
     }
 });

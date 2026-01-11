@@ -16,17 +16,18 @@ const GROUP_TO_DB_CATEGORY = {
 // --- Helper functies ---
 async function getOrCreateSession(assignmentId, isoDate) {
   const [existing] = await db.query(
-    `SELECT session_id FROM cleaning_session 
-     WHERE assignment_id = ? AND DATE(started_at) = ? 
+    `SELECT session_id FROM cleaning_session
+     WHERE assignment_id = ? AND DATE(started_at) = ?
      ORDER BY session_id DESC LIMIT 1`,
     [assignmentId, isoDate]
   );
 
   if (existing.length) return existing[0].session_id;
 
+  // Use the passed date instead of NOW() to ensure consistency
   const [ins] = await db.query(
-    `INSERT INTO cleaning_session (assignment_id, started_at, status) VALUES (?, NOW(), 'in_progress')`,
-    [assignmentId]
+    `INSERT INTO cleaning_session (assignment_id, started_at, status) VALUES (?, ?, 'in_progress')`,
+    [assignmentId, isoDate]
   );
   return ins.insertId;
 }
@@ -91,7 +92,7 @@ router.get("/today-assignments", authMiddleware, async (req, res) => {
 
     const [rows] = await db.query(
       `
-      SELECT sa.assignment_id, b.box_id, b.name AS box_name, 
+      SELECT sa.assignment_id, b.box_id, b.name AS box_name,
              CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
              s.shift_date,
              GROUP_CONCAT(DISTINCT stg.group_type ORDER BY stg.group_type) AS group_types
@@ -113,31 +114,29 @@ router.get("/today-assignments", authMiddleware, async (req, res) => {
       const assignmentId = Number(r.assignment_id);
       const boxId = Number(r.box_id);
 
-      const isoDate = r.shift_date instanceof Date
-        ? r.shift_date.toISOString().split('T')[0]
-        : String(r.shift_date).split(' ')[0];
+      // Format date without timezone conversion issues
+      let isoDate;
+      if (r.shift_date instanceof Date) {
+        const year = r.shift_date.getFullYear();
+        const month = String(r.shift_date.getMonth() + 1).padStart(2, '0');
+        const day = String(r.shift_date.getDate()).padStart(2, '0');
+        isoDate = `${year}-${month}-${day}`;
+      } else {
+        isoDate = String(r.shift_date).split(' ')[0].split('T')[0];
+      }
 
-      // 1. Haal de ruwe groepen op (ochtend, avond)
       const rawGroups = (r.group_types || "").split(",").map(g => g.trim().toLowerCase()).filter(Boolean);
-
-      // 2. Map naar DB categorieën (morning, evening) voor de query
       const dbCategories = rawGroups.map(g => GROUP_TO_DB_CATEGORY[g]).filter(Boolean);
+      const displayCategories = rawGroups.map(g => g.charAt(0).toUpperCase() + g.slice(1));
 
-      // 3. Map naar Display categorieën (Ochtend, Avond) voor de frontend tags
-      const displayCategories = rawGroups.map(g => {
-        return g.charAt(0).toUpperCase() + g.slice(1);
-      });
-
-      // 4. Zorg dat de sessie bestaat en de taken zijn aangemaakt op basis van DB categories
       const sessionId = await getOrCreateSession(assignmentId, isoDate);
+
       if (dbCategories.length > 0) {
         await ensureTaskStatuses(sessionId, dbCategories);
       }
 
-      // 5. Bereken de resultaten
       const { total, done } = await recomputeAndMaybeCompleteSession(sessionId);
 
-      // EXTRA CHECK: Als total 0 is, probeer te tellen uit task_schedules
       let finalTaskCount = total;
       if (total === 0) {
         const [[schCount]] = await db.query(
@@ -146,6 +145,8 @@ router.get("/today-assignments", authMiddleware, async (req, res) => {
         finalTaskCount = schCount.count;
       }
 
+      const status = (finalTaskCount > 0 && done === finalTaskCount) ? "voltooid" : (done > 0 ? "gedeeltelijk" : "openstaand");
+
       output.push({
         id: assignmentId,
         boxId: boxId,
@@ -153,7 +154,7 @@ router.get("/today-assignments", authMiddleware, async (req, res) => {
         dentist: r.dentist_name || "Geen arts",
         tasksCount: finalTaskCount,
         doneCount: done,
-        status: (finalTaskCount > 0 && done === finalTaskCount) ? "voltooid" : (done > 0 ? "gedeeltelijk" : "openstaand"),
+        status: status,
         types: displayCategories,
       });
     }

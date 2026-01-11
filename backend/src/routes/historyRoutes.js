@@ -125,15 +125,19 @@ router.get("/:sessionId", authMiddleware, async (req, res) => {
       SELECT
         cts.status_id,
         cts.task_type_id,
+        tt.name AS task_name,
+        tt.description AS task_description,
+        tt.category AS task_category,
         cts.completed,
         cts.completed_at,
         cts.custom_comment,
         co.common_comment
       FROM cleaning_task_status cts
+      LEFT JOIN task_type tt ON tt.task_type_id = cts.task_type_id
       LEFT JOIN comment_option co
         ON co.option_id = cts.selected_comment_option_id
       WHERE cts.session_id = ?
-      ORDER BY cts.status_id ASC
+      ORDER BY tt.category, cts.status_id ASC
       `,
       [sessionId]
     );
