@@ -4,7 +4,7 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// 1. Haal de redenen op 
+
 router.get('/options', authMiddleware, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT option_id, common_comment FROM comment_option");
@@ -14,7 +14,7 @@ router.get('/options', authMiddleware, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-// Map task group names to category names
+
 const GROUP_TO_CATEGORY = {
     ochtend: 'morning',
     avond: 'evening',
@@ -22,13 +22,13 @@ const GROUP_TO_CATEGORY = {
     maandelijks: 'monthly',
 };
 
-// 2. Haal taken op voor de Modal - gebaseerd op assignment task groups
+
 router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
     const { assignmentId } = req.params;
     const date = req.query.date;
 
     try {
-        // 1. Get the task groups for this assignment
+        
         const [groupRows] = await db.query(`
             SELECT GROUP_CONCAT(DISTINCT stg.group_type) AS group_types
             FROM shift_assignments sa
@@ -41,7 +41,7 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
             .map(g => g.trim())
             .filter(Boolean);
 
-        // 2. Map group types to categories
+    
         const categories = groupTypes
             .map(g => GROUP_TO_CATEGORY[g])
             .filter(Boolean);
@@ -50,8 +50,8 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
             return res.json([]);
         }
 
-        // 3. Get all task_types that match these categories
-        // Create placeholders for IN clause (?, ?, ?)
+        
+       
         const placeholders = categories.map(() => '?').join(', ');
         const [tasks] = await db.query(`
             SELECT
@@ -67,7 +67,7 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
             ORDER BY tt.category, tt.task_type_id
         `, [assignmentId, date, ...categories]);
 
-        // Formatteer tags naar Nederlands voor je frontend kleurtjes
+        
         const formattedTasks = tasks.map(t => ({
             ...t,
             tag: t.tag === 'morning' ? 'Ochtend' :
@@ -83,20 +83,16 @@ router.get("/boxes/:assignmentId/tasks", authMiddleware, async (req, res) => {
     }
 });
 
-// 3. Update Status (Fix: Bulk update voor alle vinkjes)
+
 router.post('/update', authMiddleware, async (req, res) => {
     const { assignment_id, date, tasks, selected_option_id, custom_text } = req.body;
 
-    // Validate required fields
-    if (!assignment_id) {
-        return res.status(400).json({ error: "assignment_id is required" });
-    }
-    if (!date) {
-        return res.status(400).json({ error: "date is required" });
+    if (!assignment_id || !date) {
+        return res.status(400).json({ error: "assignment_id and date are required" });
     }
 
     try {
-        // 1. Check of er al een sessie is voor dit assignment op deze datum
+        
         let [sessions] = await db.query(
             "SELECT session_id FROM cleaning_session WHERE assignment_id = ? AND DATE(started_at) = ?",
             [assignment_id, date]
@@ -113,35 +109,37 @@ router.post('/update', authMiddleware, async (req, res) => {
             sessionId = sessions[0].session_id;
         }
 
-        // 2. Loop door de taken en update 'cleaning_task_status'
+        
         const taskEntries = Object.entries(tasks || {});
 
         for (const [taskTypeId, isCompleted] of taskEntries) {
-            // First check if record exists
             const [existing] = await db.query(
                 "SELECT status_id FROM cleaning_task_status WHERE session_id = ? AND task_type_id = ?",
                 [sessionId, taskTypeId]
             );
 
             if (existing.length > 0) {
-                // Update existing record
+                
                 await db.query(
                     `UPDATE cleaning_task_status
-                     SET completed = ?, completed_at = ?
+                     SET completed = ?, 
+                         completed_at = ?, 
+                         selected_comment_option_id = ?, 
+                         custom_comment = ?
                      WHERE session_id = ? AND task_type_id = ?`,
-                    [isCompleted ? 1 : 0, isCompleted ? new Date() : null, sessionId, taskTypeId]
+                    [isCompleted ? 1 : 0, isCompleted ? new Date() : null, selected_option_id || null, custom_text || null, sessionId, taskTypeId]
                 );
             } else {
-                // Insert new record
+                
                 await db.query(
-                    `INSERT INTO cleaning_task_status (session_id, task_type_id, completed, completed_at)
-                     VALUES (?, ?, ?, ?)`,
-                    [sessionId, taskTypeId, isCompleted ? 1 : 0, isCompleted ? new Date() : null]
+                    `INSERT INTO cleaning_task_status (session_id, task_type_id, completed, completed_at, selected_comment_option_id, custom_comment)
+                     VALUES (?, ?, ?, ?, ?, ?)`,
+                    [sessionId, taskTypeId, isCompleted ? 1 : 0, isCompleted ? new Date() : null, selected_option_id || null, custom_text || null]
                 );
             }
         }
 
-        res.json({ message: "Opgeslagen", session_id: sessionId });
+        res.json({ message: "Opgeslagen met reden", session_id: sessionId });
     } catch (error) {
         console.error("Error updating tasks:", error);
         res.status(500).json({ error: error.message });
