@@ -10,11 +10,12 @@ const API_BASE = `${API_BASE_URL}/api/history`;
 
 const getToken = () => localStorage.getItem("token");
 
-const formatDate = (yyyyMmDd) => {
-  if (!yyyyMmDd || typeof yyyyMmDd !== "string") return "-";
-  // verwacht "YYYY-MM-DD"
-  const parts = yyyyMmDd.split("-");
-  if (parts.length !== 3) return yyyyMmDd;
+const formatDate = (dateStr) => {
+  if (!dateStr) return "-";
+  // Handle ISO date strings (e.g., "2026-01-11T23:00:00.000Z") or "YYYY-MM-DD"
+  const dateOnly = String(dateStr).split("T")[0];
+  const parts = dateOnly.split("-");
+  if (parts.length !== 3) return dateStr;
   const [y, m, d] = parts;
   return `${d}/${m}/${y}`;
 };
