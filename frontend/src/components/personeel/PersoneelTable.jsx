@@ -42,17 +42,17 @@ function PersoneelTable({ rows, onDelete }) {
 
             <span>
               <span className="inline-block bg-[#E5DCE7] text-gray-800 px-3 py-1 rounded-full text-xs font-medium">
-                {row.roleLabel}
+                <td>{t(`roles.${row.roleKey}`)}</td>
               </span>
             </span>
 
             <span>{row.email}</span>
 
             {canDelete &&
-            !(
-              currentUser?.role === "responsible" &&
-              (row.roleKey === "verantwoordelijke" || row.roleKey === "admin")
-            ) ? (
+              !(
+                currentUser?.role === "responsible" &&
+                (row.roleKey === "verantwoordelijke" || row.roleKey === "admin")
+              ) ? (
               <button
                 onClick={() => onDelete(row.id)}
                 className="ml-auto text-gray-400 hover:text-red-500 transition"

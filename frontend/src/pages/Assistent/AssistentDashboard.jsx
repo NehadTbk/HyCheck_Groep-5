@@ -104,7 +104,7 @@ function AssistentDashboard() {
     return (
       <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
         <AssistentNavBar />
-        <p>Loading...</p>
+        <p>{t("assistentDashboard.loading")}</p>
       </PageLayout>
     );
   }

@@ -1,16 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FiDownload } from "react-icons/fi";
+import { useTranslation } from "../../i18n/useTranslation";
 
 function ProgressCard({
-  month = "December",
+  monthKey = "december",
   percentage = 67,
-  status = "warning", // ok | warning | danger
+  status = "warning",
   clickable = true,
-  downloadTitle = "Download rapport",
-  onDownload, // optional callback
+  downloadTitle,
+  onDownload,
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleCardClick = () => {
     if (!clickable) return;
@@ -22,8 +24,8 @@ function ProgressCard({
     status === "ok"
       ? "border-green-500 bg-green-50"
       : status === "danger"
-      ? "border-red-500 bg-red-50"
-      : "border-[#E0B76F] bg-[#F8F3E8]",
+        ? "border-red-500 bg-red-50"
+        : "border-[#E0B76F] bg-[#F8F3E8]",
   ].join(" ");
 
   return (
@@ -45,7 +47,9 @@ function ProgressCard({
     >
       <div className="flex items-center justify-between">
         <span className="text-sm underline text-black">
-          Boxen voltooid in {month} voor
+          {t("progressCard.title", {
+            month: t(`progressCard.months.${monthKey}`)
+          })}
         </span>
 
         <div className={statusClasses}>✔</div>
@@ -55,13 +59,14 @@ function ProgressCard({
         <span className="text-4xl font-semibold">{percentage} %</span>
       </div>
 
-      <div className="mt-1 text-sm">schoongemaakt</div>
+      <div className="mt-1 text-sm">
+        {t("progressCard.completed")}
+      </div>
 
-      {/* ✅ Download button (does NOT trigger navigation) */}
       <button
         type="button"
         onClick={(e) => {
-          e.stopPropagation(); // ✅ prevents card click
+          e.stopPropagation();
           onDownload?.();
         }}
         className="absolute bottom-4 right-4 p-2 rounded-full hover:bg-gray-100 transition"

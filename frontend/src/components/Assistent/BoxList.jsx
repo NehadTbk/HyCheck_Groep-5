@@ -1,23 +1,30 @@
 import React, { useState } from "react";
 import BoxCard from "./BoxCard";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
+
 
 // Voeg onBoxCheck en onBoxClick toe aan de props
 function BoxList({ boxes, onBoxCheck, onBoxClick }) {
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   const [statusFilter, setStatusFilter] = useState("alles");
   const [typeFilter, setTypeFilter] = useState("alle");
 
   const statusOptions = [
-    { key: "alles", label: "Alles" },
-    { key: "openstaand", label: "Openstaand" },
-    { key: "voltooid", label: "Voltooid" }
-  ];
+  { key: "alles", labelKey: "status.all" },
+  { key: "openstaand", labelKey: "status.open" },
+  { key: "voltooid", labelKey: "status.completed" },
+];
 
   const typeOptions = [
-    { key: "alle", label: "Alle tags" },
-    { key: "Ochtend", label: "Ochtend" },
-    { key: "Avond", label: "Avond" },
-    { key: "Wekelijks", label: "Wekelijks" },
-    { key: "Maandelijks", label: "Maandelijks" }
+    { key: "alle", labelKey: "tags.all" },
+    { key: "morning", labelKey: "tags.morning" },
+    { key: "evening", labelKey: "tags.evening" },
+    { key: "weekly", labelKey: "tags.weekly" },
+    { key: "monthly", labelKey: "tags.monthly" },
   ];
 
   const filtered = boxes.filter((box) => {
@@ -49,12 +56,12 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
     const isActive = typeFilter === key;
 
     const typeColors = {
-      Ochtend: "bg-blue-100 text-blue-700 border-blue-300",
-      Avond: "bg-purple-100 text-purple-700 border-purple-300",
-      Wekelijks: "bg-orange-100 text-orange-700 border-orange-300",
-      Maandelijks: "bg-yellow-100 text-yellow-700 border-yellow-300",
-      alle: "bg-white text-gray-700 border-gray-300"
-    };
+  morning: "bg-blue-100 text-blue-700 border-blue-300",
+  evening: "bg-purple-100 text-purple-700 border-purple-300",
+  weekly: "bg-orange-100 text-orange-700 border-orange-300",
+  monthly: "bg-yellow-100 text-yellow-700 border-yellow-300",
+  alle: "bg-white text-gray-700 border-gray-300",
+};
 
     // Voeg een visuele hint toe als een filter actief is
     const activeClass = isActive ? " ring-2 ring-offset-1 ring-gray-400" : "";
@@ -73,7 +80,7 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
               onClick={() => setStatusFilter(item.key)}
               className={getStatusClasses(item.key)}
             >
-              {item.label}
+              {t(item.labelKey)}
             </button>
           ))}
 
@@ -85,7 +92,7 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
               onClick={() => setTypeFilter(item.key)}
               className={getTypeClasses(item.key)}
             >
-              {item.label}
+              {t(item.labelKey)}
             </button>
           ))}
         </div>

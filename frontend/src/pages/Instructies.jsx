@@ -4,14 +4,27 @@ import AssistentNavBar from "../components/navbar/AssistentNavBar";
 import VerantwoordelijkeNavBar from "../components/navbar/VerantwoordelijkeNavBar";
 import AfdelingshoofdNavBar from "../components/navbar/AfdelingshoofdNavBar";
 import { BookOpen, Edit2, Save, X, Image as ImageIcon } from "lucide-react";
+import LanguageSwitcher from "../components/layout/LanguageSwitcher";
+import { useTranslation } from "../i18n/useTranslation";
+import { useLanguage } from "../i18n/useLanguage";
 
 const IMG_BASE = "/instructions"; // files live in: frontend/public/instructions
 
+const GROUP_MAP = {
+  morning: "Ochtend",
+  endOfDay: "Einde van de dag",
+  weekly: "Elke week",
+  monthly: "Elke maand",
+};
+
 function Instructies() {
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   const [isEditing, setIsEditing] = useState(false);
 
   const [instructions, setInstructions] = useState({
-    title: "Instructies",
+    title: "",
     tasks: [
       { nr: 1, group: "Ochtend", title: "Filters", lines: ["Reinig de voorfilters."], images: ["task-1.png"] },
       {
@@ -127,7 +140,7 @@ function Instructies() {
 
   const displayInstructions = isEditing ? editedInstructions : instructions;
 
-  const groups = ["Ochtend", "Einde van de dag", "Elke week", "Elke maand"];
+const groups = ["morning", "endOfDay", "weekly", "monthly"];
 
   return (
     <PageLayout>
@@ -146,7 +159,7 @@ function Instructies() {
                 className="text-3xl font-bold text-gray-800 border-b-2 border-[#5C2D5F] focus:outline-none"
               />
             ) : (
-              <h1 className="text-3xl font-bold text-gray-800">{displayInstructions.title}</h1>
+              <h1 className="text-3xl font-bold text-gray-800">{t("instructions.title")}</h1>
             )}
           </div>
 
@@ -159,14 +172,14 @@ function Instructies() {
                     className="flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
                   >
                     <X size={18} />
-                    Annuleren
+                    {t('instructions.cancel')}
                   </button>
                   <button
                     onClick={handleSave}
                     className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors"
                   >
                     <Save size={18} />
-                    Opslaan
+                    {t('instructions.save')}
                   </button>
                 </>
               ) : (
@@ -175,7 +188,7 @@ function Instructies() {
                   className="flex items-center gap-2 bg-[#5C2D5F] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#4A2144] transition-colors"
                 >
                   <Edit2 size={18} />
-                  Aanpassen
+                  {t('instructions.edit')}
                 </button>
               )}
             </div>
@@ -184,13 +197,13 @@ function Instructies() {
 
         {/* Tasks grouped */}
         <div className="space-y-8">
-          {groups.map((groupTitle) => {
-            const groupTasks = displayInstructions.tasks.filter((t) => t.group === groupTitle);
+          {groups.map((groupKey) => {
+            const groupTasks = displayInstructions.tasks.filter((t) => t.group === GROUP_MAP[groupKey]);
             if (groupTasks.length === 0) return null;
 
             return (
-              <div key={groupTitle} className="bg-gray-50 p-6 rounded-xl">
-                <h2 className="text-2xl font-bold text-gray-800 mb-5">{groupTitle}</h2>
+              <div key={groupKey} className="bg-gray-50 p-6 rounded-xl">
+                <h2 className="text-2xl font-bold text-gray-800 mb-5">{t(`instructions.groups.${groupKey}`)}</h2>
 
                 <div className="space-y-5">
                   {groupTasks.map((task) => {
@@ -242,7 +255,7 @@ function Instructies() {
                                 <div className="mt-3 text-xs text-gray-600">
                                   <div className="flex items-center gap-2 mb-2">
                                     <ImageIcon size={16} />
-                                    <span>Afbeeldingen (1 filename per lijn in /public/instructions)</span>
+                                    <span>{t('instructions.imageFiles')}</span>
                                   </div>
                                   <textarea
                                     value={imgs.join("\n")}
@@ -264,7 +277,7 @@ function Instructies() {
                           {/* RIGHT: images */}
                           <div className="rounded-lg border border-gray-200 bg-white p-3">
                             {imgs.length === 0 ? (
-                              <div className="text-sm text-gray-500 p-4 text-center">Geen afbeelding ingesteld</div>
+                              <div className="text-sm text-gray-500 p-4 text-center">{t('instructions.noImages')}</div>
                             ) : (
                               <div
                                 className={
@@ -316,9 +329,9 @@ function Instructies() {
 
         {!isEditing && (
           <div className="bg-blue-50 border border-blue-200 p-5 rounded-lg mt-8">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">Meer informatie nodig?</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">{t('instructions.moreInfo')}</h3>
             <p className="text-gray-700 text-base">
-              Neem contact op met uw leidinggevende als u vragen heeft of hulp nodig heeft bij het uitvoeren van uw taken.
+              {t('instructions.contactLeader')}
             </p>
           </div>
         )}

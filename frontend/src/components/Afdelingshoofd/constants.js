@@ -1,5 +1,5 @@
 export const ROLE_OPTIONS = [
-  { key: "verantwoordelijke", label: "Verantwoordelijke" },
-  { key: "tandarts", label: "Tandarts" },
-  { key: "tandartsassistent", label: "Tandartsassistent" },
+  { key: "verantwoordelijke", labelKey: "roles.verantwoordelijke" },
+  { key: "tandarts", labelKey: "roles.tandarts" },
+  { key: "tandartsassistent", labelKey: "roles.tandartsassistent" },
 ];
