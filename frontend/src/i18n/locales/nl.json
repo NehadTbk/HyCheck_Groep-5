@@ -92,7 +92,11 @@
         "selectDentist": "Selecteer eerst een tandarts",
         "selectAssistant": "Selecteer eerst een assistent",
         "assignmentsCreated": "{{count}} toewijzing(en) aangemaakt",
-        "genericError": "Er is een fout opgetreden"
+        "genericError": "Er is een fout opgetreden",
+        "db": {
+            "missingBoxTitle": "Box niet volledig klaar: {{boxName}}",
+            "missingBoxMessage": "De {{groupLabel}} voor {{boxName}} zijn vandaag nog niet volledig afgerond."
+        }
     },
     "boxCard": {
         "completed": "Voltooid",

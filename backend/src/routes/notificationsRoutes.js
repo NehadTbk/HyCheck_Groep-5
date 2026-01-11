@@ -124,9 +124,27 @@ async function generateMissingBoxNotificationsForToday() {
 
     const recipients = new Set([assistantId, ...supervisorIds].filter(Boolean));
 
-    const title = `Box niet volledig klaar: ${r.box_name}`;
-    const groupLabel = groups.length ? groups.join(", ") : "taken";
-    const message = `De ${groupLabel} voor ${r.box_name} zijn vandaag nog niet volledig afgerond.`;
+    const titleKey = "notifications.db.missingBoxTitle";
+    const messageData = JSON.stringify({
+      boxName: r.box_name,
+      groupLabel: groups.length ? groups.join(", ") : "tasks"
+    });
+
+    const renderNotificationMessage = (notif) => {
+  try {
+    const params = JSON.parse(notif.message);
+    
+    return {
+      displayTitle: t(notif.title, params),
+      displayBody: t("notifications.db.missingBoxMessage", params)
+    };
+  } catch (e) {
+    return {
+      displayTitle: notif.title,
+      displayBody: notif.message
+    };
+  }
+};
 
     for (const userId of recipients) {
       // Avoid duplicates (same user + assignment + today)
@@ -148,10 +166,10 @@ async function generateMissingBoxNotificationsForToday() {
 
       await db.query(
         `
-        INSERT INTO notifications (user_id, title, message, type, related_id, related_type, is_read)
-        VALUES (?, ?, ?, 'task missing', ?, 'assignment', 0)
-        `,
-        [userId, title, message, assignmentId]
+    INSERT INTO notifications (user_id, title, message, type, related_id, related_type, is_read)
+    VALUES (?, ?, ?, 'task missing', ?, 'assignment', 0)
+    `,
+        [userId, titleKey, messageData, assignmentId]
       );
     }
   }

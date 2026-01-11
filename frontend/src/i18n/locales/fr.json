@@ -92,7 +92,11 @@
         "selectDentist": "Sélectionnez d'abord un dentiste",
         "selectAssistant": "Sélectionnez d'abord un assistant",
         "assignmentsCreated": "{{count}} affectation(s) créée(s)",
-        "genericError": "Une erreur s'est produite"
+        "genericError": "Une erreur s’est produite",
+        "db": {
+            "missingBoxTitle": "Box non complété : {{boxName}}",
+            "missingBoxMessage": "Les {{groupLabel}} voor {{boxName}} n'ont pas encore été entièrement complétés aujourd'hui."
+        }
     },
     "boxCard": {
         "completed": "Complété",
