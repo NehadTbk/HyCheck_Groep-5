@@ -5,6 +5,17 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
+        // Vang de maand en het jaar op uit de URL (bijv. ?month=2&year=2026)
+        const { month, year } = req.query;
+        
+        let whereClause = "";
+        const queryParams = [];
+
+        // Als er gefilterd wordt, voeg dan de SQL filter toe
+        if (month && year) {
+            whereClause = "WHERE MONTH(cts.created_at) = ? AND YEAR(cts.created_at) = ?";
+            queryParams.push(month, year);
+        }
         const query =  `
     SELECT 
         cts.status_id AS id, 
@@ -26,9 +37,10 @@ router.get('/', authMiddleware, async (req, res) => {
     LEFT JOIN shift_assignments sa ON cts.session_id = sa.assignment_id
     LEFT JOIN box b ON sa.box_id = b.box_id
     LEFT JOIN users u ON sa.user_id = u.user_id
+    ${whereClause}
     ORDER BY cts.created_at DESC`;
 
-        const [results] = await db.query(query);
+        const [results] = await db.query(query, queryParams);
         res.json(results);
     } catch (err) {
         console.error("Database Fout:", err.message);

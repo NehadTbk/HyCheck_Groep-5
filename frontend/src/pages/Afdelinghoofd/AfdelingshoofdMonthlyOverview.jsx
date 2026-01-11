@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import MonthlyProgressCard from "../../components/cards/ProgressCard";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
 
@@ -27,15 +29,20 @@ function statusFromPercentage(pct) {
 }
 
 function normalizeMonthData(apiData, year) {
-  // Always show 12 months (even if backend returns fewer)
   const byName = new Map((Array.isArray(apiData) ? apiData : []).map((x) => [String(x.month), x]));
+
+  const MONTH_KEYS = [
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december"
+  ];
 
   return MONTHS_NL.map((mName, idx) => {
     const raw = byName.get(mName);
     const pct = raw?.percentage ?? 0;
     const status = raw?.status || statusFromPercentage(pct);
     return {
-      month: mName,
+      month: mName, 
+      monthKey: MONTH_KEYS[idx], 
       percentage: Number.isFinite(pct) ? pct : 0,
       status,
       meta: raw?.meta || { year, month: idx + 1 },
@@ -52,6 +59,7 @@ function AfdelingshoofdMonthlyOverview() {
   const [monthData, setMonthData] = useState(() => normalizeMonthData([], currentYear));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [infoMsg, setInfoMsg] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -92,11 +100,100 @@ function AfdelingshoofdMonthlyOverview() {
     };
   }, [year, token]);
 
+  const handleDownloadPDF = async (monthName, monthIndex) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/reports?month=${monthIndex + 1}&year=${year}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await res.json();
+
+      if (!Array.isArray(data) || data.length === 0) {
+        setInfoMsg(`Geen gegevens gevonden voor ${monthName} ${year}`);
+
+        setTimeout(() => {
+                setInfoMsg("");
+            }, 3000);
+            
+        return;
+      }
+
+      const doc = new jsPDF();
+      const img = new Image();
+      img.src = '/hycheck-logo.png'; 
+
+      img.onload = () => {
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const imgWidth = 20;
+        const imgHeight = 20;
+        const margin = 14;
+
+        
+        doc.addImage(img, 'PNG', pageWidth - imgWidth - margin, 10, imgWidth, imgHeight);
+
+       
+        doc.setFontSize(16);
+        doc.text(`Maandrapportage: ${monthName} ${year}`, margin, 20);
+
+        const tableColumn = ["Datum", "Box", "Assistent", "Status", "Reden"];
+        const tableRows = data.map(item => [
+          item.datum,
+          item.box,
+          item.assistent,
+          item.status,
+          item.reden || "-"
+        ]);
+
+        autoTable(doc, {
+          startY: 35,
+          head: [tableColumn],
+          body: tableRows,
+          theme: 'grid',
+          styles: {
+            fontSize: 8,
+            cellPadding: 3,
+            valign: 'middle',
+            overflow: 'linebreak'
+          },
+          headStyles: {
+            fillColor: [74, 33, 68], 
+            textColor: 255,
+            fontStyle: 'bold',
+            halign: 'center'
+          },
+          columnStyles: {
+            0: { cellWidth: 25 },
+            1: { cellWidth: 15, halign: 'center' },
+            4: { cellWidth: 50 }
+          },
+          margin: { left: 15, right: 15 }
+        });
+
+        doc.save(`Rapportage_${monthName}_${year}.pdf`);
+      };
+    } catch (err) {
+      console.error("PDF Export fout:", err);
+      setInfoMsg("Er is een fout opgetreden bij het maken van de PDF.");
+      setTimeout(() => setInfoMsg(""), 3000);
+    }
+  };
+
   return (
     <PageLayout>
       <AfdelingshoofdNavBar />
 
       <div className="bg-white rounded-xl shadow-lg p-6 min-h-[500px]">
+        {infoMsg && (
+            <div className="fixed top-[240px] left-1/2 transform -translate-x-1/2 z-[9999]">
+                <div className="bg-[#FEE2E2] text-[#B91C1C] px-6 py-2 rounded-lg shadow-sm border border-[#FCA5A5] flex items-center gap-3 font-medium text-sm">
+                    
+                    <div className="w-5 h-5 rounded-full border-2 border-[#EF4444] flex items-center justify-center text-[#EF4444] bg-white text-[10px] font-black">
+                        !
+                    </div>
+                    {infoMsg}
+                </div>
+            </div>
+        )}
         <div className="mb-6 max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
             <h1 className="text-2xl font-semibold text-gray-900">Maandoverzicht</h1>
@@ -130,12 +227,14 @@ function AfdelingshoofdMonthlyOverview() {
             <div className="text-sm text-gray-500">Bezig met laden…</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {monthData.map((item) => (
+              {monthData.map((item, idx) => (
                 <MonthlyProgressCard
-                  key={`${item.meta?.year ?? year}-${item.meta?.month ?? item.month}`}
-                  month={item.month}
+                  key={`${item.meta?.year ?? year}-${item.month}`}
+                  
+                  monthKey={item.monthKey} 
                   percentage={item.percentage}
                   status={item.status}
+                  onDownload={() => handleDownloadPDF(item.month, idx)} 
                 />
               ))}
             </div>
