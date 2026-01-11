@@ -107,7 +107,8 @@
         "completedSubtitle": "Boxen schoongemaakt",
         "openstaand": "Openstaand",
         "pendingSubtitle": "Boxen nog te doen",
-        "assignedBoxes": "Mijn toegewezen boxen"
+        "assignedBoxes": "Mijn toegewezen boxen",
+        "loading": "Bezig met laden…"
     },
     "taskModal": {
         "reasonOptions": "Standaard redenen:",
@@ -307,5 +308,17 @@
             "weekly": "Elke week",
             "monthly": "Elke maand"
         }
+    },
+    "tags": {
+        "all": "Alle",
+        "morning": "Ochtend",
+        "evening": "Avond",
+        "weekly": "Wekelijks",
+        "monthly": "Maandelijks"
+    },
+    "status": {
+        "all": "Alles",
+        "open": "Openstaand",
+        "completed": "Voltooid"
     }
 }

@@ -102,7 +102,8 @@
         "completedSubtitle": "Box nettoyées",
         "openstaand": "En attente",
         "pendingSubtitle": "Box en attente",
-        "assignedBoxes": "Mes box assignées"
+        "assignedBoxes": "Mes box assignées",
+        "loading": "Chargement…"
     },
     "taskModal": {
         "reasonOptions": "Raisons standard :",
@@ -128,7 +129,7 @@
         }
     },
     "assistentBoxen": {
-        "allBoxes": "Toutes les boîtes"
+        "allBoxes": "Tous les boxes"
     },
     "historyAll": {
         "title": "Détails",
@@ -302,5 +303,17 @@
             "weekly": "Hebdomadaire",
             "monthly": "Mensuel"
         }
+    },
+    "tags": {
+        "all": "Toutes",
+        "morning": "Matin",
+        "evening": "Soir",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel"
+    },
+    "status": {
+        "all": "Tous",
+        "open": "En attente",
+        "completed": "Complété"
     }
 }
