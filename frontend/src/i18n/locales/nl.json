@@ -291,5 +291,21 @@
         "tandarts": "Tandarts",
         "tandartsassistent": "Tandartsassistent",
         "admin": "Afdelingshoofd"
+    },
+    "instructions": {
+        "title": "Instructies",
+        "edit": "Aanpassen",
+        "save": "Opslaan",
+        "cancel": "Annuleren",
+        "imageFiles": "Afbeeldingen (1 filename per lijn in /public/instructions)",
+        "noImages": "Geen afbeelding ingesteld",
+        "moreInfo": "Meer informatie nodig?",
+        "contactLeader": "Neem contact op met uw leidinggevende als u vragen heeft of hulp nodig heeft bij het uitvoeren van uw taken.",
+        "groups": {
+            "morning": "Ochtend",
+            "endOfDay": "Einde van de dag",
+            "weekly": "Elke week",
+            "monthly": "Elke maand"
+        }
     }
 }

@@ -286,5 +286,21 @@
         "tandarts": "Dentiste",
         "tandartsassistent": "Assistant dentaire",
         "admin": "Chef de service"
+    },
+    "instructions": {
+        "title": "Instructions",
+        "edit": "Modifier",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "imageFiles": "Images (1 nom de fichier par ligne dans /public/instructions)",
+        "noImages": "Aucune image définie",
+        "moreInfo": "Besoin de plus d'informations ?",
+        "contactLeader": "Contactez votre responsable si vous avez des questions ou besoin d'aide pour effectuer vos tâches.",
+        "groups": {
+            "morning": "Matin",
+            "endOfDay": "Fin de journée",
+            "weekly": "Hebdomadaire",
+            "monthly": "Mensuel"
+        }
     }
 }
