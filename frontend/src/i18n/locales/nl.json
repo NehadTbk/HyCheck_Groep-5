@@ -186,7 +186,14 @@
         "roleDescriptions": {
             "admin": "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen",
             "responsible": "Als verantwoordelijke kun je tandartsen en assistenten toevoegen"
-        }
+        },
+        "errors": {
+            "requiredFields": "Alle velden zijn verplicht",
+            "notLoggedIn": "Je bent niet ingelogd",
+            "serverConnection": "Kan geen verbinding maken met de server",
+            "createFailed": "Fout bij toevoegen personeelslid"
+        },
+        "success": "Personeelslid {{firstName}} {{lastName}} toegevoegd als {{role}}!"
     },
     "personeelSearch": {
         "placeholder": "Zoek Personeel"
@@ -273,7 +280,6 @@
         "selectYear": "Jaar",
         "loading": "Bezig met laden…"
     },
-
     "reports": {
         "title": "Maandrapportage",
         "date": "Datum",
