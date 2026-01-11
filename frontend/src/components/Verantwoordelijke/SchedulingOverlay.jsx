@@ -6,6 +6,9 @@ import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+
 const TASK_TYPES = {
   ochtend: {
     labelKey: "taskTypes.ochtend",
@@ -62,7 +65,7 @@ export default function SchedulingOverlay() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/scheduling-data");
+      const res = await fetch(`${API_BASE_URL}/api/scheduling-data`);
       const data = await res.json();
       setDentists(data.dentists || []);
 
@@ -193,7 +196,7 @@ export default function SchedulingOverlay() {
     });
 
     try {
-      const response = await fetch("http://localhost:5001/api/assignments", {
+      const response = await fetch(`${API_BASE_URL}/api/assignments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ shifts }),

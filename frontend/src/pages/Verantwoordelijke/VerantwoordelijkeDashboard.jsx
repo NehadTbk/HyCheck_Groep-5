@@ -6,6 +6,8 @@ import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function getMonday(date) {
   const d = new Date(date);
   const day = d.getDay();
@@ -72,7 +74,7 @@ function VerantwoordelijkeDashboard() {
   async function fetchWeekData() {
     try {
       const res = await fetch(
-        `http://localhost:5001/api/calendar?weekStart=${formatDateLocal(weekStart)}`
+        `${API_BASE_URL}/api/calendar?weekStart=${formatDateLocal(weekStart)}`
       );
       if (!res.ok) {
         console.error("GET /api/calendar failed", await res.text());
@@ -131,7 +133,7 @@ function VerantwoordelijkeDashboard() {
     setIsDeleting(true);
     try {
       const res = await fetch(
-        `http://localhost:5001/api/assignments/${selectedAssignment.assignment_id}`,
+        `${API_BASE_URL}/api/assignments/${selectedAssignment.assignment_id}`,
         { method: "DELETE" }
       );
 

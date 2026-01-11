@@ -41,10 +41,7 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
   const { t } = useTranslation();
 
   // fallback + remove trailing slash
-  const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(
-    /\/$/,
-    ""
-  );
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   // Centrale fetch (herbruikbaar)
   const fetchUsers = useCallback(async () => {

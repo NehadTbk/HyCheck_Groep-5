@@ -6,7 +6,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useTranslation } from "../../i18n/useTranslation";
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const MONTHS_NL = [
   "Januari",
