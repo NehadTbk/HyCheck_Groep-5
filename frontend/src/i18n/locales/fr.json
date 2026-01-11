@@ -201,7 +201,7 @@
             "serverConnection": "Impossible de se connecter au serveur",
             "createFailed": "Erreur lors de l’ajout du membre du personnel"
         },
-        "success": "Le membre du personnel {{firstName}} {{lastName}} a été ajouté comme {{role}} !"
+        "success": "{{firstName}} {{lastName}} a été ajouté comme {{role}} !"
     },
     "createAccountCard": {
         "title": "Créer un compte"

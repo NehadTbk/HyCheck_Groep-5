@@ -96,9 +96,9 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
       }
 
       setSuccess(
-        `Persoonslid ${formData.voornaam} ${formData.achternaam} toegevoegd als ${formData.functie}!`
+        t("personeelToevoegenModal.success", {firstName: formData.voornaam,lastName: formData.achternaam,role: t(`personeelToevoegenModal.roles.${formData.functie}`)
+        })
       );
-
       setFormData({
         voornaam: "",
         achternaam: "",
