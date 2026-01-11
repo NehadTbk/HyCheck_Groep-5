@@ -303,5 +303,17 @@
             "weekly": "Hebdomadaire",
             "monthly": "Mensuel"
         }
+    },
+    "tags": {
+        "all": "Toutes",
+        "morning": "Matin",
+        "evening": "Soir",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel"
+    },
+    "status": {
+        "all": "Tous",
+        "open": "En attente",
+        "completed": "Complété"
     }
 }
