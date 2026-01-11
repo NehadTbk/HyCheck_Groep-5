@@ -37,6 +37,8 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
     if (typeFilter !== "alle" && !box.types.includes(typeFilter)) {
       return false;
     }
+    if (statusFilter === "gedeeltelijk" && box.status !== "gedeeltelijk") return false;
+
     return true;
   });
 

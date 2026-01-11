@@ -16,24 +16,29 @@ function AssistentDashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedBox, setSelectedBox] = useState(null);
   const [tasksState, setTasksState] = useState({});
+  const [periodicData, setPeriodicData] = useState({ weekly: null, monthly: null });
   const { t } = useTranslation();
   useLanguage();
-
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const params = new URLSearchParams({
-          date: new Date().toISOString().split("T")[0],
-        });
 
-        const res = await fetch(`${API_BASE_URL}/api/assistant/dashboard?${params}`, {
+        // TEST LOGICA: Gebruik morgen (maandag) ipv vandaag (zondag)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateString = tomorrow.toISOString().split('T')[0];
+
+        // Gebruik de dateString variabele in de URL
+        const res = await fetch(`${API_BASE_URL}/api/assistant/today-assignments?date=${dateString}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!res.ok) throw new Error("Failed to fetch dashboard");
+
         const data = await res.json();
         setBoxes(data);
+
       } catch (err) {
         console.error("Error loading dashboard:", err);
       } finally {
@@ -42,6 +47,25 @@ function AssistentDashboard() {
     };
 
     fetchBoxes();
+  }, []);
+
+  useEffect(() => {
+    const fetchPeriodicData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE_URL}/api/assistant/upcoming-periodic`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch periodic data");
+        const data = await res.json();
+        setPeriodicData(data);
+      } catch (err) {
+        console.error("Error loading periodic data:", err);
+      }
+    };
+
+    fetchPeriodicData();
   }, []);
 
   const handleToggleTask = (boxId, taskId) => {
@@ -123,8 +147,8 @@ function AssistentDashboard() {
           icon="clock"
         />
         <PeriodicStatsCard
-          weeklyDate="Vrijdag 28/11"
-          monthlyDate="Maandag 17/11"
+          weeklyData={periodicData.weekly}
+          monthlyData={periodicData.monthly}
           icon="calendar"
         />
       </section>

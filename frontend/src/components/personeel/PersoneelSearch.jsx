@@ -1,22 +1,32 @@
 import React from "react";
-import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { IoSearch } from "react-icons/io5";
 import { useTranslation } from "../../i18n/useTranslation";
-import { useLanguage } from "../../i18n/useLanguage";
 
-function PersoneelSearch({ value, onChange }) {
-  const { language, setLanguage } = useLanguage();
+function PersoneelSearch({ value, onChange, label }) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center bg-[#C1A9CF] rounded-full px-4 py-1 w-56">
-      <input
-        type="text"
-        placeholder={t("personeelSearch.placeholder")}
-        value={value}
-        onChange={(e) => onChange && onChange(e.target.value)}
-        className="bg-transparent flex-1 text-xs outline-none placeholder:text-gray-600"
-      />
-      <span className="text-sm">🔍</span>
+    <div className="flex flex-col">
+      {/* label is optioneel (als je het wil tonen zoals in Rapporten) */}
+      {label && (
+        <label className="text-sm font-semibold text-gray-700 mb-1">
+          {label}
+        </label>
+      )}
+
+      <div className="relative">
+        <input
+          type="text"
+          placeholder={t("personeelSearch.placeholder")}
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
+          className="w-full border border-gray-300 rounded-md p-2 pl-10 outline-none focus:ring-1 focus:ring-purple-400"
+        />
+        <IoSearch
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          size={18}
+        />
+      </div>
     </div>
   );
 }
