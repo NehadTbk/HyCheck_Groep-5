@@ -6,6 +6,8 @@ import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function getMonday(date) {
   const d = new Date(date);
   const day = d.getDay();
@@ -63,6 +65,7 @@ function VerantwoordelijkeDashboard() {
   const [planning, setPlanning] = useState({});
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [infoMsg, setInfoMsg] = useState("");
 
   useEffect(() => {
     setDagen(generateWeekDays(weekStart, language));
@@ -71,7 +74,7 @@ function VerantwoordelijkeDashboard() {
   async function fetchWeekData() {
     try {
       const res = await fetch(
-        `http://localhost:5001/api/calendar?weekStart=${formatDateLocal(weekStart)}`
+        `${API_BASE_URL}/api/calendar?weekStart=${formatDateLocal(weekStart)}`
       );
       if (!res.ok) {
         console.error("GET /api/calendar failed", await res.text());
@@ -135,7 +138,7 @@ function VerantwoordelijkeDashboard() {
     setIsDeleting(true);
     try {
       const res = await fetch(
-        `http://localhost:5001/api/assignments/${selectedAssignment.assignment_id}`,
+        `${API_BASE_URL}/api/assignments/${selectedAssignment.assignment_id}`,
         { method: "DELETE" }
       );
 
@@ -149,7 +152,8 @@ function VerantwoordelijkeDashboard() {
       window.dispatchEvent(new Event("calendarUpdated"));
     } catch (err) {
       console.error("Delete error:", err);
-      alert(`Fout bij verwijderen: ${err.message}`);
+      setInfoMsg(`${t("errors.generic") || "Fout bij verwijderen"}: ${err.message}`);
+      setTimeout(() => setInfoMsg(""), 3000);
     } finally {
       setIsDeleting(false);
     }
@@ -164,6 +168,16 @@ function VerantwoordelijkeDashboard() {
     <PageLayout>
       <VerantwoordelijkeNavBar />
       <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px] overflow-x-auto">
+      {infoMsg && (
+        <div className="fixed top-[240px] left-1/2 transform -translate-x-1/2 z-[9999]">
+          <div className="bg-[#FEE2E2] text-[#B91C1C] px-6 py-2 rounded-lg shadow-sm border border-[#FCA5A5] flex items-center gap-3 font-medium text-sm">
+            <div className="w-5 h-5 rounded-full border-2 border-[#EF4444] flex items-center justify-center text-[#EF4444] bg-white text-[10px] font-black">
+              !
+            </div>
+            {infoMsg}
+          </div>
+        </div>
+      )}
         <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">{t("verantwoordelijkeDashboard.title")}</h1>
 
         <div className="flex space-x-6 text-2xl mb-4">

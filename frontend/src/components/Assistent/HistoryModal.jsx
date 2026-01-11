@@ -3,7 +3,7 @@ import { X, CheckCircle2, Clock, Circle } from "lucide-react";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
-const API_BASE = "http://localhost:5001/api/history";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const getToken = () => localStorage.getItem("token");
 
@@ -31,7 +31,7 @@ function HistoryModal({ data, onClose }) {
         setLoading(true);
         setErrorMsg("");
 
-        const res = await fetch(`${API_BASE}/${sessionId}`, {
+        const res = await fetch(`${API_BASE_URL}/${sessionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
