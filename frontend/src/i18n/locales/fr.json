@@ -257,5 +257,10 @@
         "avond": "Soir",
         "wekelijks": "Hebdomadaire",
         "maandelijks": "Mensuel"
+    },
+    "afdelingshoofdMonthlyOverview": {
+        "title": "Aperçu mensuel",
+        "selectYear": "Année",
+        "loading": "Chargement…"
     }
 }

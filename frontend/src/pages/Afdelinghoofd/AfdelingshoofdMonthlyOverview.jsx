@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import MonthlyProgressCard from "../../components/cards/ProgressCard";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
 
@@ -92,6 +95,9 @@ function AfdelingshoofdMonthlyOverview() {
     };
   }, [year, token]);
 
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
+
   return (
     <PageLayout>
       <AfdelingshoofdNavBar />
@@ -99,11 +105,11 @@ function AfdelingshoofdMonthlyOverview() {
       <div className="bg-white rounded-xl shadow-lg p-6 min-h-[500px]">
         <div className="mb-6 max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Maandoverzicht</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">{t("afdelingshoofdMonthlyOverview.title")}</h1>
 
             <div className="flex items-center gap-3">
               <label className="text-sm text-gray-600" htmlFor="yearSelect">
-                Jaar
+                {t("afdelingshoofdMonthlyOverview.selectYear")}
               </label>
               <select
                 id="yearSelect"
@@ -127,7 +133,7 @@ function AfdelingshoofdMonthlyOverview() {
           ) : null}
 
           {isLoading ? (
-            <div className="text-sm text-gray-500">Bezig met laden…</div>
+            <div className="text-sm text-gray-500">{t("afdelingshoofdMonthlyOverview.loading")}</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {monthData.map((item) => (

@@ -262,5 +262,10 @@
         "avond": "Avond",
         "wekelijks": "Wekelijks",
         "maandelijks": "Maandelijks"
+    },
+    "afdelingshoofdMonthlyOverview": {
+        "title": "Maandoverzicht",
+        "selectYear": "Jaar",
+        "loading": "Bezig met laden…"
     }
 }
