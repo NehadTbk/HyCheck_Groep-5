@@ -5,6 +5,7 @@ import BoxList from "../../components/Assistent/BoxList";
 import TaskModal from "../../components/Assistent/TaskModal";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
+import { Check, X } from "lucide-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -13,8 +14,18 @@ function MijnBoxen() {
   const [loading, setLoading] = useState(true);
   const [selectedBox, setSelectedBox] = useState(null);
   const [tasksState, setTasksState] = useState({});
+  const [currentDate, setCurrentDate] = useState("");
+  const [notification, setNotification] = useState(null);
   const { t } = useTranslation();
   useLanguage();
+
+  // Auto-hide notification after 4 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   // Helper voor de datum van morgen
   const getTomorrowDate = () => {
@@ -32,8 +43,7 @@ function MijnBoxen() {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const dateString = tomorrow.toLocaleDateString('en-CA'); // Geeft altijd YYYY-MM-DD
-
-      console.log("Fetching for date:", dateString); // Debug check in je browser console
+      setCurrentDate(dateString); // Store the date for later use
 
       const res = await fetch(`${API_BASE_URL}/api/assistant/all-boxes?date=${dateString}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -62,19 +72,28 @@ function MijnBoxen() {
     }));
   };
 
+  // Initialize tasks state from DB without triggering auto-save
+  const handleInitTasks = (boxId, initialState) => {
+    setTasksState(prev => ({
+      ...prev,
+      [boxId]: { ...prev[boxId], ...initialState },
+    }));
+  };
+
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
     if (!boxId) {
-      alert("Fout: Geen geldige sessie-ID gevonden.");
+      setNotification({ type: 'error', message: t('notifications.missingAssignmentId') });
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
 
-      // We sturen de session_id (boxId) en de volledige set aan vinkjes (tasksState)
+      // Send assignment_id and date (not session_id)
       const payload = {
-        session_id: boxId,
-        tasks: tasksState[boxId] || {}, // De vinkjes uit de modal
+        assignment_id: boxId,
+        date: currentDate,
+        tasks: tasksState[boxId] || {},
         selected_option_id: selectedOptionId || null,
         custom_text: customText?.trim() || null,
       };
@@ -94,24 +113,79 @@ function MijnBoxen() {
       }
 
       setSelectedBox(null);
-      fetchBoxes(); // Ververs de lijst voor de nieuwe percentages/status
+      await fetchBoxes(); // Ververs de lijst voor de nieuwe percentages/status
+      setNotification({ type: 'success', message: t('notifications.tasksSaved') });
     } catch (err) {
       console.error("Error saving tasks:", err);
-      alert("Fout bij opslaan: " + err.message);
+      setNotification({ type: 'error', message: err.message });
     }
   };
 
-  // Mock function voor de checkbox op de kaart zelf (optioneel)
-  const handleBoxCheck = (id) => {
-    // In 'Mijn Boxen' (alle boxen) is direct inchecken meestal niet wenselijk 
-    // zonder modal, maar we behouden de logica voor UI consistentie
-    setBoxes((prev) =>
-      prev.map((box) => {
-        if (box.id !== id) return box;
-        const newStatus = box.status === "voltooid" ? "openstaand" : "voltooid";
-        return { ...box, status: newStatus };
-      })
-    );
+  // Quick check/uncheck all tasks for a box
+  const handleBoxCheck = async (id) => {
+    const box = boxes.find(b => b.id === id);
+    if (!box) return;
+
+    // Determine new status: if currently completed, uncheck all; otherwise check all
+    const shouldComplete = box.status !== "voltooid";
+    const token = localStorage.getItem("token");
+
+    try {
+      // First, fetch the task types for this box
+      const tasksRes = await fetch(
+        `${API_BASE_URL}/api/tasks/boxes/${id}/tasks?date=${currentDate}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const tasksData = await tasksRes.json();
+
+      if (!Array.isArray(tasksData) || tasksData.length === 0) {
+        setNotification({ type: 'error', message: t('notifications.noTasksFound') });
+        return;
+      }
+
+      // Build tasks object with all tasks set to the new value
+      const allTasks = {};
+      tasksData.forEach(task => {
+        const taskId = task.id || task.task_type_id;
+        allTasks[taskId] = shouldComplete;
+      });
+
+      // Save to backend
+      const res = await fetch(`${API_BASE_URL}/api/tasks/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          assignment_id: id,
+          date: currentDate,
+          tasks: allTasks,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Kon taken niet opslaan");
+      }
+
+      // Update local tasksState
+      setTasksState(prev => ({
+        ...prev,
+        [id]: allTasks,
+      }));
+
+      // Refetch boxes to get accurate status
+      await fetchBoxes();
+
+      setNotification({
+        type: 'success',
+        message: shouldComplete ? t('notifications.allTasksCompleted') : t('notifications.allTasksReset')
+      });
+    } catch (err) {
+      console.error("Error in handleBoxCheck:", err);
+      setNotification({ type: 'error', message: err.message });
+    }
   };
 
   if (loading) {
@@ -128,6 +202,23 @@ function MijnBoxen() {
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
+
+      {/* Notification */}
+      {notification && (
+        <div className={`flex items-center justify-between p-3 rounded-lg ${
+          notification.type === 'success'
+            ? 'bg-green-100 text-green-800 border border-green-300'
+            : 'bg-red-100 text-red-800 border border-red-300'
+        }`}>
+          <div className="flex items-center gap-2">
+            {notification.type === 'success' ? <Check size={18} /> : <X size={18} />}
+            <span className="font-medium">{notification.message}</span>
+          </div>
+          <button onClick={() => setNotification(null)} className="hover:opacity-70">
+            <X size={16} />
+          </button>
+        </div>
+      )}
 
       <section className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
         <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
@@ -160,6 +251,7 @@ function MijnBoxen() {
           box={selectedBox}
           tasksState={tasksState}
           onToggleTask={handleToggleTask}
+          onInitTasks={handleInitTasks}
           onSave={handleSaveTasks}
           onClose={() => setSelectedBox(null)}
         />

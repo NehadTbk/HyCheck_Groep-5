@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Circle, CheckCircle2 } from "lucide-react";
 
-function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
+function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks }) {
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [standardOptions, setStandardOptions] = useState([]);
@@ -11,9 +11,10 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
 
   // Taken ophalen
   useEffect(() => {
-    // box.id is the assignment_id from the backend
     const assignmentId = box?.id || box?.assignment_id;
-    if (!box || !assignmentId) return;
+    if (!box || !assignmentId) {
+      return;
+    }
     const token = localStorage.getItem("token");
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -38,20 +39,24 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
               desc: task.desc || task.description || "",
               completed: !!task.completed
             });
-
-            // Alleen syncen als de taak in DB op 1 staat 
-            // EN hij in onze huidige UI nog niet op 'true' staat
-            if (task.completed && !tasksState[box.id]?.[taskId]) {
-              onToggleTask(box.id, taskId);
-            }
           });
         }
         setTaskByType(grouped);
+
+        // Initialize parent tasksState with DB values (without triggering auto-save)
+        if (onInitTasks && assignmentId) {
+          const initialState = {};
+          data.forEach(task => {
+            const taskId = task.id || task.schedule_id;
+            initialState[taskId] = !!task.completed;
+          });
+          onInitTasks(assignmentId, initialState);
+        }
       })
       .catch(err => console.error("Fout bij taken:", err));
-    // LET OP: We voegen box.id toe aan dependency array, maar NIET tasksState
+    // LET OP: We voegen box.id/assignment_id toe aan dependency array, maar NIET tasksState
     // anders krijg je een infinite loop!
-  }, [box?.id]);
+  }, [box?.id, box?.assignment_id]);
 
   // Redenen ophalen uit comment_option
   useEffect(() => {
@@ -89,10 +94,15 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
                 <h3 className="font-bold text-lg text-gray-800 mb-4">{type} taken</h3>
                 <div className="space-y-6">
                   {taskByType[type].map((task) => {
-                    const isDone = tasksState[box.id]?.[task.id];
+                    // Use tasksState if available, otherwise fall back to DB value
+                    const boxAssignmentId = box?.id || box?.assignment_id;
+                    const isDone = tasksState[boxAssignmentId]?.[task.id] ?? task.completed;
                     const descLines = task.desc ? task.desc.split('\n').filter(line => line.trim()) : [];
                     return (
-                      <div key={task.id} className="flex gap-4 cursor-pointer" onClick={() => onToggleTask(box.id, task.id)}>
+                      <div key={task.id} className="flex gap-4 cursor-pointer" onClick={() => {
+                                      const assignmentId = box?.id || box?.assignment_id;
+                                      if (assignmentId) onToggleTask(assignmentId, task.id);
+                                    }}>
                         <div className={isDone ? "text-green-500" : "text-gray-300"}>
                           {isDone ? <CheckCircle2 size={26} /> : <Circle size={26} />}
                         </div>
@@ -165,7 +175,13 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
             <button onClick={onClose} className="px-6 py-4 text-gray-500 font-bold">Annuleren</button>
             <button
               className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-lg text-lg"
-              onClick={() => onSave(box.id, selectedOptionId, reason)}
+              onClick={() => {
+                const assignmentId = box?.id || box?.assignment_id;
+                if (!assignmentId) {
+                  return;
+                }
+                onSave(assignmentId, selectedOptionId, reason);
+              }}
             >
               Opslaan & Sluiten
             </button>

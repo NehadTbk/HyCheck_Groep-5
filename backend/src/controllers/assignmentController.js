@@ -204,6 +204,11 @@ export const getCalendarData = async (req, res) => {
         // keep original fields to help frontend debugging
         shift_date: assignment.shift_date,
         box_id: assignment.box_id,
+        // Task completion status
+        session_id: assignment.session_id || null,
+        session_status: assignment.session_status || null,
+        total_tasks: assignment.total_tasks || 0,
+        done_tasks: assignment.done_tasks || 0,
       };
     });
 

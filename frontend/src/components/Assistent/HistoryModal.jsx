@@ -47,7 +47,8 @@ function HistoryModal({ data, onClose }) {
         // Map DB rows -> jouw UI task model
         const mapped = (Array.isArray(details) ? details : []).map((d) => ({
           id: d.status_id,
-          title: `Task ${d.task_type_id}`, // later kan je hier task_type.name joinen
+          title: d.task_name || `Task ${d.task_type_id}`,
+          category: d.task_category,
           status: d.completed ? "voltooid" : "niet voltooid",
           time: d.completed_at
             ? new Date(d.completed_at).toLocaleTimeString([], {

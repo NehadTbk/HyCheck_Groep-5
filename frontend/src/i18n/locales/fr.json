@@ -78,10 +78,16 @@
         "older": "Anciennes",
         "minutesAgo": "minutes",
         "hoursAgo": "heures",
-        "daysAgo": "jours"
+        "daysAgo": "jours",
+        "tasksSaved": "Tâches enregistrées avec succès !",
+        "allTasksCompleted": "Toutes les tâches terminées !",
+        "allTasksReset": "Toutes les tâches réinitialisées",
+        "noTasksFound": "Aucune tâche trouvée pour cette box",
+        "missingAssignmentId": "Une erreur s'est produite : ID d'assignation manquant"
     },
     "boxCard": {
         "completed": "Complété",
+        "partial": "Partiel",
         "partiallyCompleted": "Partiellement complété",
         "notCompleted": "Non complété",
         "dentist": "Dentiste",
@@ -255,7 +261,8 @@
         "dentist": "Dentiste",
         "close": "Fermer",
         "delete": "Supprimer",
-        "deleting": "Suppression..."
+        "deleting": "Suppression...",
+        "taskProgress": "Progression des tâches"
     },
     "taskTypes": {
         "ochtend": "Matin",
@@ -329,6 +336,7 @@
     "status": {
         "all": "Tous",
         "open": "En attente",
+        "partial": "Partiel",
         "completed": "Complété"
     },
     "verantwoordelijkePersoneel": {
