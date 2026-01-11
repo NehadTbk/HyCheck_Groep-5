@@ -84,11 +84,19 @@
         "minutesAgo": "minuten geleden",
         "hoursAgo": "uur geleden",
         "daysAgo": "dagen geleden",
+
         "tasksSaved": "Taken succesvol opgeslagen!",
         "allTasksCompleted": "Alle taken voltooid!",
         "allTasksReset": "Alle taken gereset",
         "noTasksFound": "Geen taken gevonden voor deze box",
         "missingAssignmentId": "Er ging iets mis: assignment ID ontbreekt"
+
+        "selectDentist": "Selecteer eerst een tandarts",
+        "selectAssistant": "Selecteer eerst een assistent",
+        "assignmentsCreated": "{{count}} toewijzing(en) aangemaakt",
+        "tasksSaved": "Taken opgeslagen",
+        "genericError": "Er is een fout opgetreden"
+
     },
     "boxCard": {
         "completed": "Voltooid",
@@ -192,7 +200,14 @@
         "roleDescriptions": {
             "admin": "Als afdelingshoofd kun je verantwoordelijken, tandartsen en assistenten toevoegen",
             "responsible": "Als verantwoordelijke kun je tandartsen en assistenten toevoegen"
-        }
+        },
+        "errors": {
+            "requiredFields": "Alle velden zijn verplicht",
+            "notLoggedIn": "Je bent niet ingelogd",
+            "serverConnection": "Kan geen verbinding maken met de server",
+            "createFailed": "Fout bij toevoegen personeelslid"
+        },
+        "success": "Personeelslid {{firstName}} {{lastName}} toegevoegd als {{role}}!"
     },
     "personeelSearch": {
         "placeholder": "Zoek Personeel"
@@ -277,10 +292,9 @@
     },
     "afdelingshoofdMonthlyOverview": {
         "title": "Maandoverzicht",
-        "selectYear": "Jaar",
+        "year": "Jaar",
         "loading": "Bezig met laden…"
     },
-
     "reports": {
         "title": "Maandrapportage",
         "date": "Datum",

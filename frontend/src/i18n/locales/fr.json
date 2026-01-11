@@ -1,4 +1,9 @@
 {
+    "app": {
+        "name": "HyCheck",
+        "description": "Système de nettoyage hygiénique dentaire",
+        "welcome": "Bienvenue sur HyCheck !"
+    },
     "login": {
         "title": "Connexion",
         "email": "Adresse mail",
@@ -79,11 +84,19 @@
         "minutesAgo": "minutes",
         "hoursAgo": "heures",
         "daysAgo": "jours",
+
         "tasksSaved": "Tâches enregistrées avec succès !",
         "allTasksCompleted": "Toutes les tâches terminées !",
         "allTasksReset": "Toutes les tâches réinitialisées",
         "noTasksFound": "Aucune tâche trouvée pour cette box",
         "missingAssignmentId": "Une erreur s'est produite : ID d'assignation manquant"
+
+        "selectDentist": "Sélectionnez d’abord un dentiste",
+        "selectAssistant": "Sélectionnez d’abord un assistant",
+        "assignmentsCreated": "{{count}} affectation(s) créée(s)",
+        "tasksSaved": "Tâches enregistrées",
+        "genericError": "Une erreur s’est produite"
+
     },
     "boxCard": {
         "completed": "Complété",
@@ -190,7 +203,14 @@
         "roleDescriptions": {
             "admin": "En tant que chef de service, vous pouvez ajouter des responsables, des dentistes et des assistants",
             "responsible": "En tant que responsable, vous pouvez ajouter des dentistes et des assistants"
-        }
+        },
+        "errors": {
+            "requiredFields": "Tous les champs sont obligatoires",
+            "notLoggedIn": "Vous n’êtes pas connecté",
+            "serverConnection": "Impossible de se connecter au serveur",
+            "createFailed": "Erreur lors de l’ajout du membre du personnel"
+        },
+        "success": "{{firstName}} {{lastName}} a été ajouté comme {{role}} !"
     },
     "createAccountCard": {
         "title": "Créer un compte"
@@ -255,7 +275,7 @@
         "taskTypes": "Types de tâche(s) :",
         "secondTitle": "Box",
         "deadline": "Date limite :",
-        "noAssignments": "Aucune shift",
+        "noAssignments": "Aucun shift",
         "detailTitle": "Box",
         "assistant": "Assistant(e)",
         "dentist": "Dentiste",
@@ -272,10 +292,9 @@
     },
     "afdelingshoofdMonthlyOverview": {
         "title": "Aperçu mensuel",
-        "selectYear": "Année",
+        "year": "Année",
         "loading": "Chargement…"
     },
-
     "reports": {
         "title": "Rapport mensuel",
         "date": "Date",
@@ -284,8 +303,7 @@
         "status": "Statut",
         "reason": "Raison",
         "noResults": "Aucune donnée trouvée"
- },
-    
+    },
     "progressCard": {
         "title": "Boxes terminées en {{month}} nettoyées à",
         "completed": " ",

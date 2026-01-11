@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
     const [email, setEmail] = useState("");

@@ -12,7 +12,7 @@ import Personeelsregister from "../../components/personeel/PersoneelsRegister";
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
 
 function VerantwoordelijkePersoneel() {
-  const {language, setLanguage} = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,11 +27,11 @@ function VerantwoordelijkePersoneel() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const functieOpties = ["Tandarts", "Tandartsassistent"];
+  const functieOpties = ["dentist", "assistant"];
 
   const functieToRoleMap = {
-    Tandartsassistent: "assistant",
-    Tandarts: "dentist",
+    assistant: "assistant",
+    dentist: "dentist",
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -57,7 +57,7 @@ function VerantwoordelijkePersoneel() {
     setLoading(true);
 
     if (!formData.voornaam || !formData.achternaam || !formData.email || !formData.functie) {
-      setError("Alle velden zijn verplicht");
+      setError(t("personeelToevoegenModal.errors.requiredFields"));
       setLoading(false);
       return;
     }
@@ -65,13 +65,12 @@ function VerantwoordelijkePersoneel() {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setError("Je bent niet ingelogd");
-        setLoading(false);
+        setError(t("personeelToevoegenModal.errors.notLoggedIn"));
         return;
       }
 
       const role = functieToRoleMap[formData.functie] || "assistant";
-      const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+      const API_BASE_URL = import.meta.env.VITE_API_URL;
 
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
@@ -91,12 +90,15 @@ function VerantwoordelijkePersoneel() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.message || "Fout bij toevoegen personeelslid");
+        setError(
+        t("personeelToevoegenModal.errors.createFailed"));
         setLoading(false);
         return;
       }
 
-      setSuccess(`Personeelslid  ${formData.voornaam} ${formData.achternaam} toegevoegd!`);
+      setSuccess(
+        t("personeelToevoegenModal.success", { firstName: formData.voornaam, lastName: formData.achternaam, role: t(`personeelToevoegenModal.roles.${formData.functie}`) })
+      );
 
       setFormData({
         voornaam: "",
@@ -111,7 +113,7 @@ function VerantwoordelijkePersoneel() {
       }, 3000);
     } catch (err) {
       console.error("Add staff error:", err);
-      setError("Kan geen verbinding maken met de server");
+      setError(t("personeelToevoegenModal.errors.serverConnection"));
     } finally {
       setLoading(false);
     }
@@ -222,7 +224,7 @@ function VerantwoordelijkePersoneel() {
                   <option value="">{t("verantwoordelijkePersoneel.selectFunction")}</option>
                   {functieOpties.map((optie) => (
                     <option key={optie} value={optie}>
-                      {optie}
+                      {t(`personeelToevoegenModal.roles.${optie}`)}
                     </option>
                   ))}
                 </select>

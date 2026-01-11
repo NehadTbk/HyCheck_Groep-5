@@ -70,7 +70,7 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
 
       const role = functieToRoleMap[formData.functie];
 
-      const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001");
+      const API_BASE_URL = import.meta.env.VITE_API_URL;
 
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
@@ -96,9 +96,9 @@ const PersoneelToevoegenModal = ({ isOpen, onClose, onCreated }) => {
       }
 
       setSuccess(
-        `Persoonslid ${formData.voornaam} ${formData.achternaam} toegevoegd als ${formData.functie}!`
+        t("personeelToevoegenModal.success", {firstName: formData.voornaam,lastName: formData.achternaam,role: t(`personeelToevoegenModal.roles.${formData.functie}`)
+        })
       );
-
       setFormData({
         voornaam: "",
         achternaam: "",
