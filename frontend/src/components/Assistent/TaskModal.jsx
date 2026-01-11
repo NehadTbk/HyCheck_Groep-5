@@ -13,6 +13,9 @@ const typeColors = {
 
 
 function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
+  const { t } = useTranslation();
+  const { language, setLanguage } = useLanguage();
+
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [standardOptions, setStandardOptions] = useState([]);
@@ -26,7 +29,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
   const params = new URLSearchParams({
     date: new Date().toISOString().split("T")[0]
   });
-  fetch(`${API_BASE_URL}/api/boxes/${box.id}/tasks?${params}`, {
+  fetch(`${API_BASE_URL}/api/assistant/boxes/${box.id}/tasks?${params}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -54,17 +57,27 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
 
   // Haal de common options op uit de database zodra de modal opent
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/tasks/options`)
-      .then((res) => res.json())
-      .then((data) => setStandardOptions(data))
-      .catch((err) => console.error("Fout bij ophalen opties:", err));
-  }, [API_BASE_URL]);
+  const token = localStorage.getItem("token"); // Haal token op
+  fetch(`${API_BASE_URL}/api/tasks/options`, {
+    headers: { 
+      Authorization: `Bearer ${token}` // Voeg deze header toe
+    }
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Niet geautoriseerd");
+      return res.json();
+    })
+    .then((data) => {
+      // Zorg dat het altijd een array is om de .map crash te voorkomen
+      setStandardOptions(Array.isArray(data) ? data : []); 
+    })
+    .catch((err) => {
+      console.error("Fout bij ophalen opties:", err);
+      setStandardOptions([]); // Zet op lege array bij fout
+    });
+}, [API_BASE_URL]);
 
-  if (!box) return null;
-
-  const { language, setLanguage } = useLanguage();
-  const { t } = useTranslation();
-
+if (!box) return null;
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-gray-200">
@@ -199,11 +212,12 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
             <button
               type="button"
               className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-xl text-lg"
-              onClick={() => {
-
-                onSave?.(box.id, selectedOptionId, reason);
+              onClick={async () => {
+                // Stuur de geselecteerde optie of de vrije tekst mee
+                await onSave?.(box.id, selectedOptionId, reason);
+                onClose(); // Sluit de modal na opslaan
               }}
-            >
+              >
               Opslaan & Sluiten
             </button>
           </div>

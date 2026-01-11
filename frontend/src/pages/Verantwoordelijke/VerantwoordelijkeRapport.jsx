@@ -24,33 +24,29 @@ function VerantwoordelijkeRapport() {
 
     useEffect(() => {
     const fetchRapporten = async () => {
-        try {
-            const response = await fetch("http://localhost:5001/api/reports");
-            const data = await response.json();
-
-            if (Array.isArray(data)) {
-                const geformatteerdeData = data.map(item => ({
-                    ...item,
-                    datum: item.datum ? item.datum.split('T')[0] : "Geen datum"
-                }));
-                setRapporten(geformatteerdeData);
-            } else {
-                console.error("Ontvangen data is geen array:", data);
-                setRapporten([]);
+    try {
+        const token = localStorage.getItem("token"); // Haal het token op
+        
+        const response = await fetch("http://localhost:5001/api/reports", {
+            headers: {
+                "Authorization": `Bearer ${token}` // Voeg de header toe
             }
+        });
+        
+        const data = await response.json();
 
-            const geformatteerdeData = data.map(item => ({
-                ...item,
-                datum: item.datum ? item.datum.split('T')[0] : "Geen datum"
-            }));
-
-            setRapporten(geformatteerdeData);
-            setLoading(false);
-        } catch (error) {
-            console.error("Fout bij ophalen:", error);
-            setLoading(false);
+        if (Array.isArray(data)) {
+            setRapporten(data);
+        } else {
+            console.error("Fout van server:", data.message);
+            setRapporten([]);
         }
-    };
+        setLoading(false);
+    } catch (error) {
+        console.error("Fout bij ophalen:", error);
+        setLoading(false);
+    }
+};
 
     
     fetchRapporten(); 
