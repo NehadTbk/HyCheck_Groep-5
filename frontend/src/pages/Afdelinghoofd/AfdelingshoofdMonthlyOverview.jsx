@@ -4,6 +4,8 @@ import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import MonthlyProgressCard from "../../components/cards/ProgressCard";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
 
@@ -52,7 +54,7 @@ function normalizeMonthData(apiData, year) {
 
 function AfdelingshoofdMonthlyOverview() {
   const token = useMemo(() => localStorage.getItem("token"), []);
-
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
 
@@ -101,82 +103,72 @@ function AfdelingshoofdMonthlyOverview() {
   }, [year, token]);
 
   const handleDownloadPDF = async (monthName, monthIndex) => {
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/reports?month=${monthIndex + 1}&year=${year}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
+  // Gebruik de sleutels die exact in je fr.json/nl.json staan
+  const MONTH_KEYS = ["january", "february", "march", "april", "may", "june", 
+                      "july", "august", "september", "october", "november", "december"];
+  
+  // Vertaal de maandnaam dynamisch op basis van de geselecteerde taal op de site
+  const translatedMonth = t(`progressCard.months.${MONTH_KEYS[monthIndex]}`);
 
-      if (!Array.isArray(data) || data.length === 0) {
-        setInfoMsg(`Geen gegevens gevonden voor ${monthName} ${year}`);
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/reports?month=${monthIndex + 1}&year=${year}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await res.json();
 
-        setTimeout(() => {
-                setInfoMsg("");
-            }, 3000);
-            
-        return;
-      }
-
-      const doc = new jsPDF();
-      const img = new Image();
-      img.src = '/hycheck-logo.png'; 
-
-      img.onload = () => {
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const imgWidth = 20;
-        const imgHeight = 20;
-        const margin = 14;
-
-        
-        doc.addImage(img, 'PNG', pageWidth - imgWidth - margin, 10, imgWidth, imgHeight);
-
-       
-        doc.setFontSize(16);
-        doc.text(`Maandrapportage: ${monthName} ${year}`, margin, 20);
-
-        const tableColumn = ["Datum", "Box", "Assistent", "Status", "Reden"];
-        const tableRows = data.map(item => [
-          item.datum,
-          item.box,
-          item.assistent,
-          item.status,
-          item.reden || "-"
-        ]);
-
-        autoTable(doc, {
-          startY: 35,
-          head: [tableColumn],
-          body: tableRows,
-          theme: 'grid',
-          styles: {
-            fontSize: 8,
-            cellPadding: 3,
-            valign: 'middle',
-            overflow: 'linebreak'
-          },
-          headStyles: {
-            fillColor: [74, 33, 68], 
-            textColor: 255,
-            fontStyle: 'bold',
-            halign: 'center'
-          },
-          columnStyles: {
-            0: { cellWidth: 25 },
-            1: { cellWidth: 15, halign: 'center' },
-            4: { cellWidth: 50 }
-          },
-          margin: { left: 15, right: 15 }
-        });
-
-        doc.save(`Rapportage_${monthName}_${year}.pdf`);
-      };
-    } catch (err) {
-      console.error("PDF Export fout:", err);
-      setInfoMsg("Er is een fout opgetreden bij het maken van de PDF.");
+    if (!Array.isArray(data) || data.length === 0) {
+      // Gebruik de nieuwe 'reports.noResults' sleutel voor de rode melding
+      setInfoMsg(`${t("reports.noResults")} (${translatedMonth} ${year})`);
       setTimeout(() => setInfoMsg(""), 3000);
+      return;
     }
-  };
+
+    const doc = new jsPDF();
+    const img = new Image();
+    img.src = '/hycheck-logo.png'; 
+
+    img.onload = () => {
+      // Logo rechtsboven plaatsen
+      doc.addImage(img, 'PNG', doc.internal.pageSize.getWidth() - 34, 10, 20, 20);
+
+      // Titel vertalen (bijv. "Maandrapportage" of "Rapport mensuel")
+      doc.setFontSize(16);
+      doc.text(`${t("reports.title")}: ${translatedMonth} ${year}`, 14, 20);
+
+      // Tabelkoppen vertalen met je nieuwe 'reports' keys
+      const tableColumn = [
+        t("reports.date"),
+        t("reports.box"),
+        t("reports.assistant"),
+        t("reports.status"),
+        t("reports.reason")
+      ];
+
+      const tableRows = data.map(item => [
+        item.datum,
+        item.box,
+        item.assistent,
+        // Status vertalen: check de waarde en kies de juiste Franse/Nederlandse term
+        item.status === "Voltooid" ? t("boxCard.completed") : t("boxCard.notCompleted"),
+        item.reden || "-"
+      ]);
+
+      autoTable(doc, {
+        startY: 35,
+        head: [tableColumn],
+        body: tableRows,
+        theme: 'grid',
+        headStyles: { fillColor: [74, 33, 68] }, // De paarse kleur uit je dashboard
+        styles: { fontSize: 8 }
+      });
+
+      doc.save(`Rapport_${translatedMonth}_${year}.pdf`);
+    };
+  } catch (err) {
+    console.error("PDF Fout:", err);
+  }
+};
 
   return (
     <PageLayout>

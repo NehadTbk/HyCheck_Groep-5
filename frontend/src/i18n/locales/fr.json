@@ -266,6 +266,17 @@
         "selectYear": "Année",
         "loading": "Chargement…"
     },
+
+    "reports": {
+        "title": "Rapport mensuel",
+        "date": "Date",
+        "box": "Box",
+        "assistant": "Assistant",
+        "status": "Statut",
+        "reason": "Raison",
+        "noResults": "Aucune donnée trouvée"
+ },
+    
     "progressCard": {
         "title": "Boxes terminées en {{month}} nettoyées à",
         "completed": " ",
