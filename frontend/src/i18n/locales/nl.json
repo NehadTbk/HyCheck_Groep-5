@@ -109,7 +109,8 @@
         "completedSubtitle": "Boxen schoongemaakt",
         "openstaand": "Openstaand",
         "pendingSubtitle": "Boxen nog te doen",
-        "assignedBoxes": "Mijn toegewezen boxen"
+        "assignedBoxes": "Mijn toegewezen boxen",
+        "loading": "Bezig met laden…"
     },
     "taskModal": {
         "reasonOptions": "Standaard redenen:",
@@ -309,5 +310,34 @@
             "weekly": "Elke week",
             "monthly": "Elke maand"
         }
+    },
+    "tags": {
+        "all": "Alle",
+        "morning": "Ochtend",
+        "evening": "Avond",
+        "weekly": "Wekelijks",
+        "monthly": "Maandelijks"
+    },
+    "status": {
+        "all": "Alles",
+        "open": "Openstaand",
+        "completed": "Voltooid"
+    },
+    "verantwoordelijkePersoneel": {
+        "title": "Mijn personeel",
+        "addPersonnelButton": "+ Personeel toevoegen",
+        "secondTitle": "Nieuw Personeelslid",
+        "firstName": "Voornaam:",
+        "lastName": "Achternaam:",
+        "email": "E-mailadres:",
+        "function": "Functie:",
+        "selectFunction": "Kies een functie",
+        "addNote": "Een tijdelijk wachtwoord wordt automatisch gegenereerd.",
+        "cancelButton": "Annuleren",
+        "addingPersonnel": "Bezig met toevoegen...",
+        "addPersonnel": "Toevoegen",
+        "firstNamePlaceholder": "bv. Léa",
+        "lastNamePlaceholder": "bv. Van Langenhove",
+        "emailPlaceholder": "bv. lea@chubrugmann.be"
     }
 }

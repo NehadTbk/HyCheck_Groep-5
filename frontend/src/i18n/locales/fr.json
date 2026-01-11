@@ -104,7 +104,8 @@
         "completedSubtitle": "Box nettoyées",
         "openstaand": "En attente",
         "pendingSubtitle": "Box en attente",
-        "assignedBoxes": "Mes box assignées"
+        "assignedBoxes": "Mes box assignées",
+        "loading": "Chargement…"
     },
     "taskModal": {
         "reasonOptions": "Raisons standard :",
@@ -130,7 +131,7 @@
         }
     },
     "assistentBoxen": {
-        "allBoxes": "Toutes les boîtes"
+        "allBoxes": "Tous les boxes"
     },
     "historyAll": {
         "title": "Détails",
@@ -304,5 +305,34 @@
             "weekly": "Hebdomadaire",
             "monthly": "Mensuel"
         }
+    },
+    "tags": {
+        "all": "Toutes",
+        "morning": "Matin",
+        "evening": "Soir",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel"
+    },
+    "status": {
+        "all": "Tous",
+        "open": "En attente",
+        "completed": "Complété"
+    },
+    "verantwoordelijkePersoneel": {
+        "title": "Mon personnel",
+        "addPersonnelButton": "+ Ajouter du personnel",
+        "secondTitle": "Nouveau membre du personnel",
+        "firstName": "Prénom:",
+        "lastName": "Nom:",
+        "email": "Adresse e-mail:",
+        "function": "Fonction:",
+        "selectFunction": "Choisir une fonction",
+        "addNote": "Un mot de passe temporaire sera généré automatiquement.",
+        "cancelButton": "Annuler",
+        "addingPersonnel": "Ajout en cours...",
+        "addPersonnel": "Ajouter",
+        "firstNamePlaceholder": "ex. Léa",
+        "lastNamePlaceholder": "ex. Van Langenhove",
+        "emailPlaceholder": "ex. lea@chubrugmann.be"
     }
 }
