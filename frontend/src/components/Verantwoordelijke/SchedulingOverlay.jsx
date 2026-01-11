@@ -7,28 +7,28 @@ import { useLanguage } from "../../i18n/useLanguage";
 
 const TASK_TYPES = {
   ochtend: {
-    label: "Ochtend",
+    labelKey: "taskTypes.ochtend",
     color: "bg-blue-100 text-blue-700 border-blue-300",
     defaultStart: "08:00",
     defaultEnd: "12:00",
     useTime: true,
   },
   avond: {
-    label: "Avond",
+    labelKey: "taskTypes.avond",
     color: "bg-purple-100 text-purple-700 border-purple-300",
     defaultStart: "13:00",
     defaultEnd: "17:00",
     useTime: true,
   },
   wekelijks: {
-    label: "Wekelijks",
+    labelKey: "taskTypes.wekelijks",
     color: "bg-orange-100 text-orange-700 border-orange-300",
     defaultStart: new Date().toISOString().slice(0, 10),
     defaultEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
     useTime: false,
   },
   maandelijks: {
-    label: "Maandelijks",
+    labelKey: "taskTypes.maandelijks",
     color: "bg-yellow-100 text-yellow-700 border-yellow-300",
     defaultStart: new Date().toISOString().slice(0, 10),
     defaultEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
@@ -251,11 +251,10 @@ export default function SchedulingOverlay() {
     <div className="max-w-7xl mx-auto bg-white p-4 rounded-lg shadow-lg space-y-3">
       {/* Notification */}
       {notification && (
-        <div className={`flex items-center justify-between p-3 rounded-lg ${
-          notification.type === 'success'
+        <div className={`flex items-center justify-between p-3 rounded-lg ${notification.type === 'success'
             ? 'bg-green-100 text-green-800 border border-green-300'
             : 'bg-red-100 text-red-800 border border-red-300'
-        }`}>
+          }`}>
           <div className="flex items-center gap-2">
             {notification.type === 'success' ? <Check size={18} /> : <X size={18} />}
             <span className="font-medium">{notification.message}</span>
@@ -279,20 +278,19 @@ export default function SchedulingOverlay() {
           <div>
             <h3 className="font-semibold text-sm mb-2">{t("schedulingOverlay.selectTaskTypes")}</h3>
             <div className="grid grid-cols-2 gap-2">
-              {Object.entries(TASK_TYPES).map(([key, { label, color }]) => (
+              {Object.entries(TASK_TYPES).map(([key, { labelKey, color }]) => (
                 <button
                   key={key}
                   onClick={() => toggleTaskType(key)}
-                  className={`p-2 rounded border-2 text-center transition font-medium text-sm ${
-                    selectedTaskTypes.includes(key)
+                  className={`p-2 rounded border-2 text-center transition font-medium text-sm ${selectedTaskTypes.includes(key)
                       ? color + " scale-105 shadow-sm"
                       : "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
-                  }`}
+                    }`}
                 >
                   {selectedTaskTypes.includes(key) && (
                     <CheckCircle2 className="inline mr-1" size={14} />
                   )}
-                  {label}
+                  {t(labelKey)}
                 </button>
               ))}
             </div>
@@ -313,7 +311,7 @@ export default function SchedulingOverlay() {
                 key={taskType}
                 className={`p-2 rounded border ${TASK_TYPES[taskType].color}`}
               >
-                <div className="font-medium mb-1 text-xs">{TASK_TYPES[taskType].label}</div>
+                <div className="font-medium mb-1 text-xs">{TASK_TYPES[taskType].labelKey}</div>
                 <div className="flex items-center gap-1 text-xs">
                   <input
                     type={TASK_TYPES[taskType].useTime ? "time" : "date"}
@@ -350,11 +348,10 @@ export default function SchedulingOverlay() {
                 <button
                   key={assistant}
                   onClick={() => setSelectedAssistant(assistant)}
-                  className={`p-2 rounded border text-center transition text-sm ${
-                    selectedAssistant === assistant
+                  className={`p-2 rounded border text-center transition text-sm ${selectedAssistant === assistant
                       ? "bg-[#582F5B] text-white border-[#582F5B]"
                       : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                  }`}
+                    }`}
                 >
                   {assistant}
                 </button>
@@ -371,11 +368,10 @@ export default function SchedulingOverlay() {
                   <button
                     key={dentist}
                     onClick={() => setSelectedDentist(dentist)}
-                    className={`p-2 rounded border text-center transition text-sm ${
-                      selectedDentist === dentist
+                    className={`p-2 rounded border text-center transition text-sm ${selectedDentist === dentist
                         ? "bg-[#582F5B] text-white border-[#582F5B]"
                         : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                    }`}
+                      }`}
                   >
                     {dentist.replace("Dr. ", "")}
                   </button>
@@ -398,11 +394,10 @@ export default function SchedulingOverlay() {
                     key={box.box_id}
                     onClick={() => selectBox(box.name)}
                     title={assigned && boxDentist ? `${boxDentist}` : ""}
-                    className={`p-1.5 rounded border text-center transition text-xs font-medium ${
-                      assigned
+                    className={`p-1.5 rounded border text-center transition text-xs font-medium ${assigned
                         ? "bg-[#582F5B] text-white border-[#582F5B]"
                         : "bg-white border-gray-300 text-gray-700 hover:border-[#582F5B]"
-                    }`}
+                      }`}
                   >
                     {box.name.replace("Box ", "")}
                   </button>
@@ -465,11 +460,10 @@ export default function SchedulingOverlay() {
         <button
           disabled={!canConfirm}
           onClick={handleConfirm}
-          className={`px-6 py-2 rounded font-semibold text-sm transition ${
-            canConfirm
+          className={`px-6 py-2 rounded font-semibold text-sm transition ${canConfirm
               ? "bg-[#582F5B] text-white hover:bg-[#4a254c]"
               : "bg-gray-200 text-gray-400 cursor-not-allowed"
-          }`}
+            }`}
         >
           {t("schedulingOverlay.confirmAssignments")}
         </button>

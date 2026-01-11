@@ -2,13 +2,19 @@ import React, { useState } from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import { IoMdClose } from "react-icons/io";
 import { FaRegTrashAlt } from "react-icons/fa";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
-// ✅ FIX: correct casing (Linux-safe)
+// FIX: correct casing (Linux-safe)
 import Personeelsregister from "../../components/personeel/PersoneelsRegister";
 
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
 
 function VerantwoordelijkePersoneel() {
+  const {language, setLanguage} = useLanguage();
+  const { t } = useTranslation();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     voornaam: "",
@@ -117,13 +123,13 @@ function VerantwoordelijkePersoneel() {
 
       <div className="p-6 bg-white rounded-xl shadow-lg min-h-[500px]">
         <div className="flex justify-between items-center pb-3 mb-6 border-b border-gray-300">
-          <h1 className="text-3xl font-bold text-gray-800">Mijn Personeel</h1>
+          <h1 className="text-3xl font-bold text-gray-800">{t("verantwoordelijkePersoneel.title")}</h1>
 
           <button
             onClick={openModal}
             className="bg-[#5C2D5F] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#4A2144] transition-colors flex items-center space-x-2"
           >
-            <span className="hidden sm:inline">Personeel toevoegen</span>
+            <span className="hidden sm:inline">{t("verantwoordelijkePersoneel.addPersonnelButton")}</span>
           </button>
         </div>
 
@@ -134,7 +140,7 @@ function VerantwoordelijkePersoneel() {
         <div className="fixed inset-0  bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
-              <h2 className="text-2xl font-bold">Nieuw Personeelslid</h2>
+              <h2 className="text-2xl font-bold">{t("verantwoordelijkePersoneel.secondTitle")}</h2>
               <button onClick={closeModal} className="text-gray-600 hover:text-gray-900" disabled={loading}>
                 <IoMdClose size={24} />
               </button>
@@ -151,7 +157,7 @@ function VerantwoordelijkePersoneel() {
               <div className="flex space-x-4">
                 <div className="flex-1">
                   <label htmlFor="voornaam" className="block text-sm font-medium text-gray-700 mb-1">
-                    Voornaam:
+                    {t("verantwoordelijkePersoneel.firstName")}
                   </label>
                   <input
                     type="text"
@@ -160,14 +166,14 @@ function VerantwoordelijkePersoneel() {
                     value={formData.voornaam}
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
-                    placeholder="bv. Van Langenhove"
+                    placeholder={t("verantwoordelijkePersoneel.firstNamePlaceholder")}
                     required
                     disabled={loading}
                   />
                 </div>
                 <div className="flex-1">
                   <label htmlFor="achternaam" className="block text-sm font-medium text-gray-700 mb-1">
-                    Achternaam:
+                    {t("verantwoordelijkePersoneel.lastName")}
                   </label>
                   <input
                     type="text"
@@ -176,7 +182,7 @@ function VerantwoordelijkePersoneel() {
                     value={formData.achternaam}
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
-                    placeholder="bv. Léa"
+                    placeholder={t("verantwoordelijkePersoneel.lastNamePlaceholder")}
                     required
                     disabled={loading}
                   />
@@ -185,7 +191,7 @@ function VerantwoordelijkePersoneel() {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  E-mailadres:
+                  {t("verantwoordelijkePersoneel.email")}
                 </label>
                 <input
                   type="email"
@@ -194,7 +200,7 @@ function VerantwoordelijkePersoneel() {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full border border-gray-300 p-2 rounded-lg focus:ring-[#A78BFA] focus:border-[#A78BFA]"
-                  placeholder="bv. lea@chubrugmann.be"
+                  placeholder={t("verantwoordelijkePersoneel.emailPlaceholder")}
                   required
                   disabled={loading}
                 />
@@ -202,7 +208,7 @@ function VerantwoordelijkePersoneel() {
 
               <div>
                 <label htmlFor="functie" className="block text-sm font-medium text-gray-700 mb-1">
-                  Functie:
+                  {t("verantwoordelijkePersoneel.function")}
                 </label>
                 <select
                   id="functie"
@@ -213,7 +219,7 @@ function VerantwoordelijkePersoneel() {
                   required
                   disabled={loading}
                 >
-                  <option value="">Functie:</option>
+                  <option value="">{t("verantwoordelijkePersoneel.selectFunction")}</option>
                   {functieOpties.map((optie) => (
                     <option key={optie} value={optie}>
                       {optie}
@@ -223,7 +229,7 @@ function VerantwoordelijkePersoneel() {
               </div>
 
               <div className="text-xs text-gray-500 mt-2">
-                Een tijdelijk wachtwoord wordt automatisch gegenereerd.
+                {t("verantwoordelijkePersoneel.addNote")}
               </div>
 
               <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
@@ -233,7 +239,7 @@ function VerantwoordelijkePersoneel() {
                   disabled={loading}
                   className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400"
                 >
-                  Annuleren
+                  {t("verantwoordelijkePersoneel.cancelButton")}
                 </button>
 
                 <button
@@ -241,7 +247,7 @@ function VerantwoordelijkePersoneel() {
                   disabled={loading}
                   className="bg-[#5C2D5F] text-white py-2 px-4 rounded-lg hover:bg-[#4A2144] transition-colors"
                 >
-                  {loading ? "Bezig met toevoegen..." : "Toevoegen"}
+                  {loading ? t("verantwoordelijkePersoneel.addingPersonnel") : t("verantwoordelijkePersoneel.addPersonnel")}
                 </button>
               </div>
             </form>
