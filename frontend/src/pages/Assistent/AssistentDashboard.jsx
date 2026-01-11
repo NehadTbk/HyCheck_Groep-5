@@ -18,22 +18,26 @@ function AssistentDashboard() {
   const [tasksState, setTasksState] = useState({});
   const { t } = useTranslation();
   useLanguage();
-
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const params = new URLSearchParams({
-          date: new Date().toISOString().split("T")[0],
-        });
 
-        const res = await fetch(`${API_BASE_URL}/api/assistant/dashboard?${params}`, {
+        // TEST LOGICA: Gebruik morgen (maandag) ipv vandaag (zondag)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateString = tomorrow.toISOString().split('T')[0];
+
+        // Gebruik de dateString variabele in de URL
+        const res = await fetch(`${API_BASE_URL}/api/assistant/today-assignments?date=${dateString}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!res.ok) throw new Error("Failed to fetch dashboard");
+
         const data = await res.json();
         setBoxes(data);
+
       } catch (err) {
         console.error("Error loading dashboard:", err);
       } finally {

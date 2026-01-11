@@ -4,18 +4,16 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/**
- * Map DB shift_task_groups.group_type -> task_type.category
- */
-const GROUP_TO_CATEGORY = {
+const GROUP_TO_DB_CATEGORY = {
   ochtend: "morning",
   avond: "evening",
   wekelijks: "weekly",
   maandelijks: "monthly",
 };
 
-// --- Helper Functions ---
 
+
+// --- Helper functies ---
 async function getOrCreateSession(assignmentId, isoDate) {
   const [existing] = await db.query(
     `SELECT session_id FROM cleaning_session 
@@ -37,25 +35,27 @@ async function ensureTaskStatuses(sessionId, categories) {
   if (!Array.isArray(categories) || categories.length === 0) return;
 
   const [taskTypes] = await db.query(
-    `SELECT task_type_id FROM task_type WHERE is_required = 1 AND category IN (?)`,
+    `SELECT task_type_id, category FROM task_type WHERE is_required = 1 AND category IN (?)`,
     [categories]
   );
 
-  const neededIds = taskTypes.map((t) => Number(t.task_type_id)).filter(Boolean);
-  if (neededIds.length === 0) return;
+  const neededIds = taskTypes.map(t => Number(t.task_type_id)).filter(Boolean);
+  if (!neededIds.length) return;
 
   const [existing] = await db.query(
     `SELECT task_type_id FROM cleaning_task_status WHERE session_id = ?`,
     [sessionId]
   );
-  const existingSet = new Set(existing.map((r) => Number(r.task_type_id)));
+  const existingSet = new Set(existing.map(r => Number(r.task_type_id)));
 
-  const toInsert = neededIds.filter((id) => !existingSet.has(id));
-  if (toInsert.length === 0) return;
+  const toInsert = neededIds.filter(id => !existingSet.has(id));
+  if (!toInsert.length) return;
 
-  const values = toInsert.map((id) => [sessionId, id, 0, null, null, null]);
+  const values = toInsert.map(id => [sessionId, id, 0, null, null, null]);
   await db.query(
-    `INSERT INTO cleaning_task_status (session_id, task_type_id, completed, completed_at, selected_comment_option_id, custom_comment) VALUES ?`,
+    `INSERT INTO cleaning_task_status 
+     (session_id, task_type_id, completed, completed_at, selected_comment_option_id, custom_comment) 
+     VALUES ?`,
     [values]
   );
 }
@@ -79,87 +79,88 @@ async function recomputeAndMaybeCompleteSession(sessionId) {
   return { total, done };
 }
 
-// --- Routes ---
-
-/**
- * GET /api/assistant/today-assignments
- * Returns current assistant's assignments for today + progress.
- */
+// --- Verbeterde Route in je backend controller ---
 router.get("/today-assignments", authMiddleware, async (req, res) => {
   try {
     const userId = req.user?.id;
+    const date = req.query.date;
+
+    if (!date) {
+      return res.status(400).json({ message: "date query param is required" });
+    }
+
     const [rows] = await db.query(
-      `SELECT sa.assignment_id, b.box_id, b.name AS box_name, 
-              CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
-              s.shift_date, sa.assignment_start, sa.assignment_end,
-              GROUP_CONCAT(DISTINCT stg.group_type ORDER BY stg.group_type) AS group_types
-       FROM shift_assignments sa
-       INNER JOIN shift s ON s.shift_id = sa.shift_id
-       INNER JOIN box b ON b.box_id = sa.box_id
-       LEFT JOIN users d ON d.user_id = sa.dentist_user_id
-       LEFT JOIN shift_task_groups stg ON stg.assignment_id = sa.assignment_id
-       WHERE sa.user_id = ? AND s.shift_date = CURDATE()
-       GROUP BY sa.assignment_id
-       ORDER BY sa.assignment_start ASC`,
-      [userId]
+      `
+      SELECT sa.assignment_id, b.box_id, b.name AS box_name, 
+             CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
+             s.shift_date,
+             GROUP_CONCAT(DISTINCT stg.group_type ORDER BY stg.group_type) AS group_types
+      FROM shift_assignments sa
+      INNER JOIN shift s ON s.shift_id = sa.shift_id
+      INNER JOIN box b ON b.box_id = sa.box_id
+      LEFT JOIN users d ON d.user_id = sa.dentist_user_id
+      LEFT JOIN shift_task_groups stg ON stg.assignment_id = sa.assignment_id
+      WHERE sa.user_id = ?
+        AND s.shift_date = ?
+      GROUP BY sa.assignment_id
+      ORDER BY sa.assignment_start ASC
+      `,
+      [userId, date]
     );
 
-    const out = [];
+    const output = [];
     for (const r of rows) {
       const assignmentId = Number(r.assignment_id);
-      const isoDate = String(r.shift_date);
-      const groups = (r.group_types || "").split(",").map(x => x.trim()).filter(Boolean);
-      const categories = [...new Set(groups.map(g => GROUP_TO_CATEGORY[g]).filter(Boolean))];
+      const boxId = Number(r.box_id);
 
+      const isoDate = r.shift_date instanceof Date
+        ? r.shift_date.toISOString().split('T')[0]
+        : String(r.shift_date).split(' ')[0];
+
+      // 1. Haal de ruwe groepen op (ochtend, avond)
+      const rawGroups = (r.group_types || "").split(",").map(g => g.trim().toLowerCase()).filter(Boolean);
+
+      // 2. Map naar DB categorieën (morning, evening) voor de query
+      const dbCategories = rawGroups.map(g => GROUP_TO_DB_CATEGORY[g]).filter(Boolean);
+
+      // 3. Map naar Display categorieën (Ochtend, Avond) voor de frontend tags
+      const displayCategories = rawGroups.map(g => {
+        return g.charAt(0).toUpperCase() + g.slice(1);
+      });
+
+      // 4. Zorg dat de sessie bestaat en de taken zijn aangemaakt op basis van DB categories
       const sessionId = await getOrCreateSession(assignmentId, isoDate);
-      await ensureTaskStatuses(sessionId, categories);
+      if (dbCategories.length > 0) {
+        await ensureTaskStatuses(sessionId, dbCategories);
+      }
+
+      // 5. Bereken de resultaten
       const { total, done } = await recomputeAndMaybeCompleteSession(sessionId);
 
-      out.push({
+      // EXTRA CHECK: Als total 0 is, probeer te tellen uit task_schedules
+      let finalTaskCount = total;
+      if (total === 0) {
+        const [[schCount]] = await db.query(
+          `SELECT COUNT(*) as count FROM task_schedules WHERE box_id = ?`, [boxId]
+        );
+        finalTaskCount = schCount.count;
+      }
+
+      output.push({
         id: assignmentId,
-        boxId: Number(r.box_id),
+        boxId: boxId,
         name: r.box_name,
-        dentist: r.dentist_name || "-",
-        tasksCount: total,
+        dentist: r.dentist_name || "Geen arts",
+        tasksCount: finalTaskCount,
         doneCount: done,
-        status: (total > 0 && done === total) ? "voltooid" : "openstaand",
-        types: groups.map(g => g.charAt(0).toUpperCase() + g.slice(1)), // Capitalize
+        status: (finalTaskCount > 0 && done === finalTaskCount) ? "voltooid" : (done > 0 ? "gedeeltelijk" : "openstaand"),
+        types: displayCategories,
       });
     }
-    res.json(out);
+
+    res.json(output);
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/**
- * POST /api/assistant/tasks/toggle
- */
-router.post("/tasks/toggle", authMiddleware, async (req, res) => {
-  try {
-    const { assignment_id: assignmentId, task_type_id: taskTypeId, completed: isTaskDone } = req.body;
-    const completed = isTaskDone ? 1 : 0;
-
-    const [check] = await db.query(
-      `SELECT sa.assignment_id, s.shift_date FROM shift_assignments sa
-       INNER JOIN shift s ON s.shift_id = sa.shift_id
-       WHERE sa.assignment_id = ? AND sa.user_id = ? LIMIT 1`,
-      [assignmentId, req.user.id]
-    );
-
-    if (!check.length) return res.status(404).json({ message: "Assignment not found" });
-
-    const sessionId = await getOrCreateSession(assignmentId, String(check[0].shift_date));
-    
-    await db.query(
-      `UPDATE cleaning_task_status SET completed = ?, completed_at = ?
-       WHERE session_id = ? AND task_type_id = ?`,
-      [completed, completed ? new Date() : null, sessionId, taskTypeId]
-    );
-
-    const counts = await recomputeAndMaybeCompleteSession(sessionId);
-    res.json({ ok: true, ...counts });
-  } catch (err) {
+    console.error("Error fetching today-assignments:", err);
     res.status(500).json({ error: err.message });
   }
 });

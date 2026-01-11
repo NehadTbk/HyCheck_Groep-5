@@ -4,7 +4,7 @@ import BoxCard from "./BoxCard";
 // Voeg onBoxCheck en onBoxClick toe aan de props
 function BoxList({ boxes, onBoxCheck, onBoxClick }) {
   const [statusFilter, setStatusFilter] = useState("alles");
-  const [typeFilter, setTypeFilter] = useState("alle"); 
+  const [typeFilter, setTypeFilter] = useState("alle");
 
   const statusOptions = [
     { key: "alles", label: "Alles" },
@@ -30,6 +30,8 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
     if (typeFilter !== "alle" && !box.types.includes(typeFilter)) {
       return false;
     }
+    if (statusFilter === "gedeeltelijk" && box.status !== "gedeeltelijk") return false;
+
     return true;
   });
 
@@ -102,11 +104,11 @@ function BoxList({ boxes, onBoxCheck, onBoxClick }) {
         "
       >
         {filtered.map((box) => (
-          <BoxCard 
-            key={box.id} 
-            box={box} 
-            onCheck={onBoxCheck} 
-            onClick={onBoxClick} 
+          <BoxCard
+            key={box.id}
+            box={box}
+            onCheck={onBoxCheck}
+            onClick={onBoxClick}
           />
         ))}
       </div>
