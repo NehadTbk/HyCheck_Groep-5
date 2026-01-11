@@ -5,6 +5,15 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
+        const { month, year } = req.query;
+        let whereClause = "";
+        const queryParams = [];
+
+        
+        if (month && year) {
+            whereClause = "WHERE MONTH(cts.created_at) = ? AND YEAR(cts.created_at) = ?";
+            queryParams.push(month, year);
+        }
         const query =  `
     SELECT 
         cts.status_id AS id, 
