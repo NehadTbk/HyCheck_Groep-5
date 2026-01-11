@@ -9,6 +9,11 @@ export const authMiddleware = async (req, res, next) => {
     }
     const token = authHeader.split(" ")[1];
 
+    // Check for invalid token values
+    if (!token || token === "undefined" || token === "null" || token.length < 10) {
+        return res.status(401).json({ message: "Invalid token format" });
+    }
+
     try {
         // Check if token is blacklisted
         const [blacklisted] = await pool.query(
