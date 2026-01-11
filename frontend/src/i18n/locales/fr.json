@@ -95,7 +95,9 @@
     "periodicStatsCard": {
         "title": "Nettoyage périodique",
         "weekly": "Hebdomadaire :",
-        "monthly": "Mensuel :"
+        "monthly": "Mensuel :",
+        "noWeekly": "Aucune tâche hebdomadaire",
+        "noMonthly": "Aucune tâche mensuelle"
     },
     "assistentDashboard": {
         "todayCompleted": "Terminé aujourd'hui",

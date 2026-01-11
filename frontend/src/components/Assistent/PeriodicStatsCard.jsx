@@ -1,16 +1,11 @@
 // src/components/cards/PeriodicStatsCard.jsx
 import React from "react";
 import { IoCalendarOutline } from "react-icons/io5";
-import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
-import { useLanguage } from "../../i18n/useLanguage";
 
 function PeriodicStatsCard({
-  title,
-  weeklyLabel,
-  weeklyDate,
-  monthlyLabel,
-  monthlyDate,
+  weeklyData,
+  monthlyData,
   icon = "calendar",
 }) {
   const iconMap = {
@@ -19,7 +14,6 @@ function PeriodicStatsCard({
   };
 
   const IconComponent = iconMap[icon] || iconMap.default;
-  const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
 
   return (
@@ -34,11 +28,19 @@ function PeriodicStatsCard({
       <div className="space-y-1 text-sm">
         <p>
           <span className="text-gray-600">{t("periodicStatsCard.weekly")} </span>
-          <span className="font-semibold text-gray-900">{weeklyDate}</span>
+          {weeklyData ? (
+            <span className="font-semibold text-gray-900">{weeklyData.date}</span>
+          ) : (
+            <span className="text-gray-400 italic">{t("periodicStatsCard.noWeekly")}</span>
+          )}
         </p>
         <p>
           <span className="text-gray-600">{t("periodicStatsCard.monthly")} </span>
-          <span className="font-semibold text-gray-900">{monthlyDate}</span>
+          {monthlyData ? (
+            <span className="font-semibold text-gray-900">{monthlyData.date}</span>
+          ) : (
+            <span className="text-gray-400 italic">{t("periodicStatsCard.noMonthly")}</span>
+          )}
         </p>
       </div>
     </div>

@@ -100,7 +100,9 @@
     "periodicStatsCard": {
         "title": "Periodieke reiniging",
         "weekly": "Wekelijks:",
-        "monthly": "Maandelijks:"
+        "monthly": "Maandelijks:",
+        "noWeekly": "Geen wekelijkse opdracht",
+        "noMonthly": "Geen maandelijkse opdracht"
     },
     "assistentDashboard": {
         "todayCompleted": "Vandaag voltooid",

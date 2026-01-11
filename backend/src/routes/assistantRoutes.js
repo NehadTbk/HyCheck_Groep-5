@@ -164,4 +164,70 @@ router.post("/tasks/toggle", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * GET /api/assistant/upcoming-periodic
+ * Returns the next upcoming wekelijks and maandelijks assignments for the current user.
+ */
+router.get("/upcoming-periodic", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    // Get next upcoming wekelijks assignment
+    const [weeklyRows] = await db.query(
+      `SELECT sa.assignment_id, b.name AS box_name, s.shift_date,
+              sa.assignment_start, sa.assignment_end
+       FROM shift_assignments sa
+       INNER JOIN shift s ON s.shift_id = sa.shift_id
+       INNER JOIN box b ON b.box_id = sa.box_id
+       INNER JOIN shift_task_groups stg ON stg.assignment_id = sa.assignment_id
+       WHERE sa.user_id = ?
+         AND s.shift_date >= CURDATE()
+         AND stg.group_type = 'wekelijks'
+       ORDER BY s.shift_date ASC, sa.assignment_start ASC
+       LIMIT 1`,
+      [userId]
+    );
+
+    // Get next upcoming maandelijks assignment
+    const [monthlyRows] = await db.query(
+      `SELECT sa.assignment_id, b.name AS box_name, s.shift_date,
+              sa.assignment_start, sa.assignment_end
+       FROM shift_assignments sa
+       INNER JOIN shift s ON s.shift_id = sa.shift_id
+       INNER JOIN box b ON b.box_id = sa.box_id
+       INNER JOIN shift_task_groups stg ON stg.assignment_id = sa.assignment_id
+       WHERE sa.user_id = ?
+         AND s.shift_date >= CURDATE()
+         AND stg.group_type = 'maandelijks'
+       ORDER BY s.shift_date ASC, sa.assignment_start ASC
+       LIMIT 1`,
+      [userId]
+    );
+
+    const formatDate = (dateObj) => {
+      if (!dateObj) return null;
+      const date = new Date(dateObj);
+      const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+      const dayName = days[date.getDay()];
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return `${dayName} ${day}/${month}`;
+    };
+
+    res.json({
+      weekly: weeklyRows.length > 0 ? {
+        date: formatDate(weeklyRows[0].shift_date),
+        boxName: weeklyRows[0].box_name,
+      } : null,
+      monthly: monthlyRows.length > 0 ? {
+        date: formatDate(monthlyRows[0].shift_date),
+        boxName: monthlyRows[0].box_name,
+      } : null,
+    });
+  } catch (err) {
+    console.error("GET upcoming-periodic error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
