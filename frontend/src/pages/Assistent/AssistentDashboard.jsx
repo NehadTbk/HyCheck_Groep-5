@@ -16,6 +16,7 @@ function AssistentDashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedBox, setSelectedBox] = useState(null);
   const [tasksState, setTasksState] = useState({});
+  const [periodicData, setPeriodicData] = useState({ weekly: null, monthly: null });
   const { t } = useTranslation();
   useLanguage();
   useEffect(() => {
@@ -46,6 +47,25 @@ function AssistentDashboard() {
     };
 
     fetchBoxes();
+  }, []);
+
+  useEffect(() => {
+    const fetchPeriodicData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE_URL}/api/assistant/upcoming-periodic`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch periodic data");
+        const data = await res.json();
+        setPeriodicData(data);
+      } catch (err) {
+        console.error("Error loading periodic data:", err);
+      }
+    };
+
+    fetchPeriodicData();
   }, []);
 
   const handleToggleTask = (boxId, taskId) => {
@@ -127,8 +147,8 @@ function AssistentDashboard() {
           icon="clock"
         />
         <PeriodicStatsCard
-          weeklyDate="Vrijdag 28/11"
-          monthlyDate="Maandag 17/11"
+          weeklyData={periodicData.weekly}
+          monthlyData={periodicData.monthly}
           icon="calendar"
         />
       </section>
