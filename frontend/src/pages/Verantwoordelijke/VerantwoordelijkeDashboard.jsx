@@ -103,8 +103,8 @@ function VerantwoordelijkeDashboard() {
             // Task completion status
             session_id: assignment.session_id || null,
             session_status: assignment.session_status || null,
-            total_tasks: assignment.total_tasks || 0,
-            done_tasks: assignment.done_tasks || 0,
+            total_tasks: parseInt(assignment.total_tasks, 10) || 0,
+            done_tasks: parseInt(assignment.done_tasks, 10) || 0,
           };
 
           newPlanning[dateKey].push(normalized);

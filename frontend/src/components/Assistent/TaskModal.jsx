@@ -18,7 +18,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
     const token = localStorage.getItem("token");
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const dateString = tomorrow.toISOString().split("T")[0];
+    const dateString = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
 
     fetch(`${API_BASE_URL}/api/tasks/boxes/${assignmentId}/tasks?date=${dateString}`, {
       headers: { Authorization: `Bearer ${token}` }
