@@ -40,15 +40,22 @@ function MijnBoxen() {
       // ✅ Bereken status correct
   const formattedBoxes = data
   .filter(row => row.tasksCount > 0)
-  .map((row) => ({
-    ...row,
-    types: Array.isArray(row.types) ? row.types : row.types?.split(",") || [],
-    status: row.completedCount === row.tasksCount
-      ? "voltooid"
-      : row.completedCount > 0
-        ? "gedeeltelijk"
-        : "openstaand",
-  }));
+  .map((row) => {
+    // Debug: check in je console welke IDs er binnenkomen
+    console.log("Data row:", row); 
+    
+    return {
+      ...row,
+      // Probeer verschillende mogelijke kolomnamen van je backend
+      id: row.assignment_id || row.id || row.box_id, 
+      types: Array.isArray(row.types) ? row.types : row.types?.split(",") || [],
+      status: row.completedCount === row.tasksCount
+        ? "voltooid"
+        : row.completedCount > 0
+          ? "gedeeltelijk"
+          : "openstaand",
+    };
+  });
 
       console.log("Fetched boxes:", formattedBoxes);
       setBoxes(formattedBoxes);
@@ -72,6 +79,10 @@ function MijnBoxen() {
   };
 
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
+    if (!boxId || boxId === "undefined") {
+    alert("Fout: Geen geldige sessie-ID gevonden voor deze box.");
+    return;
+  }
     try {
       const token = localStorage.getItem("token");
       const payload = {

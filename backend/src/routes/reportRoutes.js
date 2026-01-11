@@ -5,21 +5,27 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const query = `
+        const query =  `
     SELECT 
         cts.status_id AS id, 
         DATE_FORMAT(cts.created_at, '%Y-%m-%d') AS datum, 
-        COALESCE(b.name, 'Onbekend') AS box,
-        COALESCE(CONCAT(u.first_name, ' ', u.last_name), 'Onbekende Assistent') AS assistent,
+        -- Zoek box: via assignment, anders fallback naar box_id in de status tabel
+        COALESCE(b.name, CONCAT('Box ', cts.session_id)) AS box,
+        -- Zoek assistent: via assignment, anders fallback naar de laatst ingelogde user
+        COALESCE(
+            CONCAT(u.first_name, ' ', u.last_name),
+            (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE role = 'assistant' LIMIT 1),
+            'Onbekende Assistent'
+        ) AS assistent,
         COALESCE(co.common_comment, cts.custom_comment, '-') AS reden,
         CASE WHEN cts.completed = 1 THEN 'Voltooid' ELSE 'Niet voltooid' END AS status,
-        COALESCE((SELECT name FROM task_type WHERE task_type_id = cts.task_type_id), 'Algemeen') AS soort
+        COALESCE(tt.name, 'Algemeen') AS soort
     FROM cleaning_task_status cts
-    LEFT JOIN cleaning_session cs ON cts.session_id = cs.session_id
-    LEFT JOIN shift_assignments sa ON (cs.assignment_id = sa.assignment_id OR cts.session_id = sa.assignment_id)
+    LEFT JOIN task_type tt ON cts.task_type_id = tt.task_type_id
+    LEFT JOIN comment_option co ON cts.selected_comment_option_id = co.option_id
+    LEFT JOIN shift_assignments sa ON cts.session_id = sa.assignment_id
     LEFT JOIN box b ON sa.box_id = b.box_id
     LEFT JOIN users u ON sa.user_id = u.user_id
-    LEFT JOIN comment_option co ON cts.selected_comment_option_id = co.option_id
     ORDER BY cts.created_at DESC`;
 
         const [results] = await db.query(query);
