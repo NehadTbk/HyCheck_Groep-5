@@ -16,52 +16,34 @@ function MijnBoxen() {
   const { t } = useTranslation();
   useLanguage();
 
+  // Helper voor de datum van morgen
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
   const fetchBoxes = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("Geen token gevonden, login vereist");
 
-      const params = new URLSearchParams({
-        date: new Date().toISOString().split("T")[0],
-      });
+      // Veilige manier om lokale datum van morgen te pakken (YYYY-MM-DD)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const dateString = tomorrow.toLocaleDateString('en-CA'); // Geeft altijd YYYY-MM-DD
 
-      const res = await fetch(`${API_BASE_URL}/api/assistant/all-boxes?${params.toString()}`, {
+      console.log("Fetching for date:", dateString); // Debug check in je browser console
+
+      const res = await fetch(`${API_BASE_URL}/api/assistant/all-boxes?date=${dateString}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || "Fout bij ophalen boxen");
-      }
-
+      if (!res.ok) throw new Error("Fout bij ophalen");
       const data = await res.json();
-
-      // ✅ Bereken status correct
-  const formattedBoxes = data
-  .filter(row => row.tasksCount > 0)
-  .map((row) => {
-    // Debug: check in je console welke IDs er binnenkomen
-    console.log("Data row:", row); 
-    
-    return {
-      ...row,
-      // Probeer verschillende mogelijke kolomnamen van je backend
-      id: row.assignment_id || row.id || row.box_id, 
-      types: Array.isArray(row.types) ? row.types : row.types?.split(",") || [],
-      status: row.completedCount === row.tasksCount
-        ? "voltooid"
-        : row.completedCount > 0
-          ? "gedeeltelijk"
-          : "openstaand",
-    };
-  });
-
-      console.log("Fetched boxes:", formattedBoxes);
-      setBoxes(formattedBoxes);
+      setBoxes(data);
     } catch (err) {
-      console.error("Error fetching boxes: ", err);
-      alert("Fout bij ophalen van boxen: " + err.message);
+      console.error("Error:", err);
     } finally {
       setLoading(false);
     }
@@ -70,27 +52,31 @@ function MijnBoxen() {
   useEffect(() => {
     fetchBoxes();
   }, []);
-
   const handleToggleTask = (boxId, taskId) => {
     setTasksState((prev) => ({
       ...prev,
-      [boxId]: { ...prev[boxId], [taskId]: !prev[boxId]?.[taskId] },
+      [boxId]: {
+        ...prev[boxId],
+        [taskId]: !prev[boxId]?.[taskId]
+      },
     }));
   };
 
   const handleSaveTasks = async (boxId, selectedOptionId, customText) => {
-    if (!boxId || boxId === "undefined") {
-    alert("Fout: Geen geldige sessie-ID gevonden voor deze box.");
-    return;
-  }
+    if (!boxId) {
+      alert("Fout: Geen geldige sessie-ID gevonden.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
+
+      // We sturen de session_id (boxId) en de volledige set aan vinkjes (tasksState)
       const payload = {
-        session_id: Number(boxId),
-        task_type_id: 999, // pas aan naar echte value
+        session_id: boxId,
+        tasks: tasksState[boxId] || {}, // De vinkjes uit de modal
         selected_option_id: selectedOptionId || null,
         custom_text: customText?.trim() || null,
-        completed: 0,
       };
 
       const res = await fetch(`${API_BASE_URL}/api/tasks/update`, {
@@ -108,24 +94,21 @@ function MijnBoxen() {
       }
 
       setSelectedBox(null);
-      fetchBoxes(); // refresh na update
+      fetchBoxes(); // Ververs de lijst voor de nieuwe percentages/status
     } catch (err) {
       console.error("Error saving tasks:", err);
       alert("Fout bij opslaan: " + err.message);
     }
   };
 
+  // Mock function voor de checkbox op de kaart zelf (optioneel)
   const handleBoxCheck = (id) => {
+    // In 'Mijn Boxen' (alle boxen) is direct inchecken meestal niet wenselijk 
+    // zonder modal, maar we behouden de logica voor UI consistentie
     setBoxes((prev) =>
       prev.map((box) => {
         if (box.id !== id) return box;
-        // toggle alleen voltooid/openstaand, behoud gedeeltelijk
-        const newStatus =
-          box.status === "voltooid"
-            ? "openstaand"
-            : box.status === "openstaand"
-              ? "voltooid"
-              : "gedeeltelijk";
+        const newStatus = box.status === "voltooid" ? "openstaand" : "voltooid";
         return { ...box, status: newStatus };
       })
     );
@@ -135,7 +118,9 @@ function MijnBoxen() {
     return (
       <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
         <AssistentNavBar />
-        <p>Loading boxen...</p>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500 animate-pulse text-lg italic">Boxen ophalen...</p>
+        </div>
       </PageLayout>
     );
   }
@@ -143,16 +128,31 @@ function MijnBoxen() {
   return (
     <PageLayout mainClassName="max-w-6xl mx-auto py-8 px-6 space-y-6">
       <AssistentNavBar />
-      <section className="bg-white rounded-xl p-6 shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 pb-3 mb-6 border-b border-gray-300">
-          {t("assistentBoxen.allBoxes")}
-        </h1>
+
+      <section className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+        <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+          <h1 className="text-3xl font-bold text-gray-800">
+            {t("assistentBoxen.allBoxes")}
+          </h1>
+          <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
+            {new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('nl-BE', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })}          </span>
+        </div>
 
         <BoxList
           boxes={boxes}
           onBoxCheck={handleBoxCheck}
           onBoxClick={(box) => setSelectedBox(box)}
         />
+
+        {boxes.length === 0 && (
+          <p className="text-center py-12 text-gray-400 italic">
+            Geen boxen toegewezen voor vandaag.
+          </p>
+        )}
       </section>
 
       {selectedBox && (
@@ -167,6 +167,5 @@ function MijnBoxen() {
     </PageLayout>
   );
 }
-
 
 export default MijnBoxen;
