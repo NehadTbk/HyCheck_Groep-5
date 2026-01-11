@@ -11,13 +11,15 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
 
   // Taken ophalen
   useEffect(() => {
-    if (!box || !box.assignment_id) return; 
+    // box.id is the assignment_id from the backend
+    const assignmentId = box?.id || box?.assignment_id;
+    if (!box || !assignmentId) return;
     const token = localStorage.getItem("token");
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split("T")[0];
 
-    fetch(`${API_BASE_URL}/api/tasks/boxes/${box.assignment_id}/tasks?date=${dateString}`, {
+    fetch(`${API_BASE_URL}/api/tasks/boxes/${assignmentId}/tasks?date=${dateString}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -49,7 +51,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
       .catch(err => console.error("Fout bij taken:", err));
     // LET OP: We voegen box.id toe aan dependency array, maar NIET tasksState
     // anders krijg je een infinite loop!
-  }, [box?.assignment_id]);
+  }, [box?.id]);
 
   // Redenen ophalen uit comment_option
   useEffect(() => {
@@ -88,16 +90,26 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave }) {
                 <div className="space-y-6">
                   {taskByType[type].map((task) => {
                     const isDone = tasksState[box.id]?.[task.id];
+                    const descLines = task.desc ? task.desc.split('\n').filter(line => line.trim()) : [];
                     return (
                       <div key={task.id} className="flex gap-4 cursor-pointer" onClick={() => onToggleTask(box.id, task.id)}>
                         <div className={isDone ? "text-green-500" : "text-gray-300"}>
                           {isDone ? <CheckCircle2 size={26} /> : <Circle size={26} />}
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <h4 className={`font-semibold ${isDone ? "text-gray-400 line-through" : "text-gray-800"}`}>
                             {task.title}
                           </h4>
-                          <p className="text-sm text-gray-500">{task.desc}</p>
+                          {descLines.length > 0 && (
+                            <ul className="mt-1 space-y-1">
+                              {descLines.map((line, idx) => (
+                                <li key={idx} className={`text-sm flex items-start gap-2 ${isDone ? "text-gray-400" : "text-gray-600"}`}>
+                                  <span className="text-gray-400 mt-0.5">•</span>
+                                  <span>{line}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                       </div>
                     );
