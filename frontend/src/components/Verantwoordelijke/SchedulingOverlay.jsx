@@ -311,7 +311,7 @@ export default function SchedulingOverlay() {
                 key={taskType}
                 className={`p-2 rounded border ${TASK_TYPES[taskType].color}`}
               >
-                <div className="font-medium mb-1 text-xs">{TASK_TYPES[taskType].labelKey}</div>
+                <div className="font-medium mb-1 text-xs">{t(TASK_TYPES[taskType].labelKey)}</div>
                 <div className="flex items-center gap-1 text-xs">
                   <input
                     type={TASK_TYPES[taskType].useTime ? "time" : "date"}
