@@ -84,19 +84,15 @@
         "minutesAgo": "minutes",
         "hoursAgo": "heures",
         "daysAgo": "jours",
-
         "tasksSaved": "Tâches enregistrées avec succès !",
         "allTasksCompleted": "Toutes les tâches terminées !",
         "allTasksReset": "Toutes les tâches réinitialisées",
         "noTasksFound": "Aucune tâche trouvée pour cette box",
-        "missingAssignmentId": "Une erreur s'est produite : ID d'assignation manquant"
-
-        "selectDentist": "Sélectionnez d’abord un dentiste",
-        "selectAssistant": "Sélectionnez d’abord un assistant",
+        "missingAssignmentId": "Une erreur s'est produite : ID d'assignation manquant",
+        "selectDentist": "Sélectionnez d'abord un dentiste",
+        "selectAssistant": "Sélectionnez d'abord un assistant",
         "assignmentsCreated": "{{count}} affectation(s) créée(s)",
-        "tasksSaved": "Tâches enregistrées",
-        "genericError": "Une erreur s’est produite"
-
+        "genericError": "Une erreur s'est produite"
     },
     "boxCard": {
         "completed": "Complété",

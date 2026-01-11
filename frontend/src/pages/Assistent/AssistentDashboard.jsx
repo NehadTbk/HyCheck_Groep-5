@@ -35,10 +35,10 @@ function AssistentDashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        // TEST LOGICA: Gebruik morgen (maandag) ipv vandaag (zondag)
+        // Gebruik morgen als datum (YYYY-MM-DD in lokale tijd, geen UTC conversie)
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const dateString = tomorrow.toISOString().split('T')[0];
+        const dateString = tomorrow.toLocaleDateString('en-CA'); // Geeft altijd YYYY-MM-DD
         setCurrentDate(dateString);
 
         // Gebruik de dateString variabele in de URL

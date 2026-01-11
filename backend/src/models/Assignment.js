@@ -205,7 +205,7 @@ export const getShiftAssignmentsByDateRange = async (startDate, endDate) => {
     LEFT JOIN users a ON sa.user_id = a.user_id
     LEFT JOIN users d ON sa.dentist_user_id = d.user_id
     LEFT JOIN shift_task_groups stg ON sa.assignment_id = stg.assignment_id
-    LEFT JOIN cleaning_session cs ON cs.assignment_id = sa.assignment_id
+    LEFT JOIN cleaning_session cs ON cs.assignment_id = sa.assignment_id AND DATE(cs.started_at) = s.shift_date
     LEFT JOIN (
       SELECT
         cts.session_id,
