@@ -4,45 +4,54 @@ import AfdelingshoofdNavBar from "../../components/navbar/AfdelingshoofdNavBar";
 import MonthlyProgressCard from "../../components/cards/ProgressCard";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
 
-const MONTHS_NL = [
-  "Januari",
-  "Februari",
-  "Maart",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Augustus",
-  "September",
-  "Oktober",
-  "November",
-  "December",
+const MONTH_KEYS = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
 ];
+
+function normalizeMonthData(apiData = [], year) {
+  // map by month index (0-based)
+  const byIndex = new Map(
+    (Array.isArray(apiData) ? apiData : []).map((x) => {
+      const m = Number(x.month);
+      const idx = Number.isFinite(m) ? m - 1 : NaN;
+      return [idx, x];
+    })
+  );
+
+  return MONTH_KEYS.map((monthKey, idx) => {
+    const raw = byIndex.get(idx);
+    const pct = raw?.percentage ?? 0;
+    const status = raw?.status ?? statusFromPercentage(pct);
+    return {
+      monthKey,
+      percentage: Number(pct) || 0,
+      status,
+      meta: raw?.meta || { year, month: idx + 1 },
+    };
+  });
+}
 
 function statusFromPercentage(pct) {
   if (pct >= 70) return "ok";
   if (pct >= 50) return "warning";
   return "danger";
-}
-
-function normalizeMonthData(apiData, year) {
-  // Always show 12 months (even if backend returns fewer)
-  const byName = new Map((Array.isArray(apiData) ? apiData : []).map((x) => [String(x.month), x]));
-
-  return MONTHS_NL.map((mName, idx) => {
-    const raw = byName.get(mName);
-    const pct = raw?.percentage ?? 0;
-    const status = raw?.status || statusFromPercentage(pct);
-    return {
-      month: mName,
-      percentage: Number.isFinite(pct) ? pct : 0,
-      status,
-      meta: raw?.meta || { year, month: idx + 1 },
-    };
-  });
 }
 
 function AfdelingshoofdMonthlyOverview() {
@@ -165,6 +174,8 @@ function AfdelingshoofdMonthlyOverview() {
       alert("Fout bij het genereren van de PDF.");
     }
   };
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <PageLayout>
@@ -173,11 +184,11 @@ function AfdelingshoofdMonthlyOverview() {
       <div className="bg-white rounded-xl shadow-lg p-6 min-h-[500px]">
         <div className="mb-6 max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Maandoverzicht</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">{t("afdelingshoofdMonthlyOverview.title")}</h1>
 
             <div className="flex items-center gap-3">
               <label className="text-sm text-gray-600" htmlFor="yearSelect">
-                Jaar
+                {t("afdelingshoofdMonthlyOverview.selectYear")}
               </label>
               <select
                 id="yearSelect"
@@ -201,13 +212,13 @@ function AfdelingshoofdMonthlyOverview() {
           ) : null}
 
           {isLoading ? (
-            <div className="text-sm text-gray-500">Bezig met laden…</div>
+            <div className="text-sm text-gray-500">{t("afdelingshoofdMonthlyOverview.loading")}</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {monthData.map((item, idx) => (
                 <MonthlyProgressCard
-                  key={`${item.meta?.year ?? year}-${item.month}`}
-                  month={item.month}
+                  key={`${item.meta.year}-${item.meta.month}`}
+                  monthKey={item.monthKey}
                   percentage={item.percentage}
                   status={item.status}
                   // HIER koppel je jouw functie aan de prop van de ProgressCard

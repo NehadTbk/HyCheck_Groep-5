@@ -257,5 +257,50 @@
         "avond": "Soir",
         "wekelijks": "Hebdomadaire",
         "maandelijks": "Mensuel"
+    },
+    "afdelingshoofdMonthlyOverview": {
+        "title": "Aperçu mensuel",
+        "selectYear": "Année",
+        "loading": "Chargement…"
+    },
+    "progressCard": {
+        "title": "Boxes terminées en {{month}} nettoyées à",
+        "completed": " ",
+        "months": {
+            "january": "janvier",
+            "february": "février",
+            "march": "mars",
+            "april": "avril",
+            "may": "mai",
+            "june": "juin",
+            "july": "juillet",
+            "august": "août",
+            "september": "septembre",
+            "october": "octobre",
+            "november": "novembre",
+            "december": "décembre"
+        }
+    },
+    "roles": {
+        "verantwoordelijke": "Responsable",
+        "tandarts": "Dentiste",
+        "tandartsassistent": "Assistant dentaire",
+        "admin": "Chef de service"
+    },
+    "instructions": {
+        "title": "Instructions",
+        "edit": "Modifier",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "imageFiles": "Images (1 nom de fichier par ligne dans /public/instructions)",
+        "noImages": "Aucune image définie",
+        "moreInfo": "Besoin de plus d'informations ?",
+        "contactLeader": "Contactez votre responsable si vous avez des questions ou besoin d'aide pour effectuer vos tâches.",
+        "groups": {
+            "morning": "Matin",
+            "endOfDay": "Fin de journée",
+            "weekly": "Hebdomadaire",
+            "monthly": "Mensuel"
+        }
     }
 }
