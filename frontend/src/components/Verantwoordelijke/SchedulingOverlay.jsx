@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Trash2, Clock, CheckCircle2, X, Check } from "lucide-react";
+import { Trash2, Clock, CheckCircle2, X, Check, Edit2 } from "lucide-react";
 import DateCalendar from "./DateCalendar";
+import TaskEditModal from "./TaskEditModal";
 import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
@@ -42,6 +43,7 @@ export default function SchedulingOverlay() {
   const [boxes, setBoxes] = useState([]);
   const [assistants, setAssistants] = useState([]);
   const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
+  const [editingTaskType, setEditingTaskType] = useState(null); // Category being edited
 
   // Step 1: Select task types
   const [selectedTaskTypes, setSelectedTaskTypes] = useState([]);
@@ -279,19 +281,30 @@ export default function SchedulingOverlay() {
             <h3 className="font-semibold text-sm mb-2">{t("schedulingOverlay.selectTaskTypes")}</h3>
             <div className="grid grid-cols-2 gap-2">
               {Object.entries(TASK_TYPES).map(([key, { labelKey, color }]) => (
-                <button
-                  key={key}
-                  onClick={() => toggleTaskType(key)}
-                  className={`p-2 rounded border-2 text-center transition font-medium text-sm ${selectedTaskTypes.includes(key)
-                      ? color + " scale-105 shadow-sm"
-                      : "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
-                    }`}
-                >
-                  {selectedTaskTypes.includes(key) && (
-                    <CheckCircle2 className="inline mr-1" size={14} />
-                  )}
-                  {t(labelKey)}
-                </button>
+                <div key={key} className="relative">
+                  <button
+                    onClick={() => toggleTaskType(key)}
+                    className={`w-full p-2 rounded border-2 text-center transition font-medium text-sm pr-8 ${selectedTaskTypes.includes(key)
+                        ? color + " scale-105 shadow-sm"
+                        : "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
+                      }`}
+                  >
+                    {selectedTaskTypes.includes(key) && (
+                      <CheckCircle2 className="inline mr-1" size={14} />
+                    )}
+                    {t(labelKey)}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingTaskType(key);
+                    }}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-[#5C2D5F] hover:bg-gray-100 rounded transition"
+                    title={t("schedulingOverlay.editTasks")}
+                  >
+                    <Edit2 size={14} />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -474,6 +487,23 @@ export default function SchedulingOverlay() {
         <div className="text-center text-gray-500 text-xs py-3">
           {t("schedulingOverlay.selectTaskTypesToProceed")}
         </div>
+      )}
+
+      {/* Task Edit Modal */}
+      {editingTaskType && (
+        <TaskEditModal
+          category={editingTaskType}
+          onClose={(saved) => {
+            setEditingTaskType(null);
+            if (saved) {
+              setNotification({
+                type: 'success',
+                message: t("schedulingOverlay.tasksSaved")
+              });
+              setTimeout(() => setNotification(null), 3000);
+            }
+          }}
+        />
       )}
     </div>
   );

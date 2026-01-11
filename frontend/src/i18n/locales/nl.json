@@ -241,7 +241,9 @@
         "assignments": "Toewijzingen",
         "selectAssistantAndBox": "Selecteer assistent en klik op box(en)",
         "confirmAssignments": "Bevestig Toewijzingen",
-        "selectTaskTypesToProceed": "Selecteer eerst taak types"
+        "selectTaskTypesToProceed": "Selecteer eerst taak types",
+        "editTasks": "Taken bewerken",
+        "tasksSaved": "Taken succesvol opgeslagen"
     },
     "verantwoordelijkeBoxen": {
         "title": "Mijn Boxen"
@@ -349,5 +351,19 @@
         "firstNamePlaceholder": "bv. Léa",
         "lastNamePlaceholder": "bv. Van Langenhove",
         "emailPlaceholder": "bv. lea@chubrugmann.be"
+    },
+    "taskEditModal": {
+        "editTasks": "Taken bewerken",
+        "loading": "Laden...",
+        "noTasks": "Geen taken gevonden voor deze categorie",
+        "taskName": "Taaknaam",
+        "instructions": "Instructies",
+        "instructionPlaceholder": "Voer een instructie in...",
+        "addInstruction": "Instructie toevoegen",
+        "deleteTask": "Taak verwijderen",
+        "addTask": "Nieuwe taak toevoegen",
+        "cancel": "Annuleren",
+        "save": "Opslaan",
+        "saving": "Opslaan..."
     }
 }

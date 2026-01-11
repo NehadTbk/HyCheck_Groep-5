@@ -236,7 +236,9 @@
         "assignments": "Affectations",
         "selectAssistantAndBox": "Sélectionnez un assistant et cliquez sur la/les box(es)",
         "confirmAssignments": "Confirmer les affectations",
-        "selectTaskTypesToProceed": "Sélectionnez d'abord les types de tâches"
+        "selectTaskTypesToProceed": "Sélectionnez d'abord les types de tâches",
+        "editTasks": "Modifier les tâches",
+        "tasksSaved": "Tâches enregistrées avec succès"
     },
     "verantwoordelijkeBoxen": {
         "title": "Mes Boxes"
@@ -345,5 +347,19 @@
         "firstNamePlaceholder": "ex. Léa",
         "lastNamePlaceholder": "ex. Van Langenhove",
         "emailPlaceholder": "ex. lea@chubrugmann.be"
+    },
+    "taskEditModal": {
+        "editTasks": "Modifier les tâches",
+        "loading": "Chargement...",
+        "noTasks": "Aucune tâche trouvée pour cette catégorie",
+        "taskName": "Nom de la tâche",
+        "instructions": "Instructions",
+        "instructionPlaceholder": "Entrez une instruction...",
+        "addInstruction": "Ajouter une instruction",
+        "deleteTask": "Supprimer la tâche",
+        "addTask": "Ajouter une nouvelle tâche",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "saving": "Enregistrement..."
     }
 }

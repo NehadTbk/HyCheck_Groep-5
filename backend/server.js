@@ -15,6 +15,7 @@ import taskRoutes from "./src/routes/taskRoutes.js";
 import assistantRoutes from "./src/routes/assistantRoutes.js";
 import allboxesRoutes from "./src/routes/allboxesRoutes.js";
 import historyRoutes from "./src/routes/historyRoutes.js";
+import taskTypeRoutes from "./src/routes/taskTypeRoutes.js";
 
 dotenv.config();
 
@@ -53,6 +54,9 @@ app.use("/api/afdelingshoofd", afdelingshoofdRoutes);
 
 // ✅ NEW: History API
 app.use("/api/history", historyRoutes);
+
+// ✅ NEW: Task Types API
+app.use("/api/task-types", taskTypeRoutes);
 
 app.get("/", (req, res) => {
   res.send("HyCheck Backend werkt!");
