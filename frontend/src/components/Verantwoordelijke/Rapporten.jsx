@@ -7,6 +7,15 @@ function Rapporten({ data = [] }) {
     const { language, letLanguage } = useLanguage();
     const { t } = useTranslation();
 
+    const getTypeColor = (type) => {
+        const typeLower = type.toLowerCase().trim();
+        if (typeLower === 'ochtend') return 'bg-blue-100 text-blue-700 border-blue-300';
+        if (typeLower === 'avond') return 'bg-purple-100 text-purple-700 border-purple-300';
+        if (typeLower === 'wekelijks') return 'bg-orange-100 text-orange-700 border-orange-300';
+        if (typeLower === 'maandelijks') return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
+    };
+
     return(
         <div className="overflow-x-auto mt-4">
             <table className="w-full text-left border-collapse">
@@ -29,9 +38,16 @@ function Rapporten({ data = [] }) {
                             <td className="px-6 py-4 text-sm border-b border-gray-100">{item.assistent}</td>
                             <td className="px-6 py-4 text-sm border-b border-gray-100">{item.aantal}</td>
                             <td className="px-6 py-4 text-sm border-b border-gray-100">
-                                <span className="bg-[#E1F0FF] text-[#007BFF] px-3 py-1 rounded-md text-xs font-medium border border-[#A5D1FF]">
-                                    {item.soort}
-                                </span>
+                                <div className="flex flex-wrap gap-1">
+                                    {(item.soort || '').split(',').map((type, idx) => (
+                                        <span
+                                            key={idx}
+                                            className={`px-3 py-1 rounded-full text-xs font-medium border ${getTypeColor(type)}`}
+                                        >
+                                            {type.trim()}
+                                        </span>
+                                    ))}
+                                </div>
                             </td>
                             <td className="px-6 py-4 text-sm">{item.status}</td>
                             <td>{item.reden || "N.v.t."}</td>

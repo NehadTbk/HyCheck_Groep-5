@@ -31,7 +31,7 @@ function HistoryModal({ data, onClose }) {
         setLoading(true);
         setErrorMsg("");
 
-        const res = await fetch(`${API_BASE_URL}/${sessionId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/history/${sessionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
