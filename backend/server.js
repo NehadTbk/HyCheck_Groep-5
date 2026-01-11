@@ -14,18 +14,23 @@ import assignmentRoutes from "./src/routes/assignmentRoutes.js";
 import taskRoutes from "./src/routes/taskRoutes.js";
 import assistantRoutes from "./src/routes/assistantRoutes.js";
 import allboxesRoutes from "./src/routes/allboxesRoutes.js";
+import historyRoutes from "./src/routes/historyRoutes.js";
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 app.use(helmet());
-app.use(cors({
-  origin: ['http://localhost:5174'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5174"],
+    credentials: true,
+  })
+);
+
 app.use(generalLimiter);
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: "10kb" }));
 
 // ✅ ALWAYS start with a leading slash
 app.use("/auth", authRoutes);
@@ -38,9 +43,11 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/assistant", assistantRoutes);
 app.use("/api/assistant", allboxesRoutes);
 
-
-// ✅ ADD THIS (and make sure it's BEFORE listen)
+// ✅ Existing
 app.use("/api/afdelingshoofd", afdelingshoofdRoutes);
+
+// ✅ NEW: History API
+app.use("/api/history", historyRoutes);
 
 app.get("/", (req, res) => {
   res.send("HyCheck Backend werkt!");
