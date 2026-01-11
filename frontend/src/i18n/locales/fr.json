@@ -277,7 +277,7 @@
     },
     "afdelingshoofdMonthlyOverview": {
         "title": "Aperçu mensuel",
-        "selectYear": "Année",
+        "year": "Année",
         "loading": "Chargement…"
     },
     "reports": {
