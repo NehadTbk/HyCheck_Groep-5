@@ -5,15 +5,17 @@ import HistoryModal from "../../components/Assistent/HistoryModal";
 import { Search, Eye } from "lucide-react";
 import { useTranslation } from "../../i18n/useTranslation";
 
-const API_BASE = "http://localhost:5001/api/history";
+const API_BASE_URL = import.meta.env.VITE_API_URL
+const API_BASE = `${API_BASE_URL}/api/history`;
 
 const getToken = () => localStorage.getItem("token");
 
-const formatDate = (yyyyMmDd) => {
-  if (!yyyyMmDd || typeof yyyyMmDd !== "string") return "-";
-  // verwacht "YYYY-MM-DD"
-  const parts = yyyyMmDd.split("-");
-  if (parts.length !== 3) return yyyyMmDd;
+const formatDate = (dateStr) => {
+  if (!dateStr) return "-";
+  // Handle ISO date strings (e.g., "2026-01-11T23:00:00.000Z") or "YYYY-MM-DD"
+  const dateOnly = String(dateStr).split("T")[0];
+  const parts = dateOnly.split("-");
+  if (parts.length !== 3) return dateStr;
   const [y, m, d] = parts;
   return `${d}/${m}/${y}`;
 };

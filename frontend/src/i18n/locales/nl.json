@@ -84,10 +84,14 @@
         "minutesAgo": "minuten geleden",
         "hoursAgo": "uur geleden",
         "daysAgo": "dagen geleden",
+        "tasksSaved": "Taken succesvol opgeslagen!",
+        "allTasksCompleted": "Alle taken voltooid!",
+        "allTasksReset": "Alle taken gereset",
+        "noTasksFound": "Geen taken gevonden voor deze box",
+        "missingAssignmentId": "Er ging iets mis: assignment ID ontbreekt",
         "selectDentist": "Selecteer eerst een tandarts",
         "selectAssistant": "Selecteer eerst een assistent",
         "assignmentsCreated": "{{count}} toewijzing(en) aangemaakt",
-        "tasksSaved": "Taken opgeslagen",
         "genericError": "Er is een fout opgetreden",
         "db": {
             "missingBoxTitle": "Box niet volledig klaar: {{boxName}}",
@@ -96,6 +100,7 @@
     },
     "boxCard": {
         "completed": "Voltooid",
+        "partial": "Gedeeltelijk",
         "partiallyCompleted": "Gedeeltelijk voltooid",
         "notCompleted": "Niet voltooid",
         "dentist": "Tandarts",
@@ -276,7 +281,8 @@
         "dentist": "Tandarts",
         "close": "Sluiten",
         "delete": "Verwijderen",
-        "deleting": "Verwijderen..."
+        "deleting": "Verwijderen...",
+        "taskProgress": "Voortgang taken"
     },
     "taskTypes": {
         "ochtend": "Ochtend",
@@ -348,6 +354,7 @@
     "status": {
         "all": "Alles",
         "open": "Openstaand",
+        "partial": "Gedeeltelijk",
         "completed": "Voltooid"
     },
     "verantwoordelijkePersoneel": {

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { X, Trash2 } from "lucide-react";
+import { X, Trash2, CheckCircle2, Circle, AlertCircle } from "lucide-react";
 import PageLayout from "../../components/layout/PageLayout";
 import VerantwoordelijkeNavBar from "../../components/navbar/VerantwoordelijkeNavBar";
 import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function getMonday(date) {
   const d = new Date(date);
@@ -72,7 +74,7 @@ function VerantwoordelijkeDashboard() {
   async function fetchWeekData() {
     try {
       const res = await fetch(
-        `http://localhost:5001/api/calendar?weekStart=${formatDateLocal(weekStart)}`
+        `${API_BASE_URL}/api/calendar?weekStart=${formatDateLocal(weekStart)}`
       );
       if (!res.ok) {
         console.error("GET /api/calendar failed", await res.text());
@@ -98,6 +100,11 @@ function VerantwoordelijkeDashboard() {
             dentist_name: assignment.dentist_name || assignment.dentist || null,
             box_color: assignment.box_color || assignment.color_code || null,
             task_groups: assignment.task_groups || [],
+            // Task completion status
+            session_id: assignment.session_id || null,
+            session_status: assignment.session_status || null,
+            total_tasks: parseInt(assignment.total_tasks, 10) || 0,
+            done_tasks: parseInt(assignment.done_tasks, 10) || 0,
           };
 
           newPlanning[dateKey].push(normalized);
@@ -131,7 +138,7 @@ function VerantwoordelijkeDashboard() {
     setIsDeleting(true);
     try {
       const res = await fetch(
-        `http://localhost:5001/api/assignments/${selectedAssignment.assignment_id}`,
+        `${API_BASE_URL}/api/assignments/${selectedAssignment.assignment_id}`,
         { method: "DELETE" }
       );
 
@@ -276,6 +283,21 @@ function VerantwoordelijkeDashboard() {
                             );
                           })}
                         </div>
+                        {/* Task completion status indicator */}
+                        {assignment.total_tasks > 0 && (
+                          <div className="flex items-center gap-1 mt-1.5">
+                            {assignment.done_tasks === assignment.total_tasks ? (
+                              <CheckCircle2 size={12} className="text-green-500" />
+                            ) : assignment.done_tasks > 0 ? (
+                              <AlertCircle size={12} className="text-orange-500" />
+                            ) : (
+                              <Circle size={12} className="text-gray-400" />
+                            )}
+                            <span className="text-[10px] text-gray-500">
+                              {assignment.done_tasks}/{assignment.total_tasks}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     );
                   })
@@ -383,6 +405,38 @@ function VerantwoordelijkeDashboard() {
                 <div>
                   <span className="text-gray-500 text-sm">{t("verantwoordelijkeDashboard.dentist")}</span>
                   <p className="font-medium">{selectedAssignment.dentist_name}</p>
+                </div>
+              )}
+
+              {/* Task completion status */}
+              {selectedAssignment.total_tasks > 0 && (
+                <div className="mt-2 pt-3 border-t">
+                  <span className="text-gray-500 text-sm">{t("verantwoordelijkeDashboard.taskProgress") || "Voortgang taken"}</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    {selectedAssignment.done_tasks === selectedAssignment.total_tasks ? (
+                      <CheckCircle2 size={18} className="text-green-500" />
+                    ) : selectedAssignment.done_tasks > 0 ? (
+                      <AlertCircle size={18} className="text-orange-500" />
+                    ) : (
+                      <Circle size={18} className="text-gray-400" />
+                    )}
+                    <span className="font-medium">
+                      {selectedAssignment.done_tasks}/{selectedAssignment.total_tasks} {t("rapporten.amountTasks") || "taken"}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      selectedAssignment.done_tasks === selectedAssignment.total_tasks
+                        ? "bg-green-100 text-green-700"
+                        : selectedAssignment.done_tasks > 0
+                          ? "bg-orange-100 text-orange-700"
+                          : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {selectedAssignment.done_tasks === selectedAssignment.total_tasks
+                        ? t("boxCard.completed") || "Voltooid"
+                        : selectedAssignment.done_tasks > 0
+                          ? t("boxCard.partiallyCompleted") || "Gedeeltelijk"
+                          : t("boxCard.notCompleted") || "Niet voltooid"}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>

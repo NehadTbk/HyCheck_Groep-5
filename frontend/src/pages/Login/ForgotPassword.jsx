@@ -5,7 +5,7 @@ import LanguageSwitcher from "../../components/layout/LanguageSwitcher";
 import { useLanguage } from "../../i18n/useLanguage";
 import { useTranslation } from "../../i18n/useTranslation";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function ForgotPassword() {
   const { language, setLanguage } = useLanguage();

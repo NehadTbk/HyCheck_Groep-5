@@ -3,7 +3,7 @@ import { X, CheckCircle2, Clock, Circle } from "lucide-react";
 import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
-const API_BASE = "http://localhost:5001/api/history";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const getToken = () => localStorage.getItem("token");
 
@@ -31,7 +31,7 @@ function HistoryModal({ data, onClose }) {
         setLoading(true);
         setErrorMsg("");
 
-        const res = await fetch(`${API_BASE}/${sessionId}`, {
+        const res = await fetch(`${API_BASE_URL}/${sessionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -47,7 +47,8 @@ function HistoryModal({ data, onClose }) {
         // Map DB rows -> jouw UI task model
         const mapped = (Array.isArray(details) ? details : []).map((d) => ({
           id: d.status_id,
-          title: `Task ${d.task_type_id}`, // later kan je hier task_type.name joinen
+          title: d.task_name || `Task ${d.task_type_id}`,
+          category: d.task_category,
           status: d.completed ? "voltooid" : "niet voltooid",
           time: d.completed_at
             ? new Date(d.completed_at).toLocaleTimeString([], {

@@ -194,15 +194,28 @@ export const getShiftAssignmentsByDateRange = async (startDate, endDate) => {
       b.color_code AS box_color,
       CONCAT(a.first_name, ' ', a.last_name) AS assistant_name,
       CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
-      GROUP_CONCAT(stg.group_type) AS task_groups
+      GROUP_CONCAT(DISTINCT stg.group_type) AS task_groups,
+      cs.session_id,
+      cs.status AS session_status,
+      COALESCE(task_stats.total_tasks, 0) AS total_tasks,
+      COALESCE(task_stats.done_tasks, 0) AS done_tasks
     FROM shift_assignments sa
     JOIN shift s ON sa.shift_id = s.shift_id
     JOIN box b ON sa.box_id = b.box_id
     LEFT JOIN users a ON sa.user_id = a.user_id
     LEFT JOIN users d ON sa.dentist_user_id = d.user_id
     LEFT JOIN shift_task_groups stg ON sa.assignment_id = stg.assignment_id
+    LEFT JOIN cleaning_session cs ON cs.assignment_id = sa.assignment_id AND DATE(cs.started_at) = s.shift_date
+    LEFT JOIN (
+      SELECT
+        cts.session_id,
+        COUNT(*) AS total_tasks,
+        SUM(CASE WHEN cts.completed = 1 THEN 1 ELSE 0 END) AS done_tasks
+      FROM cleaning_task_status cts
+      GROUP BY cts.session_id
+    ) task_stats ON task_stats.session_id = cs.session_id
     WHERE s.shift_date BETWEEN ? AND ?
-    GROUP BY sa.assignment_id
+    GROUP BY sa.assignment_id, cs.session_id, cs.status, task_stats.total_tasks, task_stats.done_tasks
     ORDER BY s.shift_date, sa.assignment_start`,
       [startDate, endDate]
     );

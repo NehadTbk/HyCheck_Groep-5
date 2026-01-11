@@ -15,17 +15,18 @@ const GROUP_TO_DB_CATEGORY = {
 // 2. De helper functies (MOETEN in dit bestand staan of geïmporteerd worden)
 async function getOrCreateSession(assignmentId, isoDate) {
   const [existing] = await db.query(
-    `SELECT session_id FROM cleaning_session 
-     WHERE assignment_id = ? AND DATE(started_at) = ? 
+    `SELECT session_id FROM cleaning_session
+     WHERE assignment_id = ? AND DATE(started_at) = ?
      ORDER BY session_id DESC LIMIT 1`,
     [assignmentId, isoDate]
   );
 
   if (existing.length) return existing[0].session_id;
 
+  // Use the passed date instead of NOW() to ensure consistency
   const [ins] = await db.query(
-    `INSERT INTO cleaning_session (assignment_id, started_at, status) VALUES (?, NOW(), 'in_progress')`,
-    [assignmentId]
+    `INSERT INTO cleaning_session (assignment_id, started_at, status) VALUES (?, ?, 'in_progress')`,
+    [assignmentId, isoDate]
   );
   return ins.insertId;
 }

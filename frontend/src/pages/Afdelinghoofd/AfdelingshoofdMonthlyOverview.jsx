@@ -6,7 +6,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useTranslation } from "../../i18n/useTranslation";
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/$/, "");
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const MONTHS_NL = [
   "Januari",
@@ -198,9 +198,9 @@ function AfdelingshoofdMonthlyOverview() {
           </div>
         )}
 
-        <div className="mb-6 max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">{t("afdelingshoofdMonthlyOverview.title")}</h1>
+        <div className="mb-6 w-full">
+          <div className="flex justify-between items-end pb-3 mb-8 border-b border-gray-300">
+            <h1 className="text-3xl font-bold text-gray-800">{t("afdelingshoofdMonthlyOverview.title")}</h1>
 
             <div className="flex items-center gap-3">
               <label className="text-sm text-gray-600">{t("afdelingshoofdMonthlyOverview.year")}</label>
@@ -227,7 +227,7 @@ function AfdelingshoofdMonthlyOverview() {
           ) : (
             <>
               {/* ✅ RESPONSIVE GRID: past zich aan schermgrootte aan */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {monthData.map((item, idx) => (
                 <MonthlyProgressCard
                   key={`${item.meta?.year ?? year}-${item.month}`}
