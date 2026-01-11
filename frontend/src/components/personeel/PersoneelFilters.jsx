@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { ROLE_OPTIONS } from "../Afdelingshoofd/constants";
+import { useTranslation } from "../../i18n/useTranslation";
 
 const getLocalUser = () => {
   try {
@@ -10,41 +11,25 @@ const getLocalUser = () => {
 };
 
 function PersoneelFilters({ selectedRoles, onChange }) {
-  const currentUser = getLocalUser();
+  const { t } = useTranslation();
 
-  // ✅ Hide "verantwoordelijke" for responsible users
-  const visibleRoleOptions =
-    currentUser?.role === "responsible"
-      ? ROLE_OPTIONS.filter((r) => r.key !== "verantwoordelijke")
-      : ROLE_OPTIONS;
-
-  // ✅ Safety: if responsible already has verantwoordelijke selected somehow, remove it
-  useEffect(() => {
-    if (currentUser?.role === "responsible" && selectedRoles.includes("verantwoordelijke")) {
-      onChange(selectedRoles.filter((k) => k !== "verantwoordelijke"));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser?.role]);
-
-  const handleClick = (key) => {
-    let next;
-
-    if (selectedRoles.includes(key)) {
-      next = selectedRoles.filter((k) => k !== key);
+  const handleClick = (roleKey) => {
+    if (selectedRoles.includes(roleKey)) {
+      onChange(selectedRoles.filter((r) => r !== roleKey));
     } else {
-      next = [...selectedRoles, key];
+      onChange([...selectedRoles, roleKey]);
     }
-
-    onChange(next);
   };
 
   return (
     <div className="flex gap-2">
-      {visibleRoleOptions.map((role) => {
+      {ROLE_OPTIONS.map((role) => {
         const isActive = selectedRoles.includes(role.key);
+
         return (
           <button
             key={role.key}
+            type="button"
             onClick={() => handleClick(role.key)}
             className={[
               "px-4 py-1 rounded-full text-xs transition-colors",
@@ -53,7 +38,7 @@ function PersoneelFilters({ selectedRoles, onChange }) {
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300",
             ].join(" ")}
           >
-            {role.label}
+            {t(role.labelKey)}
           </button>
         );
       })}

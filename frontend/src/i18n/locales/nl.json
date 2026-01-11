@@ -285,5 +285,11 @@
             "november": "november",
             "december": "december"
         }
+    },
+    "roles": {
+        "verantwoordelijke": "Verantwoordelijke",
+        "tandarts": "Tandarts",
+        "tandartsassistent": "Tandartsassistent",
+        "admin": "Afdelingshoofd"
     }
 }

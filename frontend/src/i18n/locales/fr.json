@@ -280,5 +280,11 @@
             "november": "novembre",
             "december": "décembre"
         }
+    },
+    "roles": {
+        "verantwoordelijke": "Responsable",
+        "tandarts": "Dentiste",
+        "tandartsassistent": "Assistant dentaire",
+        "admin": "Chef de service"
     }
 }
