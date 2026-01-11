@@ -109,7 +109,15 @@
     "historyModal": {
         "title": "Détails",
         "tasks": "Tâches effectuées",
-        "close": "Fermer"
+        "close": "Fermer",
+        "loading": "Chargement...",
+        "noSessionId": "Aucun sessionId trouvé.",
+        "loadFailed": "Impossible de charger les détails.",
+        "noTasks": "Aucune tâche trouvée.",
+        "completed": "Terminé",
+        "notCompleted": "Non terminé",
+        "partial": "Partiel",
+        "undefined": "Indéfini"
     },
     "periodicStatsCard": {
         "title": "Nettoyage périodique",
