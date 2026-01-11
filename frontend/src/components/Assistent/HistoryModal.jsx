@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 const getToken = () => localStorage.getItem("token");
 
 function HistoryModal({ data, onClose }) {
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
   const { t } = useTranslation();
 
   const token = useMemo(() => getToken(), []);
@@ -22,7 +22,7 @@ function HistoryModal({ data, onClose }) {
   useEffect(() => {
     if (!data) return;
     if (!sessionId) {
-      setErrorMsg("Geen sessionId gevonden.");
+      setErrorMsg(t("historyModal.noSessionId"));
       return;
     }
 
@@ -44,12 +44,11 @@ function HistoryModal({ data, onClose }) {
 
         const details = await res.json();
 
-        // Map DB rows -> jouw UI task model
         const mapped = (Array.isArray(details) ? details : []).map((d) => ({
           id: d.status_id,
           title: d.task_name || `Task ${d.task_type_id}`,
           category: d.task_category,
-          status: d.completed ? "voltooid" : "niet voltooid",
+          isCompleted: d.completed === 1 || d.completed === true || d.completed === "1",
           time: d.completed_at
             ? new Date(d.completed_at).toLocaleTimeString([], {
                 hour: "2-digit",
@@ -62,7 +61,7 @@ function HistoryModal({ data, onClose }) {
         setTasks(mapped);
       } catch (e) {
         console.error(e);
-        setErrorMsg("Kon details niet laden.");
+        setErrorMsg(t("historyModal.loadFailed"));
         setTasks([]);
       } finally {
         setLoading(false);
@@ -84,7 +83,6 @@ function HistoryModal({ data, onClose }) {
             </h2>
             <p className="text-sm text-gray-500">{data.date}</p>
 
-            {/* Extra info (optioneel) */}
             {data?.meta?.assistant && (
               <p className="text-xs text-gray-500 mt-1">
                 {data.meta.assistant} {data.meta.dentist ? `• ${data.meta.dentist}` : ""}
@@ -102,7 +100,7 @@ function HistoryModal({ data, onClose }) {
             {t("historyModal.tasks")}
           </h3>
 
-          {loading && <div className="text-sm text-gray-500">Details laden…</div>}
+          {loading && <div className="text-sm text-gray-500">{t("historyModal.loading")}</div>}
           {errorMsg && <div className="text-sm text-red-600">{errorMsg}</div>}
 
           {!loading && !errorMsg && (
@@ -113,7 +111,7 @@ function HistoryModal({ data, onClose }) {
                   className="flex items-center justify-between p-4 border border-gray-100 rounded-2xl bg-white shadow-sm"
                 >
                   <div className="flex items-center gap-3">
-                    {task.status === "voltooid" ? (
+                    {task.isCompleted ? (
                       <CheckCircle2 className="text-green-500" size={20} />
                     ) : (
                       <Circle className="text-gray-300" size={20} />
@@ -122,11 +120,20 @@ function HistoryModal({ data, onClose }) {
                     <div>
                       <span
                         className={`font-medium ${
-                          task.status === "niet voltooid" ? "text-gray-400" : "text-gray-700"
+                          !task.isCompleted ? "text-gray-400" : "text-gray-700"
                         }`}
                       >
                         {task.title}
                       </span>
+
+                      <div 
+                        className="text-[10px] uppercase tracking-wide font-bold mt-0.5"
+                        style={{ color: task.isCompleted ? '#10b981' : '#9ca3af' }}
+                      >
+                        {task.isCompleted 
+                          ? t("historyModal.completed") 
+                          : t("historyModal.notCompleted")}
+                      </div>
 
                       {task.comment ? (
                         <div className="text-xs text-gray-400 mt-1">{task.comment}</div>
@@ -142,14 +149,14 @@ function HistoryModal({ data, onClose }) {
               ))}
 
               {tasks.length === 0 && (
-                <div className="text-sm text-gray-500">Geen taken gevonden.</div>
+                <div className="text-sm text-gray-500">{t("historyModal.noTasks")}</div>
               )}
             </div>
           )}
         </div>
 
         <div className="p-6 border-t flex justify-end">
-          <button className="bg-[#5C2D5F] text-white px-8 py-2.5 rounded-xl font-bold" onClick={onClose}>
+          <button className="bg-[#4A2144] text-white px-8 py-2.5 rounded-xl font-bold hover:opacity-90 transition-opacity" onClick={onClose}>
             {t("historyModal.close")}
           </button>
         </div>

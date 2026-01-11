@@ -109,7 +109,15 @@
     "historyModal": {
         "title": "Details",
         "tasks": "Uitgevoerde taken",
-        "close": "Sluiten"
+        "close": "Sluiten",
+        "loading": "Bezig met laden…",
+        "noSessionId": "Geen sessionId gevonden.",
+        "loadFailed": "Kon details niet laden.",
+        "noTasks": "Geen taken gevonden.",
+        "completed": "Voltooid",
+        "notCompleted": "Niet voltooid",
+        "partial": "Gedeeltelijk",
+        "undefined": "Onbekend"
     },
     "periodicStatsCard": {
         "title": "Periodieke reiniging",

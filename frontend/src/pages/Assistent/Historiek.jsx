@@ -5,14 +5,13 @@ import HistoryModal from "../../components/Assistent/HistoryModal";
 import { Search, Eye } from "lucide-react";
 import { useTranslation } from "../../i18n/useTranslation";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 const API_BASE = `${API_BASE_URL}/api/history`;
 
 const getToken = () => localStorage.getItem("token");
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
-  // Handle ISO date strings (e.g., "2026-01-11T23:00:00.000Z") or "YYYY-MM-DD"
   const dateOnly = String(dateStr).split("T")[0];
   const parts = dateOnly.split("-");
   if (parts.length !== 3) return dateStr;
@@ -30,20 +29,20 @@ function Historiek() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const getStatusLabel = (done, total, sessionStatus) => {
-    if (total > 0 && done === total) return "voltooid";
-    if (total > 0 && done > 0 && done < total) return "gedeeltelijk";
-    if (sessionStatus === "completed") return "voltooid";
-    return "niet voltooid";
+  const getStatusKey = (done, total, sessionStatus) => {
+    if (total > 0 && done === total) return "completed";
+    if (total > 0 && done > 0 && done < total) return "partial";
+    if (sessionStatus === "completed") return "completed";
+    return "notCompleted";
   };
 
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "voltooid":
+  const getStatusStyle = (statusKey) => {
+    switch (statusKey) {
+      case "completed":
         return "bg-green-100 text-green-700 border-green-200";
-      case "gedeeltelijk":
+      case "partial":
         return "bg-orange-100 text-orange-700 border-orange-200";
-      case "niet voltooid":
+      case "notCompleted":
         return "bg-red-100 text-red-700 border-red-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
@@ -81,13 +80,13 @@ function Historiek() {
         const done = Number(r.done_tasks ?? 0);
         const total = Number(r.total_tasks ?? 0);
 
-        const status = getStatusLabel(done, total, r.session_status);
+        const statusKey = getStatusKey(done, total, r.session_status);
 
         return {
           id: r.session_id,
           boxNr: r.box_name ? r.box_name : `Box ${r.box_id ?? ""}`.trim(),
           date: formatDate(r.date),
-          status,
+          statusKey,
           meta: {
             sessionId: r.session_id,
             rawDate: r.date,
@@ -103,24 +102,20 @@ function Historiek() {
       setHistoryRows(mapped);
     } catch (err) {
       console.error(err);
-      setErrorMsg("Kon historiek niet laden. Controleer backend/endpoint/token.");
+      setErrorMsg("Kon historiek niet laden.");
       setHistoryRows([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // initial load
   useEffect(() => {
     loadHistory("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // debounce search
   useEffect(() => {
     const id = setTimeout(() => loadHistory(search), 300);
     return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (
@@ -143,7 +138,7 @@ function Historiek() {
           </div>
         </div>
 
-        {loading && <div className="text-sm text-gray-500 mb-3">Historiek laden…</div>}
+        {loading && <div className="text-sm text-gray-500 mb-3">{t("historyModal.loading")}</div>}
         {errorMsg && <div className="text-sm text-red-600 mb-3">{errorMsg}</div>}
 
         <div className="overflow-x-auto">
@@ -164,10 +159,8 @@ function Historiek() {
                   <td className="px-6 py-4 text-gray-600">{item.date}</td>
 
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusStyle(item.status)}`}>
-                      {item.status === "gedeeltelijk"
-                        ? "Gedeeltelijk voltooid"
-                        : item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusStyle(item.statusKey)}`}>
+                      {t(`historyModal.${item.statusKey}`)}
                     </span>
 
                     {item.meta?.totalTasks > 0 && (
@@ -191,7 +184,7 @@ function Historiek() {
               {!loading && historyRows.length === 0 && (
                 <tr>
                   <td className="px-6 py-6 text-gray-500" colSpan={4}>
-                    Geen historiek gevonden.
+                    {t("historyModal.noTasks")}
                   </td>
                 </tr>
               )}
