@@ -83,7 +83,12 @@
         "older": "Anciennes",
         "minutesAgo": "minutes",
         "hoursAgo": "heures",
-        "daysAgo": "jours"
+        "daysAgo": "jours",
+        "selectDentist": "Sélectionnez d’abord un dentiste",
+        "selectAssistant": "Sélectionnez d’abord un assistant",
+        "assignmentsCreated": "{{count}} affectation(s) créée(s)",
+        "tasksSaved": "Tâches enregistrées",
+        "genericError": "Une erreur s’est produite"
     },
     "boxCard": {
         "completed": "Complété",
