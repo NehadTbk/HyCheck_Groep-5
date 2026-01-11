@@ -107,7 +107,8 @@
         "completedSubtitle": "Boxen schoongemaakt",
         "openstaand": "Openstaand",
         "pendingSubtitle": "Boxen nog te doen",
-        "assignedBoxes": "Mijn toegewezen boxen"
+        "assignedBoxes": "Mijn toegewezen boxen",
+        "loading": "Bezig met laden…"
     },
     "taskModal": {
         "reasonOptions": "Standaard redenen:",

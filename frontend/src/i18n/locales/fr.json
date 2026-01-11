@@ -102,7 +102,8 @@
         "completedSubtitle": "Box nettoyées",
         "openstaand": "En attente",
         "pendingSubtitle": "Box en attente",
-        "assignedBoxes": "Mes box assignées"
+        "assignedBoxes": "Mes box assignées",
+        "loading": "Chargement…"
     },
     "taskModal": {
         "reasonOptions": "Raisons standard :",
