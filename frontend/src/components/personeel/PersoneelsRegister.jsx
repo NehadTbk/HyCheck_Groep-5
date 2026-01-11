@@ -23,21 +23,6 @@ const roleToKey = (role) => {
   }
 };
 
-const roleToLabel = (role) => {
-  switch (role) {
-    case "responsible":
-      return "Verantwoordelijke";
-    case "assistant":
-      return "Tandartsassistent";
-    case "dentist":
-      return "Tandarts";
-    case "admin":
-      return "Admin";
-    default:
-      return role;
-  }
-};
-
 // robust local user read (optional filtering)
 const getLocalUser = () => {
   try {
@@ -55,13 +40,13 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
 
-  // ✅ fallback + remove trailing slash
+  // fallback + remove trailing slash
   const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(
     /\/$/,
     ""
   );
 
-  // 🔄 Centrale fetch (herbruikbaar)
+  // Centrale fetch (herbruikbaar)
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -79,7 +64,7 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
       const data = await res.json();
       const list = Array.isArray(data) ? data : [];
 
-      // ✅ accept is_active as 1 / "1" / true
+      // accept is_active as 1 / "1" / true
       let mapped = list
         .filter((u) => u.is_active === 1 || u.is_active === "1" || u.is_active === true)
         .map((u) => ({
@@ -88,7 +73,6 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
           lastName: u.last_name,
           firstName: u.first_name,
           roleKey: roleToKey(u.role),
-          roleLabel: roleToLabel(u.role),
           email: u.email,
         }));
 
@@ -147,7 +131,7 @@ function PersoneelRegister({ refreshKey = 0, showAllUsers = false }) {
     const currentUser = getLocalUser();
 
     return rows.filter((row) => {
-      // ✅ If responsible, never show verantwoordelijke/admin even if filter tries
+      // If responsible, never show verantwoordelijke/admin even if filter tries
       if (currentUser?.role === "responsible") {
         if (row.roleKey === "verantwoordelijke" || row.roleKey === "admin") return false;
       }
