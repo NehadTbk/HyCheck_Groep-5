@@ -93,9 +93,10 @@
         "selectAssistant": "Sélectionnez d'abord un assistant",
         "assignmentsCreated": "{{count}} affectation(s) créée(s)",
         "genericError": "Une erreur s’est produite",
+        "tasksFallback": "tâches",
         "db": {
             "missingBoxTitle": "Box non complété : {{boxName}}",
-            "missingBoxMessage": "Les {{groupLabel}} voor {{boxName}} n'ont pas encore été entièrement complétés aujourd'hui."
+            "missingBoxMessage": "Les {{groups}} voor {{boxName}} n'ont pas encore été entièrement complétés aujourd'hui."
         }
     },
     "boxCard": {

@@ -127,24 +127,8 @@ async function generateMissingBoxNotificationsForToday() {
     const titleKey = "notifications.db.missingBoxTitle";
     const messageData = JSON.stringify({
       boxName: r.box_name,
-      groupLabel: groups.length ? groups.join(", ") : "tasks"
+      groupLabels: groups.map(g => `taskTypes.${g}`)
     });
-
-    const renderNotificationMessage = (notif) => {
-  try {
-    const params = JSON.parse(notif.message);
-    
-    return {
-      displayTitle: t(notif.title, params),
-      displayBody: t("notifications.db.missingBoxMessage", params)
-    };
-  } catch (e) {
-    return {
-      displayTitle: notif.title,
-      displayBody: notif.message
-    };
-  }
-};
 
     for (const userId of recipients) {
       // Avoid duplicates (same user + assignment + today)

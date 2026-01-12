@@ -89,13 +89,32 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
   };
 
   const renderNotificationText = (notification) => {
-    const params = parseParams(notification.message);
+    let params = {};
+
+    try {
+      params = JSON.parse(notification.message);
+    } catch {
+      params = {};
+    }
+
+    const groups = Array.isArray(params.groupLabels) && params.groupLabels.length > 0
+      ? params.groupLabels.map(k => {
+        const translated = t(k);
+        return translated === k ? null : translated;
+      })
+        .filter(Boolean)
+        .join(", ")
+      : "";
 
     return {
       title: t(notification.title, params),
-      body: t("notifications.db.missingBoxMessage", params)
+      body: t("notifications.db.missingBoxMessage", {
+        boxName: params.boxName ?? "—",
+        groups: groups || t("notifications.tasksFallback")
+      })
     };
   };
+
 
   return (
     <>
