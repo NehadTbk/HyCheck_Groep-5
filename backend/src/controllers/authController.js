@@ -55,8 +55,15 @@ export const login = async (req, res) => {
         }
 
         if (user.must_change_password) {
+            const token = jwt.sign(
+                { id: user.user_id, email: user.email, role: user.role, mustChange: true },
+                process.env.JWT_SECRET,
+                { expiresIn: "15m" }
+            );
+
             return res.status(200).json({
                 success: true,
+                token, 
                 mustChangePassword: true,
                 user: {
                     id: user.user_id,
@@ -274,7 +281,7 @@ export const forgotPassword = async (req, res) => {
             [hashedToken, expires, email]
         );
 
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`; 
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`;
 
         try {
             await sendResetPasswordEmail(email, resetLink, `${user.first_name} ${user.last_name}`)
