@@ -115,8 +115,8 @@
         "noSessionId": "Aucun sessionId trouvé.",
         "loadFailed": "Impossible de charger les détails.",
         "noTasks": "Aucune tâche trouvée.",
-        "completed": "Terminé",
-        "notCompleted": "Non terminé",
+        "completed": "Complété",
+        "notCompleted": "Non complété",
         "partial": "Partiel",
         "undefined": "Indéfini"
     },
@@ -183,7 +183,8 @@
         "confirmTitle": "Confirmation"
     },
     "common": {
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "notAvailable": "N/A"
     },
     "personeelSearch": {
         "placeholder": "Par nom, prénom ou e-mail..."
@@ -235,7 +236,9 @@
     "periodicCard": {
         "title": "Nettoyage périodique",
         "weekly": "Hebdomadaire: ",
-        "monthly": "Mensuel: "
+        "monthly": "Mensuel: ",
+        "noWeekly": "Aucune tâche hebdomadaire",
+        "noMonthly": "Aucune tâche mensuelle"
     },
     "dateCalendar": {
         "previousMonth": "Mois précédent",

@@ -182,8 +182,9 @@
         "errorDelete": "Verwijderen onsuccesvol",
         "confirmTitle": "Bevestiging"
     },
-    "common":{
-        "cancel":"Annuleren"
+    "common": {
+        "cancel": "Annuleren",
+        "notAvailable": "N.v.t."
     },
     "personeelTable": {
         "id": "ID",
@@ -235,7 +236,9 @@
     "periodicCard": {
         "title": "Periodieke reinigingen",
         "weekly": "Wekelijks:",
-        "monthly": "Maandelijks:"
+        "monthly": "Maandelijks:",
+        "noWeekly": "Geen wekelijkse opdracht",
+        "noMonthly": "Geen maandelijkse opdracht"
     },
     "dateCalendar": {
         "previousMonth": "Vorige maand",
