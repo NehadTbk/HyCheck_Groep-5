@@ -11,7 +11,6 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
 
   useEffect(() => {
     if (!isOpen) {
-      // Reset position when modal closes
       setPosition({ x: window.innerWidth / 2 - 192, y: 100 });
     }
   }, [isOpen]);
@@ -26,30 +25,27 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
       }
     };
 
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
+    const handleMouseUp = () => setIsDragging(false);
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, dragOffset]);
 
   const handleMouseDown = (e) => {
-    if (modalRef.current) {
-      const rect = modalRef.current.getBoundingClientRect();
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-      setIsDragging(true);
-    }
+    if (!modalRef.current) return;
+    const rect = modalRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    setIsDragging(true);
   };
 
   if (!isOpen) return null;
@@ -73,135 +69,86 @@ function NotificationsModal({ isOpen, onClose, notifications = [] }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInMs = now - date;
-    const diffInMinutes = Math.floor(diffInMs / 60000);
-    const diffInHours = Math.floor(diffInMs / 3600000);
-    const diffInDays = Math.floor(diffInMs / 86400000);
+    const diff = now - date;
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
 
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} ${t('notifications.minutesAgo')}`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours} ${t('notifications.hoursAgo')}`;
-    } else if (diffInDays < 7) {
-      return `${diffInDays} ${t('notifications.daysAgo')}`;
-    } else {
-      return date.toLocaleDateString();
+    if (mins < 60) return `${mins} ${t("notifications.minutesAgo")}`;
+    if (hours < 24) return `${hours} ${t("notifications.hoursAgo")}`;
+    if (days < 7) return `${days} ${t("notifications.daysAgo")}`;
+    return date.toLocaleDateString();
+  };
+
+  const parseParams = (message) => {
+    try {
+      return typeof message === "string" ? JSON.parse(message) : {};
+    } catch {
+      return {};
     }
+  };
+
+  const renderNotificationText = (notification) => {
+    const params = parseParams(notification.message);
+
+    return {
+      title: t(notification.title, params),
+      body: t("notifications.db.missingBoxMessage", params)
+    };
   };
 
   return (
     <>
-      {/* Backdrop without blur */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-40" onClick={onClose} />
 
-      {/* Draggable Modal */}
       <div
         ref={modalRef}
         className="fixed w-96 max-h-[600px] bg-white rounded-xl shadow-2xl flex flex-col z-50"
-        style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-        }}
+        style={{ left: position.x, top: position.y }}
       >
-        {/* Header - Draggable */}
         <div
-          className="flex items-center justify-between p-4 border-b border-gray-200 cursor-move select-none"
+          className="flex items-center justify-between p-4 border-b cursor-move"
           onMouseDown={handleMouseDown}
         >
           <div className="flex items-center gap-2">
             <Bell className="text-[#5C2D5F]" size={24} />
-            <h2 className="text-xl font-bold text-gray-800">
-              {t('notifications.title')}
-            </h2>
+            <h2 className="text-xl font-bold">{t("notifications.title")}</h2>
             {newNotifications.length > 0 && (
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                 {newNotifications.length}
               </span>
             )}
           </div>
-          <button
-            onClick={onClose}
-            onMouseDown={(e) => e.stopPropagation()}
-            className="text-gray-500 hover:text-gray-700 transition"
-          >
+          <button onClick={onClose}>
             <X size={24} />
           </button>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-              <Bell size={48} className="mb-3 opacity-50" />
-              <p className="text-center font-medium">{t('notifications.noAlerts')}</p>
-            </div>
+            <p className="text-center text-gray-400">{t("notifications.noAlerts")}</p>
           ) : (
-            <>
-              {/* New Notifications */}
-              {newNotifications.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-600 uppercase">
-                    {t('notifications.new')}
-                  </h3>
-                  {newNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className="bg-purple-50 border-l-4 border-[#5C2D5F] p-4 rounded-r-lg hover:bg-purple-100 transition cursor-pointer"
-                    >
-                      <div className="flex items-start gap-3">
-                        {getIcon(notification.type)}
-                        <div className="flex-1">
-                          <h4 className="font-bold text-gray-800 text-sm mb-1">
-                            {notification.title}
-                          </h4>
-                          <p className="text-gray-600 text-xs mb-2">
-                            {notification.message}
-                          </p>
-                          <span className="text-xs text-gray-500">
-                            {formatDate(notification.date)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+            [...newNotifications, ...oldNotifications].map((notification) => {
+              const { title, body } = renderNotificationText(notification);
 
-              {/* Old Notifications */}
-              {oldNotifications.length > 0 && (
-                <div className="space-y-3">
-                  {newNotifications.length > 0 && (
-                    <h3 className="text-sm font-semibold text-gray-600 uppercase pt-4">
-                      {t('notifications.older')}
-                    </h3>
-                  )}
-                  {oldNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className="bg-gray-50 border-l-4 border-gray-300 p-4 rounded-r-lg hover:bg-gray-100 transition cursor-pointer opacity-75"
-                    >
-                      <div className="flex items-start gap-3">
-                        {getIcon(notification.type)}
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-700 text-sm mb-1">
-                            {notification.title}
-                          </h4>
-                          <p className="text-gray-600 text-xs mb-2">
-                            {notification.message}
-                          </p>
-                          <span className="text-xs text-gray-500">
-                            {formatDate(notification.date)}
-                          </span>
-                        </div>
-                      </div>
+              return (
+                <div
+                  key={notification.id}
+                  className="bg-purple-50 border-l-4 border-[#5C2D5F] p-4 rounded"
+                >
+                  <div className="flex gap-3">
+                    {getIcon(notification.type)}
+                    <div>
+                      <h4 className="font-bold text-sm">{title}</h4>
+                      <p className="text-xs text-gray-600">{body}</p>
+                      <span className="text-xs text-gray-400">
+                        {formatDate(notification.date)}
+                      </span>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              )}
-            </>
+              );
+            })
           )}
         </div>
       </div>
