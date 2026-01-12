@@ -180,7 +180,7 @@
         "confirmBtn": "Ja, verwijderen",
         "deleteSuccess": "Personeelslid succesvol verwijderd",
         "errorDelete": "Verwijderen onsuccesvol",
-        "confirmTitle": ""
+        "confirmTitle": "Bevestiging"
     },
     "common": {
         "cancel": "Annuleren"
