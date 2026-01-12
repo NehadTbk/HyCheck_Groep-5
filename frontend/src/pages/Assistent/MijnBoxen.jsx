@@ -27,12 +27,7 @@ function MijnBoxen() {
     }
   }, [notification]);
 
-  // Helper voor de datum van morgen
-  const getTomorrowDate = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-  };
+
 
   const fetchBoxes = async () => {
     setLoading(true);
@@ -40,9 +35,8 @@ function MijnBoxen() {
       const token = localStorage.getItem("token");
 
       // Veilige manier om lokale datum van morgen te pakken (YYYY-MM-DD)
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const dateString = tomorrow.toLocaleDateString('en-CA'); // Geeft altijd YYYY-MM-DD
+      const today = new Date();
+      const dateString = today.toLocaleDateString('en-CA'); // Geeft altijd YYYY-MM-DD
       setCurrentDate(dateString); // Store the date for later use
 
       const res = await fetch(`${API_BASE_URL}/api/assistant/all-boxes?date=${dateString}`, {
@@ -226,7 +220,7 @@ function MijnBoxen() {
             {t("assistentBoxen.allBoxes")}
           </h1>
           <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
-            {new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('nl-BE', {
+            {new Date().toLocaleDateString('nl-BE', {
               day: 'numeric',
               month: 'long',
               year: 'numeric'

@@ -33,12 +33,13 @@ function AssistentDashboard() {
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
+        setLoading(true);
+
         const token = localStorage.getItem("token");
 
         // Gebruik morgen als datum (YYYY-MM-DD in lokale tijd, geen UTC conversie)
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const dateString = tomorrow.toLocaleDateString('en-CA'); // Geeft altijd YYYY-MM-DD
+        const today = new Date();
+        const dateString = today.toLocaleDateString('en-CA');
         setCurrentDate(dateString);
 
         // Gebruik de dateString variabele in de URL
