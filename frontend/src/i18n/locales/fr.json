@@ -96,7 +96,7 @@
         "tasksFallback": "tâches",
         "db": {
             "missingBoxTitle": "Box non complété : {{boxName}}",
-            "missingBoxMessage": "Les {{groups}} voor {{boxName}} n'ont pas encore été entièrement complétés aujourd'hui."
+            "missingBoxMessage": "Les {{groups}} pour {{boxName}} n'ont pas encore été entièrement complétés aujourd'hui."
         }
     },
     "boxCard": {
@@ -175,7 +175,15 @@
     },
     "personeelsRegister": {
         "title": "Registre du personnel",
-        "loading": "Chargement du personnel…"
+        "loading": "Chargement du personnel…",
+        "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce membre du personnel ?",
+        "confirmBtn": "Oui, supprimer",
+        "deleteSuccess": "Membre du personnel supprimé avec succès",
+        "errorDelete": "Échec de la suppression",
+        "confirmTitle": "Confirmation"
+    },
+    "common": {
+        "cancel": "Annuler"
     },
     "personeelSearch": {
         "placeholder": "Par nom, prénom ou e-mail..."
