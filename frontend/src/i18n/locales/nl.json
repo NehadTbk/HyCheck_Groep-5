@@ -183,7 +183,8 @@
         "confirmTitle": "Bevestiging"
     },
     "common": {
-        "cancel": "Annuleren"
+        "cancel": "Annuleren",
+        "notAvailable": "N.v.t."
     },
     "personeelTable": {
         "id": "ID",
