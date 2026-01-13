@@ -74,9 +74,9 @@ function HistoryModal({ data, onClose }) {
   if (!data) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden flex flex-col shadow-2xl">
-        <div className="p-6 border-b flex justify-between items-center bg-gray-50">
+<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+<div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+          <div className="p-6 border-b flex justify-between items-center bg-gray-50">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
               {t("historyModal.title")} {data.boxNr}
@@ -95,7 +95,7 @@ function HistoryModal({ data, onClose }) {
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
           <h3 className="font-bold text-gray-700 uppercase text-xs tracking-widest">
             {t("historyModal.tasks")}
           </h3>
