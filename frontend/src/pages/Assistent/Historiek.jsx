@@ -12,11 +12,11 @@ const getToken = () => localStorage.getItem("token");
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
-  const dateOnly = String(dateStr).split("T")[0];
-  const parts = dateOnly.split("-");
-  if (parts.length !== 3) return dateStr;
-  const [y, m, d] = parts;
-  return `${d}/${m}/${y}`;
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
 };
 
 function Historiek() {
