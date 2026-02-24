@@ -141,7 +141,8 @@
         "cancel": "ANNULEREN",
         "addReason": "Reden toevoegen",
         "confirmReason": "REDEN BEVESTIGEN",
-        "saveAndClose": "Opslaan & Sluiten"
+        "saveAndClose": "Opslaan & Sluiten",
+        "selectReason": "Selecteer een reden: "
     },
     "assistentNav": {
         "dashboard": "Dashboard",
@@ -266,7 +267,7 @@
         "fromDate": "Van de",
         "toDate": "Tot de",
         "assistant": "Assistent",
-        "searchAssistant": "Zoek assistent..."
+        "searchAssistant": "Zoek een assistent(e)..."
     },
     "schedulingOverlay": {
         "selectDate": "Selecteer datum(s)",
@@ -407,5 +408,16 @@
         "cancel": "Annuleren",
         "save": "Opslaan",
         "saving": "Opslaan..."
+    },
+    "taskHeaders": {
+        "ochtend": "Ochtend taken",
+        "avond": "Avond taken",
+        "wekelijks": "Wekelijkse taken",
+        "maandelijks": "Maandelijkse taken"
+    }, 
+    "comments": {
+        "Pas de temps": "Niet genoeg tijd",
+        "Dentiste occupé": "Tandarts nog bezig",
+        "Manque de personnel": "Niet genoeg personeel"
     }
 }

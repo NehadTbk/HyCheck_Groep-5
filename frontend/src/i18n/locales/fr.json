@@ -87,7 +87,7 @@
         "tasksSaved": "Tâches enregistrées avec succès !",
         "allTasksCompleted": "Toutes les tâches terminées !",
         "allTasksReset": "Toutes les tâches réinitialisées",
-        "noTasksFound": "Aucune tâche trouvée pour cette box",
+        "noTasksFound": "Aucune tâche trouvée pour ce box",
         "missingAssignmentId": "Une erreur s'est produite : ID d'assignation manquant",
         "selectDentist": "Sélectionnez d'abord un dentiste",
         "selectAssistant": "Sélectionnez d'abord un assistant",
@@ -141,7 +141,8 @@
         "cancel": "ANNULER",
         "confirmReason": "CONFIRMER LA RAISON",
         "addReason": "Ajouter une raison",
-        "saveAndClose": "Enregistrer & Fermer"
+        "saveAndClose": "Enregistrer & Fermer",
+        "selectReason": "Choisissez une raison"
     },
     "assistentNav": {
         "dashboard": "Tableau de bord",
@@ -266,7 +267,7 @@
         "fromDate": "Du",
         "toDate": "Au",
         "assistant": "Assistant",
-        "searchAssistant": "Rechercher un assistant..."
+        "searchAssistant": "Rechercher un(e) assistant(e)..."
     },
     "schedulingOverlay": {
         "selectDate": "Sélectionner la/les date(s)",
@@ -407,5 +408,16 @@
         "cancel": "Annuler",
         "save": "Enregistrer",
         "saving": "Enregistrement..."
+    },
+    "taskHeaders": {
+        "ochtend": "Tâches matinales",
+        "avond": "Tâches du soir",
+        "wekelijks": "Tâches hebdomadaires",
+        "maandelijks": "Tâches mensuelles"
+    },
+    "comments": {
+        "Pas de temps": "Pas de temps",
+        "Dentiste occupé": "Dentiste occupé",
+        "Manque de personnel": "Manque de personnel"
     }
 }

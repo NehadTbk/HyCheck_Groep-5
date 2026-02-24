@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { X, Circle, CheckCircle2 } from "lucide-react";
+import { useTranslation } from "../../i18n/useTranslation";
+import { useLanguage } from "../../i18n/useLanguage";
+
 
 function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks }) {
+  const { t} = useTranslation();
+  useLanguage();
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [standardOptions, setStandardOptions] = useState([]);
@@ -91,7 +96,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
           {Object.keys(taskByType).length > 0 ? (
             Object.keys(taskByType).map((type) => (
               <div key={type} className="border border-gray-100 rounded-2xl p-5 bg-gray-50/50">
-                <h3 className="font-bold text-lg text-gray-800 mb-4">{type} taken</h3>
+                <h3 className="font-bold text-lg text-gray-800 mb-4">{t(`taskHeaders.${type.toLowerCase()}`)}</h3>
                 <div className="space-y-6">
                   {taskByType[type].map((task) => {
                     // Use tasksState if available, otherwise fall back to DB value
@@ -136,7 +141,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
         <div className="p-6 border-t bg-white">
           {showReasonInput ? (
             <div className="space-y-4 mb-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
-              <p className="text-xs font-bold text-gray-500 uppercase">Selecteer een reden:</p>
+              <p className="text-xs font-bold text-gray-500 uppercase">{t("taskModal.selectReason")}</p>
               <div className="grid grid-cols-1 gap-2">
                 {standardOptions.map((opt) => (
                   <label key={opt.option_id} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer ${selectedOptionId === opt.option_id ? "bg-[#5C2D5F]/5 border-[#5C2D5F]" : "bg-white"}`}>
@@ -150,7 +155,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
                       }}
                     />
                     {/* HIER GEBRUIKEN WE DE KOLOM UIT JE DB */}
-                    <span className="text-sm text-gray-700">{opt.common_comment}</span>
+                    <span className="text-sm text-gray-700">{t(`comments.${opt.common_comment}`, {defaultValue: opt.common_comment})}</span>
                   </label>
                 ))}
               </div>
@@ -160,19 +165,19 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
                   setReason(e.target.value);
                   setSelectedOptionId(null); // Deselecteer optie bij zelf typen
                 }}
-                placeholder="Of typ hier een eigen opmerking..."
+                placeholder={t('taskModal.customReason')}
                 className="w-full border border-gray-300 rounded-xl p-3 text-sm resize-none"
                 rows={2}
               />
             </div>
           ) : (
             <button className="text-[#5C2D5F] font-bold mb-4" onClick={() => setShowReasonInput(true)}>
-              + Reden toevoegen
+              + {t('taskModal.addReason')}
             </button>
           )}
 
           <div className="flex justify-end gap-3">
-            <button onClick={onClose} className="px-6 py-4 text-gray-500 font-bold">Annuleren</button>
+            <button onClick={onClose} className="px-6 py-4 text-gray-500 font-bold">{t('common.cancel')}</button>
             <button
               className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-lg text-lg"
               onClick={() => {
@@ -183,7 +188,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
                 onSave(assignmentId, selectedOptionId, reason);
               }}
             >
-              Opslaan & Sluiten
+             {t('taskModal.saveAndClose')}
             </button>
           </div>
         </div>

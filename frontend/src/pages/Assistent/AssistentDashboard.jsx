@@ -133,6 +133,7 @@ function AssistentDashboard() {
         setBoxes(prev => prev.map(b => b.id === boxId ? { ...b, status: newStatus, doneCount: completedCount } : b));
       }
     } catch (err) {
+      console.error(err);
       // Revert local state on error
       setTasksState(prev => ({
         ...prev,
