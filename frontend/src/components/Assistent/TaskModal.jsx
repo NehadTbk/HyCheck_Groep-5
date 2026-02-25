@@ -83,7 +83,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
         {/* Header */}
         <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
           <h2 className="text-3xl font-bold text-gray-900">{box.name}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+          <button onClick={onClose} className="p-2  hover:bg-gray-100 rounded-full cursor-pointer">
             <X size={24} />
           </button>
         </div>
@@ -168,15 +168,15 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
               />
             </div>
           ) : (
-            <button className="text-[#5C2D5F] font-bold mb-4" onClick={() => setShowReasonInput(true)}>
+            <button className="text-[#5C2D5F] font-bold mb-4 cursor-pointer" onClick={() => setShowReasonInput(true)}>
               + {t('taskModal.addReason')}
             </button>
           )}
 
           <div className="flex justify-end gap-3">
-            <button onClick={onClose} className="px-6 py-4 text-gray-500 font-bold">{t('common.cancel')}</button>
+            <button onClick={onClose} className="px-6 py-4 text-gray-500 font-bold cursor-pointer">{t('common.cancel')}</button>
             <button
-              className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-lg text-lg"
+              className="bg-[#5C2D5F] text-white px-10 py-4 rounded-2xl font-bold shadow-lg text-lg cursor-pointer"
               onClick={() => {
                 const assignmentId = box?.id || box?.assignment_id;
                 if (!assignmentId) {
