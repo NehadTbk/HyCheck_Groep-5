@@ -127,6 +127,29 @@
         "noWeekly": "Aucune tâche hebdomadaire",
         "noMonthly": "Aucune tâche mensuelle"
     },
+    "days": {
+        "maandag": "lundi",
+        "dinsdag": "mardi",
+        "woensdag": "mercredi",
+        "donderdag": "jeudi",
+        "vrijdag": "vendredi",
+        "zaterdag": "samedi",
+        "zondag": "dimanche"
+    },
+    "months": {
+        "0": "janvier",
+        "1": "février",
+        "2": "mars",
+        "3": "avril",
+        "4": "mai",
+        "5": "juin",
+        "6": "juillet",
+        "7": "août",
+        "8": "septembre",
+        "9": "octobre",
+        "10": "novembre",
+        "11": "décembre"
+    },
     "assistentDashboard": {
         "todayCompleted": "Terminé aujourd'hui",
         "completedSubtitle": "Box nettoyées",

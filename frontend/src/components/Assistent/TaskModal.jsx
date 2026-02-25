@@ -4,8 +4,8 @@ import { useTranslation } from "../../i18n/useTranslation";
 import { useLanguage } from "../../i18n/useLanguage";
 
 
-function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks }) {
-  const { t} = useTranslation();
+function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks, currentDate}) {
+  const { t } = useTranslation();
   useLanguage();
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
@@ -21,9 +21,8 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
       return;
     }
     const token = localStorage.getItem("token");
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const dateString = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
+    const today = new Date();
+    const dateString = today.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
 
     fetch(`${API_BASE_URL}/api/tasks/boxes/${assignmentId}/tasks?date=${dateString}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -31,37 +30,35 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
       .then(res => res.json())
       .then((data) => {
         const grouped = {};
+        const localInitialstate = {};
         if (Array.isArray(data)) {
           data.forEach(task => {
             const type = task.tag || task.category || "Overig";
             if (!grouped[type]) grouped[type] = [];
 
             const taskId = task.id || task.schedule_id;
+            const isDone = (tasksState[assignmentId] && tasksState[assignmentId][taskId !==undefined])
+            ? tasksState[assignmentId][taskId]
+            : !!task.completed;
 
+          localInitialstate[taskId] = isDone;
             grouped[type].push({
               id: taskId,
               title: task.title || task.task_name,
               desc: task.desc || task.description || "",
-              completed: !!task.completed
+              completed: isDone
             });
           });
         }
         setTaskByType(grouped);
 
         // Initialize parent tasksState with DB values (without triggering auto-save)
-        if (onInitTasks && assignmentId) {
-          const initialState = {};
-          data.forEach(task => {
-            const taskId = task.id || task.schedule_id;
-            initialState[taskId] = !!task.completed;
-          });
-          onInitTasks(assignmentId, initialState);
+        if (onInitTasks) {
+          onInitTasks(assignmentId, localInitialstate);
         }
       })
       .catch(err => console.error("Fout bij taken:", err));
-    // LET OP: We voegen box.id/assignment_id toe aan dependency array, maar NIET tasksState
-    // anders krijg je een infinite loop!
-  }, [box?.id, box?.assignment_id]);
+  }, [box?.id, box?.assignment_id, currentDate]);
 
   // Redenen ophalen uit comment_option
   useEffect(() => {
@@ -105,9 +102,9 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
                     const descLines = task.desc ? task.desc.split('\n').filter(line => line.trim()) : [];
                     return (
                       <div key={task.id} className="flex gap-4 cursor-pointer" onClick={() => {
-                                      const assignmentId = box?.id || box?.assignment_id;
-                                      if (assignmentId) onToggleTask(assignmentId, task.id);
-                                    }}>
+                        const assignmentId = box?.id || box?.assignment_id;
+                        if (assignmentId) onToggleTask(assignmentId, task.id);
+                      }}>
                         <div className={isDone ? "text-green-500" : "text-gray-300"}>
                           {isDone ? <CheckCircle2 size={26} /> : <Circle size={26} />}
                         </div>
@@ -155,7 +152,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
                       }}
                     />
                     {/* HIER GEBRUIKEN WE DE KOLOM UIT JE DB */}
-                    <span className="text-sm text-gray-700">{t(`comments.${opt.common_comment}`, {defaultValue: opt.common_comment})}</span>
+                    <span className="text-sm text-gray-700">{t(`comments.${opt.common_comment}`, { defaultValue: opt.common_comment })}</span>
                   </label>
                 ))}
               </div>
@@ -188,7 +185,7 @@ function TaskModal({ box, tasksState, onToggleTask, onClose, onSave, onInitTasks
                 onSave(assignmentId, selectedOptionId, reason);
               }}
             >
-             {t('taskModal.saveAndClose')}
+              {t('taskModal.saveAndClose')}
             </button>
           </div>
         </div>

@@ -16,6 +16,18 @@ function PeriodicStatsCard({
   const IconComponent = iconMap[icon] || iconMap.default;
   const { t } = useTranslation();
 
+  const getTranslatedDay = (dateStr) => {
+    if (!dateStr || typeof dateStr !== 'string') return "";
+    const lowerStr = dateStr.toLowerCase();
+    const dutchDays = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"];
+    const foundDay = dutchDays.find(day => lowerStr.includes(day));
+    if (foundDay) {
+      const restOfDate = dateStr.split(' ').slice(1).join(' ');
+      return `${t(`days.${foundDay}`)} ${restOfDate}`;
+    }
+    return dateStr;
+  };
+
   return (
     <div className="bg-white rounded-xl p-6 flex flex-col justify-between shadow-lg">
       <div className="flex justify-between items-start mb-4">
@@ -28,8 +40,8 @@ function PeriodicStatsCard({
       <div className="space-y-1 text-sm">
         <p>
           <span className="text-gray-600">{t("periodicStatsCard.weekly")} </span>
-          {weeklyData ? (
-            <span className="font-semibold text-gray-900">{weeklyData.date}</span>
+          {weeklyData?.date ? (
+            <span className="font-semibold text-gray-900">{getTranslatedDay(weeklyData.date)}</span>
           ) : (
             <span className="text-gray-400 italic">{t("periodicStatsCard.noWeekly")}</span>
           )}

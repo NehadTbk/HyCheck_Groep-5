@@ -338,6 +338,7 @@ function AssistentDashboard() {
         <TaskModal
           box={selectedBox}
           tasksState={tasksState}
+          currentDate={currentDate}
           onToggleTask={handleToggleTask}
           onInitTasks={handleInitTasks}
           onSave={handleSaveTasks}

@@ -127,6 +127,29 @@
         "noWeekly": "Geen wekelijkse opdracht",
         "noMonthly": "Geen maandelijkse opdracht"
     },
+    "days": {
+        "maandag": "maandag",
+        "dinsdag": "dinsdag",
+        "woensdag": "woensdag",
+        "donderdag": "donderdag",
+        "vrijdag": "vrijdag",
+        "zaterdag": "zaterdag",
+        "zondag": "zondag"
+    },
+    "months": {
+        "0": "januari",
+        "1": "februari",
+        "2": "maart",
+        "3": "april",
+        "4": "mei",
+        "5": "juni",
+        "6": "juli",
+        "7": "augustus",
+        "8": "september",
+        "9": "oktober",
+        "10": "november",
+        "11": "december"
+    },
     "assistentDashboard": {
         "todayCompleted": "Vandaag voltooid",
         "completedSubtitle": "Boxen schoongemaakt",
@@ -414,7 +437,7 @@
         "avond": "Avond taken",
         "wekelijks": "Wekelijkse taken",
         "maandelijks": "Maandelijkse taken"
-    }, 
+    },
     "comments": {
         "Pas de temps": "Niet genoeg tijd",
         "Dentiste occupé": "Tandarts nog bezig",

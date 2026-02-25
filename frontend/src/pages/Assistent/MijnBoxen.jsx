@@ -181,6 +181,15 @@ function MijnBoxen() {
       setNotification({ type: 'error', message: err.message });
     }
   };
+  const getTranslatedDate = () => {
+    const now = new Date();
+    const day = now.getDate();
+    const monthIndex = now.getMonth();
+    const year = now.getFullYear();
+    const monthName = t(`months.${monthIndex}`);
+
+    return `${day} ${monthName} ${year}`;
+  }
 
   if (loading) {
     return (
@@ -199,11 +208,10 @@ function MijnBoxen() {
 
       {/* Notification */}
       {notification && (
-        <div className={`flex items-center justify-between p-3 rounded-lg ${
-          notification.type === 'success'
+        <div className={`flex items-center justify-between p-3 rounded-lg ${notification.type === 'success'
             ? 'bg-green-100 text-green-800 border border-green-300'
             : 'bg-red-100 text-red-800 border border-red-300'
-        }`}>
+          }`}>
           <div className="flex items-center gap-2">
             {notification.type === 'success' ? <Check size={18} /> : <X size={18} />}
             <span className="font-medium">{notification.message}</span>
@@ -220,11 +228,8 @@ function MijnBoxen() {
             {t("assistentBoxen.allBoxes")}
           </h1>
           <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
-            {new Date().toLocaleDateString('nl-BE', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric'
-            })}          </span>
+            {getTranslatedDate()}
+          </span>
         </div>
 
         <BoxList

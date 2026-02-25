@@ -82,7 +82,7 @@ function BoxCard({ box, onCheck, onClick }) {
             className={`text-[10px] px-2 py-0.5 rounded-full border font-bold ${typeColors[type] || "bg-gray-100"
               }`}
           >
-            {type}
+            {t(`taskTypes.${type.toLowerCase()}`)}
           </span>
         ))}
       </div>
