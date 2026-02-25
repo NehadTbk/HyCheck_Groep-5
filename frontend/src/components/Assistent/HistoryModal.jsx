@@ -50,9 +50,10 @@ function HistoryModal({ data, onClose }) {
           category: d.task_category,
           isCompleted: d.completed === 1 || d.completed === true || d.completed === "1",
           time: d.completed_at
-            ? new Date(d.completed_at).toLocaleTimeString([], {
+            ? new Date(d.completed_at).toLocaleTimeString(['nl-BE'], {
                 hour: "2-digit",
                 minute: "2-digit",
+                hour12: false,
               })
             : "-",
           comment: d.common_comment || d.custom_comment || "",
